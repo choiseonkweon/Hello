@@ -28,7 +28,7 @@ import jcep.admin.service.MemberService;
 /**
  * @Class Name : BusinessController.java
  * @Description : Business Controller  Class
- * @Modification Information
+ * @Modification Information  test
  * @
  * @  수정일      수정자              수정내용
  * @ ---------   ---------   -------------------------------
@@ -73,7 +73,6 @@ public class BusinessController {
 		paginationInfo.setRecordCountPerPage(searchVO.getPageUnit());
 		paginationInfo.setPageSize(searchVO.getPageSize());
 
-		searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
 		searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
 		searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
 		searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
