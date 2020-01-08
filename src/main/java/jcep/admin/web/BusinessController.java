@@ -74,7 +74,7 @@ public class BusinessController {
 		paginationInfo.setPageSize(searchVO.getPageSize());
 
 		searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
-		//searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
+		searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
 		searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
 		searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
 
