@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jcep.admin.dao.MemberMapper">
+
+<!-- 회원 관리 > 회원 관리 -->
+	<select id="selectMemberList" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
+			SELECT
+				member_idx AS memberIdx,
+				member_id AS memberId,
+				member_pw AS memberPw,
+				member_nm AS memberNm,
+				member_addr AS memberAddr,
+				member_tel AS memberTel,
+				member_hp AS memberHp,
+				member_mail AS memberMail,
+				member_belong AS memberBelong,
+				date_format(member_join_dt, '%Y.%m.%d') AS memberJoinDt,
+				(
+					CASE member_join_type 
+						WHEN 'A' THEN '직원'
+						WHEN 'B' THEN '기업회원'
+						WHEN 'C' THEN '전문가'
+						WHEN 'D' THEN '사업담당자'
+						WHEN 'E' THEN '일반회원'
+					END
+                ) AS memberJoinType,
+				member_st AS memberSt
+			FROM tb_member
+			WHERE 1=1
+			<if test='memberSt != null and memberSt != ""'>
+				AND	member_st = #{memberSt}
+			</if>
+			<if test="searchText != null and searchText != ''">
+		        <choose>
+		        	<when test='searchType eq ""'>
+						AND	member_id LIKE CONCAT('%',#{searchText},'%') OR member_nm LIKE CONCAT('%',#{searchText},'%') OR member_belong LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 1'>
+						AND	member_id LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 2'>
+						AND	member_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+					<when test='searchType eq 3'>
+						AND	member_belong LIKE CONCAT('%',#{searchText},'%')
+					</when>
+				</choose>
+			</if>
+			ORDER BY member_join_dt DESC
+			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+	</select>
+	
+	<select id="selectMemberListTotCnt" parameterType="jcep.admin.model.MemberVO" resultType="int">
+			SELECT COUNT(*) totcnt
+			FROM tb_member
+			WHERE 1=1
+			<if test='memberSt != null and memberSt != ""'>
+				AND	member_st = #{memberSt}
+			</if>
+			<if test="searchText != null and searchText != ''">
+		        <choose>
+		        	<when test='searchType eq ""'>
+						AND	member_id LIKE CONCAT('%',#{searchText},'%') OR member_nm LIKE CONCAT('%',#{searchText},'%') OR member_belong LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 1'>
+						AND	member_id LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 2'>
+						AND	member_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+					<when test='searchType eq 3'>
+						AND	member_belong LIKE CONCAT('%',#{searchText},'%')
+					</when>
+				</choose>
+			</if>
+	</select>
+
+	<select id="selectMemberDetail" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
+			SELECT
+				member_idx AS memberIdx,
+				member_id AS memberId,
+				member_pw AS memberPw,
+				member_nm AS memberNm,
+				member_addr AS memberAddr,
+				member_tel AS memberTel,
+				member_hp AS memberHp,
+				member_mail AS memberMail,
+				member_belong AS memberBelong,
+				date_format(member_join_dt, '%Y.%m.%d') AS memberJoinDt,
+				member_join_type AS memberJoinType,
+				member_st AS memberSt
+			FROM tb_member
+			WHERE 1=1
+			AND member_idx = #{memberIdx}
+	</select>
+	
+	<update id="memberUpdate" parameterType="jcep.admin.model.MemberVO">
+			UPDATE tb_member
+			SET 
+				<if test="memberPw != null and memberPw != ''"> member_pw = #{memberPw},</if>
+				<if test="memberBelong != null and memberBelong != ''"> member_belong = #{memberBelong},</if>
+				<if test="memberAddr != null and memberAddr != ''"> member_addr = #{memberAddr},</if>
+				<if test="memberMail != null and memberMail != ''"> member_mail = #{memberMail},</if>
+				<if test="memberTel != null and memberTel != ''"> member_tel = #{memberTel},</if>
+				<if test="memberHp != null and memberHp != ''"> member_hp = #{memberHp},</if>
+				<if test="memberJoinType != null and memberJoinType != ''">member_join_type = #{memberJoinType}</if>
+			WHERE member_idx = #{memberIdx}
+	</update>
+	
+	<select id="memberIdChk" parameterType="jcep.admin.model.MemberVO" resultType="int">
+			SELECT COUNT(*) idCnt
+			FROM tb_member
+			WHERE 1=1
+			AND  member_id = #{memberId}
+	</select>
+	
+	<insert id="memberInsert" parameterType="jcep.admin.model.MemberVO">
+			INSERT INTO tb_member (
+				 member_idx
+				,member_id
+				,member_pw
+				,member_nm
+				,member_addr
+				,member_tel
+				,member_hp
+				,member_mail
+				,member_belong
+				,member_join_dt
+				,member_join_type
+				,member_st
+			)
+			VALUES(
+				 (select concat('M',IFNULL(LPAD(MAX(SUBSTRING(member_idx,2,LENGTH(member_idx))) + 1,4,'0'),'0000')) from tb_member a)
+				,#{memberId}
+				,#{memberPw}
+				,#{memberNm}
+				,#{memberAddr}
+				,#{memberTel}
+				,#{memberHp}
+				,#{memberMail}
+				,#{memberBelong}
+				,CURRENT_TIMESTAMP
+				,#{memberJoinType}
+				,'N'
+			)
+	</insert>
+	
+	<insert id="memberAuthInsert" parameterType="jcep.admin.model.MemberVO">
+			INSERT INTO tb_member_auth (
+				 member_idx
+				,member_auth
+			)
+			VALUES(
+				 (select member_idx from tb_member where member_idx = #{memberIdx})
+				,'AA'
+			)
+		   ON
+		      DUPLICATE KEY
+		   UPDATE
+		     	member_idx = (select member_idx from tb_member where member_idx = #{memberIdx})
+		       ,member_auth = 'AA'
+
+	</insert>
+	
+	<update id="memberConfirm" parameterType="jcep.admin.model.MemberVO">
+			UPDATE tb_member
+			SET 
+				member_st = 'Y'
+			WHERE member_idx = #{memberIdx}
+	</update>
+	
+	<!-- 회원관리 > 권한관리 -->
+	<select id="selectAuthList" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
+			SELECT
+				A.member_idx AS memberIdx,
+				A.member_id AS memberId,
+				A.member_pw AS memberPw,
+				A.member_nm AS memberNm,
+				A.member_addr AS memberAddr,
+				A.member_tel AS memberTel,
+				A.member_hp AS memberHp,
+				A.member_mail AS memberMail,
+				A.member_belong AS memberBelong,
+				date_format(A.member_join_dt, '%Y.%m.%d') AS memberJoinDt,
+				(
+					CASE A.member_join_type 
+						WHEN 'A' THEN '직원'
+						WHEN 'B' THEN '기업회원'
+						WHEN 'C' THEN '전문가'
+						WHEN 'D' THEN '사업담당자'
+						WHEN 'E' THEN '일반회원'
+					END
+                ) AS memberJoinType,
+				A.member_st AS memberSt,
+				(
+					CASE B.member_auth 
+						WHEN 'AA' THEN '마스터'
+						WHEN 'BB' THEN '일반회원'
+						WHEN 'CC' THEN '사업담당자'
+						WHEN 'DD' THEN '기업회원'
+						WHEN 'EE' THEN '전문가'
+						WHEN 'FF' THEN '바이어'
+					END
+                ) AS memberAuth
+			FROM tb_member AS A INNER JOIN tb_member_auth AS B 
+                 ON A.member_idx = B.member_idx
+			WHERE 1=1
+			<if test='memberAuthType != null and memberAuthType != ""'>
+				AND	B.member_auth = #{memberAuthType}
+			</if>
+			<if test="searchText != null and searchText != ''">
+		        <choose>
+		        	<when test='searchType eq ""'>
+						AND	member_id LIKE CONCAT('%',#{searchText},'%') OR member_nm LIKE CONCAT('%',#{searchText},'%') OR member_belong LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 1'>
+						AND	member_id LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 2'>
+						AND	member_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+					<when test='searchType eq 3'>
+						AND	member_belong LIKE CONCAT('%',#{searchText},'%')
+					</when>
+				</choose>
+			</if>
+			ORDER BY A.member_join_dt DESC
+			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+	</select>
+	
+	<select id="selectAuthListTotCnt" parameterType="jcep.admin.model.MemberVO" resultType="int">
+			SELECT
+				COUNT(*) totcnt
+			FROM tb_member AS A INNER JOIN tb_member_auth AS B 
+                 ON A.member_idx = B.member_idx
+			WHERE 1=1
+			<if test='memberAuthType != null and memberAuthType != ""'>
+				AND	B.member_auth = #{memberAuthType}
+			</if>
+			<if test="searchText != null and searchText != ''">
+		        <choose>
+		        	<when test='searchType eq ""'>
+						AND	member_id LIKE CONCAT('%',#{searchText},'%') OR member_nm LIKE CONCAT('%',#{searchText},'%') OR member_belong LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 1'>
+						AND	member_id LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 2'>
+						AND	member_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+					<when test='searchType eq 3'>
+						AND	member_belong LIKE CONCAT('%',#{searchText},'%')
+					</when>
+				</choose>
+			</if>
+	</select>
+	
+	<update id="memberAuthSave" parameterType="jcep.admin.model.MemberVO">
+		    UPDATE tb_member_auth
+			SET 
+				member_auth = #{memberAuth}
+			WHERE member_idx = #{memberIdx}   
+	</update>
+	
+</mapper>

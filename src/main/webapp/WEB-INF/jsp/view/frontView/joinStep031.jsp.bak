@@ -1,0 +1,869 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %> 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="form"	uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="ui"	uri="http://egovframework.gov/ctl/ui"%>
+<%@ taglib prefix="spring"	uri="http://www.springframework.org/tags"%>    
+<!DOCTYPE html>
+<html>
+<link rel='stylesheet' type='text/css' href='css/reset.css' />
+<link rel='stylesheet' type='text/css' href='css/common.css' />
+<link rel='stylesheet' type='text/css' href='css/sub.css' />
+<script type="text/javascript" src="../db/assets/js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="../db/assets/js/jquery.easing.1.3.js"></script>
+<script type="text/javascript" src="../db/assets/js/ui.js"></script>
+
+<script src="http://dmaps.daum.net/map_js_init/postcode.v2.js"></script>
+<script type="text/javaScript" defer="defer">
+	$(document).ready(function () {
+		
+/* 		var memberId = $('#memberId').val();
+		alert("memberId :: " + memberId); */
+		
+		$("#idChkBtn").click(function(){
+			//alert($('#memberId').val());
+			//alert($('#expertHeadTel1').val());
+			if($('#memberId').val() == ''){
+				alert('아이디를 입력하세요.');
+				$('#memberId').focus();
+				return false;
+			}else{
+				$.ajax({
+					type : 'post',
+					url:'/db/member/memberIdChk.do',
+					data: {memberId : $('#memberId').val()},
+					dataType: 'json',
+					success : function(data) {
+						if(data.idCnt != 0){
+							$("#chkYn").val("N");
+							$("#able").hide();
+							$("#enable").show();
+						}else{
+							$("#chkYn").val("Y");
+							$("#able").show();
+							$("#enable").hide();
+						}
+					},  
+				    error:function(request,status,error){ //ajax 오류인경우  
+			            alert("작업중 에러가 발생했습니다.");      
+			            console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+			   		} 
+			 	});
+				return false;
+			}
+			 
+		});
+		
+
+		function checkValue(){
+			var retValue = true;
+			
+			if($('#memberId').val() == ""){
+				alert("아이디를 입력하세요.");
+				$('#memberId').focus();
+				return;
+			}
+			
+			if($('#chkYn').val() != "Y"){
+				alert("아이디를 중복체크 하세요.");
+				return;
+			}
+			
+			if($('#memberPw').val() == ""){
+				alert("비밀번호를 입력하세요.");
+				$('#memberPw').focus();
+				return;
+			}
+			
+			if($('#memPwdChk').val() == ""){
+				alert("비밀번호 확인을 입력하세요.");
+				$('#memPwdChk').focus();
+				return;
+			}
+			
+			if($('#memberPw').val() != $('#memPwdChk').val()){
+				alert("비밀번호가 일치하지 않습니다.");
+				return;
+			}
+			
+			if($('#memberNm').val() == ""){
+				alert("이름을 입력하세요.");
+				$('#memberNm').focus();
+				return;
+			}
+			
+			if($('#entprRespsibHpNo').val() == ""){
+				alert("휴대폰번호를 입력하세요.");
+				$('#expertHeadTel').focus();
+				return;
+			}
+
+/* 			if($('#expertHeadTel2').val() == ""){
+				alert("휴대폰번호를 입력하세요.");
+				$('#expertHeadTel2').focus();
+				return;
+			}
+			
+			if($('#expertHeadTel3').val() == ""){
+				alert("휴대폰번호를 입력하세요.");
+				$('#expertHeadTel3').focus();
+				return;
+			} */
+			return retValue;
+		}
+		
+		$("#createBtn").click(function(){
+			if(checkValue()){
+				$.ajax({
+					type : 'post',
+					url:'/db/memberEnterpriseInsert.do',
+					data: $('#insertFrm').serialize(),
+					dataType: 'json',
+					success : function(data) {
+						if(data.returnCode == 0){
+		                    alert("등록을 실패 하였습니다.");
+		                    return;
+		                }else{
+		                	alert("등록이 완료 되었습니다.");
+		                	window.location.href="/db/login.do";
+		                }
+					},  
+				    error:function(request,status,error){ //ajax 오류인경우  
+			            alert("작업중 에러가 발생했습니다.");      
+			            console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+			   		} 
+			 	});
+			} 
+		});
+		
+		$("#saveBtn").click(function(){
+			$.ajax({
+				type : 'post',
+				url:'/db/memberEnterpriseUpdate.do',
+				data: $('#updateFrm').serialize(),
+				dataType: 'json',
+				success : function(data) {
+					if(data.returnCode == 0){
+	                    alert("등록을 실패 하였습니다.");
+	                    return;
+	                }else{
+	                	alert("수정이 완료 되었습니다.");
+	                	window.location.href="/db/login.do";
+	                }
+				},  
+			    error:function(request,status,error){ //ajax 오류인경우  
+		            alert("작업중 에러가 발생했습니다.");      
+		            console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+		   		} 
+		 	});
+		});
+		
+		 
+		 $("#resourceBtn").click(function(){
+				$("#resourcePop").show();
+		 });	
+		 
+		 $(".closeBtn").click(function(){
+				$("#resourcePop").hide();
+		 });
+		 
+		 $("#cancel").click(function(){
+			var result = confirm("취소하시겠습니까?");
+			if(result){
+				window.location.href="/db/main.do";
+			}else{
+				
+			}
+		 });
+		 
+		 $("#cancel1").click(function(){
+				var result = confirm("취소하시겠습니까?");
+				if(result){
+					var memberId = $('#memberId').val();
+					var memberPw = $('#memberPw').val();
+					
+					//confirm("memberId :: " + memberId);
+					//confirm("memberPw :: " + memberPw); 
+					
+					$.ajax({
+						type : 'post',
+						url:'/db/frontView/loginCheck.do',
+						data: {
+							//memberId : memberId,
+							memberId : $('#memberId').val(),
+							memberPw : memberPw,
+						},
+						dataType: 'json',
+						success : function(data) {
+							if(data.idCnt == 0){
+								alert("아이디 패스워드를 확인하세요.");
+							}else{
+								alert("로그인 합니다.");
+								fn_login();
+								return false;
+							}
+						},  
+					    error:function(request,status,error){ //ajax 오류인경우  
+				            alert("작업중 에러가 발생했습니다.");      
+				            console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+				   		}
+					});
+				}else{
+					
+				}
+			 });
+		 
+  $(function(){
+      //직접입력 인풋박스 기존에는 숨어있다가
+		$("#selboxDirect").hide();
+		$("#selbox").change(function() {
+                //직접입력을 누를 때 나타남
+				if($("#selbox").val() == "direct") {
+					$("#selboxDirect").show();
+				}  else {
+					$("#selboxDirect").hide();
+				}
+			}) 
+		$("#selboxDirect1").hide();
+		$("#selbox1").change(function() {
+               //직접입력을 누를 때 나타남
+			if($("#selbox1").val() == "direct") {
+				$("#selboxDirect1").show();
+			}  else {
+				$("#selboxDirect1").hide();
+			}
+		}) 	
+		});
+		 		
+	});
+	
+
+	function fn_login(){
+		window.location.href="/db/main2.do";
+	}
+	
+	function openDaumPostcode(){
+		
+		new daum.Postcode({
+				oncomplete: function(data) {
+					// 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+
+			            // 도로명 주소의 노출 규칙에 따라 주소를 조합한다.
+			            // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+			            var fullRoadAddr = data.roadAddress; // 도로명 주소 변수
+			            var extraRoadAddr = ''; // 도로명 조합형 주소 변수
+
+			            // 법정동명이 있을 경우 추가한다. (법정리는 제외)
+			            // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
+			            if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+			                extraRoadAddr += data.bname;
+			            }
+			            // 건물명이 있고, 공동주택일 경우 추가한다.
+			            if(data.buildingName !== '' && data.apartment === 'Y'){
+			               extraRoadAddr += (extraRoadAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+			            }
+			            // 도로명, 지번 조합형 주소가 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
+			            if(extraRoadAddr !== ''){
+			                extraRoadAddr = ' (' + extraRoadAddr + ')';
+			            }
+			            // 도로명, 지번 주소의 유무에 따라 해당 조합형 주소를 추가한다.
+			            if(fullRoadAddr !== ''){
+			                fullRoadAddr += extraRoadAddr;
+			            }
+
+			            // 우편번호와 주소 정보를 해당 필드에 넣는다.
+			            document.getElementById('entprHeadAddr').value = "(" + data.zonecode + ")" + " " + fullRoadAddr;
+			  }
+		}).open();
+	}
+	
+
+	function openDaumPostcode1(){
+		
+		new daum.Postcode({
+				oncomplete: function(data) {
+					// 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+
+			            // 도로명 주소의 노출 규칙에 따라 주소를 조합한다.
+			            // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+			            var fullRoadAddr = data.roadAddress; // 도로명 주소 변수
+			            var extraRoadAddr = ''; // 도로명 조합형 주소 변수
+
+			            // 법정동명이 있을 경우 추가한다. (법정리는 제외)
+			            // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
+			            if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+			                extraRoadAddr += data.bname;
+			            }
+			            // 건물명이 있고, 공동주택일 경우 추가한다.
+			            if(data.buildingName !== '' && data.apartment === 'Y'){
+			               extraRoadAddr += (extraRoadAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+			            }
+			            // 도로명, 지번 조합형 주소가 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
+			            if(extraRoadAddr !== ''){
+			                extraRoadAddr = ' (' + extraRoadAddr + ')';
+			            }
+			            // 도로명, 지번 주소의 유무에 따라 해당 조합형 주소를 추가한다.
+			            if(fullRoadAddr !== ''){
+			                fullRoadAddr += extraRoadAddr;
+			            }
+
+			            // 우편번호와 주소 정보를 해당 필드에 넣는다.
+			            document.getElementById('entprBranchAddr').value = "(" + data.zonecode + ")" + " " + fullRoadAddr;
+			  }
+		}).open();
+	}
+	
+	function inNumber(){
+		if(event.keyCode<48 || event.keyCode>57){
+			event.returnValue=false;
+		}
+	}
+	
+</script>
+        
+	<style>
+		.hidden { display: none;  }
+ 	</style>
+
+<head>
+
+</head>
+<body>
+<jsp:include page="menu.jsp"></jsp:include>
+<input type="hidden" name="searchType" value="<c:out value='${searchVO.searchType}'/>"/>
+<input type="hidden" name="searchText" value="<c:out value='${searchVO.searchText}'/>"/>
+<input type="hidden" name="memberSt" value="<c:out value='${searchVO.memberSt}'/>"/>
+<input type="hidden" name="pageIndex" value="<c:out value='${searchVO.pageIndex}'/>"/> 
+<input type="hidden" name="chkYn" id="chkYn" value="">
+
+<div id="wrap" class="sub s6">
+	
+	<div id="contents">
+		<c:if test="${viewType eq 'create'}">
+				<div class="row">
+					<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+						<h1 class="page-title txt-color-blueDark"><i class="fa-fw fa fa-home"></i><b>회원정보 등록</b></h1>
+					</div>
+				</div>
+		</c:if>
+		<c:if test="${viewType eq 'modify'}">
+			<div class="row">
+				<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+					<h1 class="page-title txt-color-blueDark"><i class="fa-fw fa fa-home"></i><b>회원정보 수정</b></h1>
+				</div>
+			</div>
+		</c:if>
+		
+		<div id="location">
+			<div class="layout01 clearfix">
+				<span class="home">홈</span>
+				<span class="now">회원가입</span>
+				<span class="now">회원 가입 및 수정</span>
+			</div>
+		</div>
+		<div class="layout01">
+		
+			<h2 class="">회원가입 - 더 새로워진 전남콘테츠기업육성센터 홈페이지를 만나보세요!</h2>
+			<div class="cont">
+				<h3>회원</h3>
+			
+							
+			<!--  회원정보 가입 form S -->
+			<c:if test="${viewType eq 'create' }">
+			<section id="widget-grid" class="">			
+				<div class="continner">
+				<form id="insertFrm" name="insertFrm" action="#" method="POST">
+					<div class="tab">
+						<ul class="tab01_4 clearfix">
+							<li class="step"><a href="/db/joinStep01.do">가입유형</a></li>
+							<li class="step"><a href="/db/joinStep02.do">약관동의</a></li>
+							<li class="on"><a href="#none">정보입력</a></li>
+							<li><a href="#none">가입완료</a></li>
+						</ul>
+					</div>
+					
+			
+					<div class="joininfobox">
+						<h4>기업정보입력</h4>
+						<table class="table01 tb_pc">
+							<colgroup>
+								<col style="width:10%;">
+								<col style="width:5%;">
+								<col style="width:35%;">
+								<col style="width:15%;">
+								<col style="width:35%;">
+							</colgroup>
+							<tbody>
+								<tr>
+									<th colspan="2" class="essential">아이디</th>
+									<td colspan="3">
+										<input type="text" id="memberId" name="memberId" style="width: 50%;" maxlength="20">
+										<button class="txtbtn" id="idChkBtn" style="width: 100px;">중복확인</button>
+										<div id="able" style="padding-top:5px;padding-bottom:5px;width:99%;display:none;color:blue;">
+											사용가능한 아이디입니다.
+										</div>
+										<div id="enable" style="padding-top:5px;padding-bottom:5px;width:99%;display:none;color:red;">
+											사용 불가능한 아이디입니다.
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<th colspan="2" class="essential">비밀번호</th>
+									<td>
+										<input type="password" style="width: 100%;" id="memberPw" name="memberPw"  maxlength="30">
+									</td>
+									<th class="essential">비밀번호 확인</th>
+									<td>
+										<input type="password" style="width: 100%;" id="memPwdChk" name="memPwdChk" maxlength="4">
+									</td>
+								</tr>
+								<tr>
+									<th colspan="2" class="essential">이름</th>
+									<td colspan="3">
+										<input type="text" style="width: 100%;" id="memberNm" name="memberNm" maxlength="30">
+									</td>
+								</tr>
+								<tr>
+									<th colspan="2" class="essential">휴대폰번호</th>
+									<td>
+										<input type="text" style="width: 50%;" id="entprRespsibHpNo" name="entprRespsibHpNo" maxlength="11" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');">
+										*특수문자 사용할 수 없습니다.
+<!-- 										<em>-</em>
+										<input type="text" style="width: 25%;" id="expertHeadTel2" name="expertHeadTel2">
+										<em>-</em>
+										<input type="text" style="width: 25%;" id="expertHeadTel3" name="expertHeadTel3"> -->
+									</td>
+									<th>이메일</th>
+									<td>
+										<input type="text" style="width: 40%;" id="entprRespsibEmail" name="entprRespsibEmail"maxlength="30" >
+										<em>@</em>
+										<!-- 상단의 select box에서 '직접입력'을 선택하면 나타날 인풋박스 -->
+										<input type="text" id="selboxDirect1" name="selboxDirect1" style="width: 40%;"/>
+										<select style="width: 40%;" id="selbox1" name="selbox1">
+											<option value="nate.com">nate.com</option>
+											<option value="naver.com">naver.com</option>
+											<option value="gmail.com">gmail.com</option>
+											<option value="direct">기타</option>
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<th colspan="2">회사명</th>
+									<td>
+										<input type="text" style="width: 100%;" id="entprNm" name="entprNm" maxlength="30" >
+									</td>
+									<th>대표자</th>
+									<td>
+										<input type="text" style="width: 100%;" id="entprCeo" name="entprCeo" maxlength="30" >
+									</td>
+								</tr>
+								<tr>
+									<th colspan="2">사업자등록번호</th>
+									<td>
+										<input type="text" style="width: 100%;" id="entprComRegNum" name="entprComRegNum" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="10">
+									</td>
+									<th>대표자이메일</th>
+									<td>
+										<input type="text" style="width: 40%;" id="entprCeoEmail" name="entprCeoEmail" maxlength="30">
+										<em>@</em>
+										<!-- 상단의 select box에서 '직접입력'을 선택하면 나타날 인풋박스 -->
+										<input type="text" id="selboxDirect" name="selboxDirect" style="width: 40%;"/>
+										<select style="width: 40%;" id="selbox" name="selbox">
+											<option value="@nate.com">nate.com</option>
+											<option value="@naver.com">naver.com</option>
+											<option value="@gmail.com">gmail.com</option>
+											<option value="direct">기타</option>
+										</select>
+									</td>
+								</tr>
+								
+								<tr>
+									<th colspan="2">사업분야</th>
+									<td>
+										<input type="text" style="width: 100%;" id="largeBussAreaCd" name="largeBussAreaCd">
+									</td>
+									<th>홈페이지</th>
+									<td>
+										<input type="text" style="width: 100%;" id="entprSite" name="entprSite">
+									</td>
+								</tr>
+								<tr>
+									<th rowspan="4">주소</th>
+									<th rowspan="2" class="row">본사</th>
+									<td>
+										<input type="text" id="entprHeadAddr" name="entprHeadAddr" class="input-sm" value="" maxlength="50" style="width:90%" readonly="readonly">
+										<button type="button" class="txtbtn" style="width: 120px;" onclick="javascript:openDaumPostcode()">우편번호 검색</button>
+									</td>
+									<th>대표전화</th>
+									<td>
+										<select style="width: 25%;" id="entprHeadTel" name="entprHeadTel">
+											<option></option>
+											<option value="02">02</option>
+											<option value="031">031</option>
+											<option value="032">032</option>
+											<option value="033">033</option>
+											<option value="041">041</option>
+											<option value="042">042</option>
+											<option value="043">043</option>
+											<option value="044">044</option>
+											<option value="051">051</option>
+											<option value="052">052</option>
+											<option value="053">053</option>
+											<option value="054">054</option>
+											<option value="055">055</option>
+											<option value="061">061</option>
+											<option value="062">062</option>
+											<option value="063">063</option>
+											<option value="064">064</option>
+										</select>
+										<em>-</em>
+										<input type="text" style="width: 25%;" id="expertOffiTel1" name="expertOffiTel1" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="4">
+										<em>-</em>
+										<input type="text" style="width: 25%;" id="expertOffiTel2" name="expertOffiTel2" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="4">
+									</td>
+								</tr>
+								<tr>
+									<td>
+										상세주소
+										<input type="text" style="width: 70%;" id="entprHeadDetailAddr" name="entprHeadDetailAddr">
+									</td>
+									<th>대표FAX</th>
+									<td>
+										<select style="width: 25%;" id="expertOffiFax" name="expertOffiFax">
+											<option></option>
+											<option value="02">02</option>
+											<option value="031">031</option>
+											<option value="032">032</option>
+											<option value="033">033</option>
+											<option value="041">041</option>
+											<option value="042">042</option>
+											<option value="043">043</option>
+											<option value="044">044</option>
+											<option value="051">051</option>
+											<option value="052">052</option>
+											<option value="053">053</option>
+											<option value="054">054</option>
+											<option value="055">055</option>
+											<option value="061">061</option>
+											<option value="062">062</option>
+											<option value="063">063</option>
+											<option value="064">064</option>
+										</select>
+										<em>-</em>
+										<input type="text" style="width: 25%;" id="expertOffiFax1" name="expertOffiFax1" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="4">
+										<em>-</em>
+										<input type="text" style="width: 25%;" id="expertOffiFax2" name="expertOffiFax2" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="4">
+									</td>
+								</tr>
+								<tr>
+									<th rowspan="2" class="row">자택</th>
+									<td>
+										<input type="text" id="entprBranchAddr" name="entprBranchAddr" class="input-sm" value="" maxlength="50" style="width:90%" readonly="readonly">
+										<button type="button" class="txtbtn" style="width: 120px;" onclick="javascript:openDaumPostcode1()">우편번호 검색</button>
+									</td>
+									<th>대표전화</th>
+									<td>
+										<select style="width: 25%;" id="entprBranchTel" name="entprBranchTel">
+											<option></option>
+											<option value="02">02</option>
+											<option value="031">031</option>
+											<option value="032">032</option>
+											<option value="033">033</option>
+											<option value="041">041</option>
+											<option value="042">042</option>
+											<option value="043">043</option>
+											<option value="044">044</option>
+											<option value="051">051</option>
+											<option value="052">052</option>
+											<option value="053">053</option>
+											<option value="054">054</option>
+											<option value="055">055</option>
+											<option value="061">061</option>
+											<option value="062">062</option>
+											<option value="063">063</option>
+											<option value="064">064</option>
+										</select>
+										<em>-</em>
+										<input type="text" style="width: 25%;" id="memberMyTel1" name="memberMyTel1" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="4">
+										<em>-</em>
+										<input type="text" style="width: 25%;" id="memberMyTel2" name="memberMyTel2" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="4">
+									</td>
+								</tr>
+								<tr>
+									<td>
+										상세주소
+										<input type="text" style="width: 70%;" id="entprBranchDetailAddr" name="entprBranchDetailAddr">
+									</td>
+									<th>대표FAX</th>
+									<td>
+										<select style="width: 25%;" id="entprBranchFax" name="entprBranchFax">
+											<option></option>
+											<option value="02">02</option>
+											<option value="031">031</option>
+											<option value="032">032</option>
+											<option value="033">033</option>
+											<option value="041">041</option>
+											<option value="042">042</option>
+											<option value="043">043</option>
+											<option value="044">044</option>
+											<option value="051">051</option>
+											<option value="052">052</option>
+											<option value="053">053</option>
+											<option value="054">054</option>
+											<option value="055">055</option>
+											<option value="061">061</option>
+											<option value="062">062</option>
+											<option value="063">063</option>
+											<option value="064">064</option>
+										</select>
+										<em>-</em>
+										<input type="text" style="width: 25%;" id="memberMyFax1" name="memberMyFax1" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="4">
+										<em>-</em>
+										<input type="text" style="width: 25%;" id="memberMyFax2" name="memberMyFax2" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="4">
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+
+
+					<div class="submitbtn">
+						<button type="button" id="createBtn" name="createBtn" class="ok">신청하기</button>
+						<button type="button" id="cancel" name="cancel" class="no">취소</button>
+					</div>
+					</form>
+					
+				</div>
+				
+				</section>
+			</c:if>
+			
+			
+			<!--  회원정보 수정 form S -->
+			<c:if test="${viewType eq 'modify' }">
+				<section id="widget-grid" class="">			
+				<div class="continner">
+				<form id="updateFrm" name="updateFrm" action="#" method="POST">
+					<input type="hidden" name="memberIdx" id="memberIdx" value="<c:out value="${detail.memberIdx}"/>"/>
+					<div class="tab">
+						<ul class="tab01_4 clearfix">
+							<li class="step"><a href="/db/joinStep01.do">가입유형</a></li>
+							<li class="step"><a href="/db/joinStep02.do">약관동의</a></li>
+							<li class="on"><a href="#none">정보입력</a></li>
+							<li><a href="#none">가입완료</a></li>
+						</ul>
+					</div>
+					
+			
+					<div class="joininfobox">
+						<h4>기업정보수정</h4>
+						<table class="table01 tb_pc">
+							<colgroup>
+								<col style="width:10%;">
+								<col style="width:5%;">
+								<col style="width:35%;">
+								<col style="width:15%;">
+								<col style="width:35%;">
+							</colgroup>
+							<tbody>
+								<tr>
+									<th colspan="2" class="essential">아이디</th>
+									<td colspan="2">
+										<input type="text" id="memberId" name="memberId" value="${detail.memberId}" readonly="readonly"/>
+									</td>
+								</tr>
+								<tr>
+									<th colspan="2" class="essential">비밀번호</th>
+									<td>
+										<label class="input">
+											<input type="password" id="memberPw" name="memberPw" value="${detail.memberPw}" maxlength="30"/>
+										</label>
+									</td>
+									<th class="essential">비밀번호 확인</th>
+									<td>
+										<label class="input">
+											<input type="password" id="memPwdChk" name="memPwdChk" value="${detail.memberPw}" maxlength="30" />
+										</label>
+									</td>
+								</tr>
+								<tr>
+									<th colspan="2" class="essential">이름</th>
+									<td colspan="3">
+										<input type="text" id="entprRespsibNm" name="entprRespsibNm" value="${detail.memberNm}" maxlength="30"/>
+									</td>
+								</tr>
+								<tr>
+									<th colspan="2" class="essential">휴대폰번호</th>
+									<td>
+										<label class="input">
+											<input type="text" style="width: 100%;" id="entprRespsibHpNo" name="entprRespsibHpNo" value="${detail.entprRespsibHpNo}" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="12" />
+										</label>
+									</td>
+									<th>이메일</th>
+									<td>
+										<label class="input">
+											<input type="text" style="width: 100%;" id=entprRespsibEmail name="entprRespsibEmail" value="${detail.entprRespsibEmail}" maxlength="30"/>
+										</label>	
+									</td>
+								</tr>
+								<tr>
+									<th colspan="2">회사명</th>
+									<td>
+										<label class="input">
+											<input type="text" style="width: 100%;" id="entprNm" name="entprNm" value="${detail.entprNm}" maxlength="30"/>
+										</label>	
+									</td>
+									<th>대표자</th>
+									<td>
+										<label class="input">
+											<input type="text" style="width: 100%;" id="entprCeo" name="entprCeo" value="${detail.entprCeo}" maxlength="30"/>
+										</label>	
+									</td>
+								</tr>
+								<tr>
+									<th colspan="2">사업자등록번호</th>
+									<td>
+										<label class="input">
+											<input type="text" style="width: 100%;" id="entprComRegNum" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="10" name="entprComRegNum" value="${detail.entprComRegNum} "/>
+										</label>	
+									</td>
+									<th>대표자이메일</th>
+									<td>
+										<label class="input">
+										 	<input type="text" style="width: 100%;" id="entprCeoEmail" name="entprCeoEmail" value="${detail.entprCeoEmail} " maxlength="30" />
+										</label> 
+									</td>
+								</tr>
+								<tr>
+									<th colspan="2">사업분야</th>
+									<td>
+										<label class="input">
+											<input type="text" style="width: 100%;" id="largeBussAreaCd" name="largeBussAreaCd" value="${detail.largeBussAreaCd} "/>
+										</label>	
+									</td>
+									<th>홈페이지</th>
+									<td>
+										<label class="input">
+										 	<input type="text" style="width: 100%;" id="entprSite" name="entprSite" value="${detail.entprSite} "  maxlength="40"/>
+										</label> 
+									</td>
+								</tr>
+								
+								<tr>
+									<th rowspan="4">주소</th>
+									<th rowspan="2" class="row">본사</th>
+									<td>
+										<label class="input">
+											<input type="text" id="entprHeadAddr" name="entprHeadAddr" class="input-sm" value="${detail.entprHeadAddr}" maxlength="50" style="width:90%" readonly="readonly">
+											<button type="button" class="txtbtn" style="width: 120px;" onclick="javascript:openDaumPostcode()">우편번호 검색</button>
+										</label>
+									</td>
+									<th>대표전화</th>
+									<td>
+										<input type="text" style="width: 100%;" id="entprHeadTel" name="entprHeadTel" value="${detail.entprHeadTel}" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="12"/>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										상세주소
+										<input type="text" style="width: 70%;" id="entprHeadDetailAddr" name="entprHeadDetailAddr" value="${detail.entprHeadDetailAddr}" />
+									</td>
+									<th>대표FAX</th>
+									<td>
+										<input type="text" style="width: 100%;" id="entprHeadFax" name="entprHeadFax" value="${detail.entprHeadFax}" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="12" />
+									</td>
+								</tr>
+								<tr>
+									<th rowspan="2" class="row">지사</th>
+									<td>
+										<input type="text" id="entprBranchAddr" name="entprBranchAddr" class="input-sm" value="${detail.entprBranchAddr}" maxlength="50" style="width:90%" readonly="readonly">
+										<button type="button" class="txtbtn" style="width: 120px;" onclick="javascript:openDaumPostcode1()">우편번호 검색</button>
+									</td>
+									<th>대표전화</th>
+									<td>
+										<input type="text" style="width: 100%;" id="entprBranchTel" name="entprBranchTel" value="${detail.entprBranchTel}" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="12">
+									</td>
+								</tr>
+								<tr>
+									<td>
+										상세주소
+										<input type="text" style="width: 70%;" id="entprBranchDetailAddr" name="entprBranchDetailAddr" value="${detail.entprBranchDetailAddr}" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="12">
+									</td>
+									<th>대표FAX</th>
+									<td>
+										<input type="text" style="width: 100%;" id="entprBranchFax" name="entprBranchFax" value="${detail.entprBranchFax}" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="12">
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+
+					<div class="submitbtn">
+						<button type="button" id="saveBtn" name="saveBtn" class="ok">수정하기</button>
+						<button type="button" id="cancel1" name="cancel1" class="no">취소</button>
+					</div>
+					</form>
+				</div>
+				
+				</section>
+			</c:if>
+			
+				
+			</div>
+		</div>
+	</div>
+	
+</div>
+<%-- 
+<form role="form" id="insertFrm" action="#" class="form-horizontal" method="post">
+	<input type="hidden" name="memberIdx" id="memberIdx" value="">
+	<input type="hidden" id="memberId" name="memberId" value="">
+	<input type="hidden" name="memberPw" id="memberPw" value="">
+	<input type="hidden" name="memberNm" id="memberNm" value="">
+	<input type="hidden" name="expertOffiAddr" id="expertOffiAddr" value="">
+	<input type="hidden" name="expertOffiDetailAddr" id="expertOffiDetailAddr" value="">
+	<input type="hidden" name="expertOffiTel" id="expertOffiTel" value="">
+	<input type="hidden" name="expertHeadTel" id="expertHeadTel" value="">
+	<input type="hidden" name="expertEmail" id="expertEmail" value="">
+	<input type="hidden" name="memberBelong" id="memberBelong" value="">
+	<input type="hidden" name="memberJoinDt" id="memberJoinDt" value="">
+	<input type="hidden" name="memberJoinType" id="memberJoinType" value="">
+	<input type="hidden" name="memberSt" id="memberSt" value="">
+	<input type="hidden" name="expertFinalSchoolNm" id="expertFinalSchoolNm" value="">
+	<input type="hidden" name="expertMajorNm" id="expertMajorNm" value="">
+	<input type="hidden" name="expertHeadAddrNm" id="expertHeadAddrNm" value="">
+	<input type="hidden" name="expertDptmNm" id="expertDptmNm" value="">
+	<input type="hidden" name="memberSpecialty" id="memberSpecialty" value="">
+	<input type="hidden" name="detailSpecialAreaCd" id="detailSpecialAreaCd" value="">
+	<input type="hidden" name="expertInterestAreaCd" id="expertInterestAreaCd" value="">
+	<input type="hidden" name="expertDetailIntrtAreaCd" id="expertDetailIntrtAreaCd" value="">
+	<input type="hidden" name="expertOffiFax" id="expertOffiFax" value="">
+	<input type="hidden" name="expertHomeAddr" id="expertHomeAddr" value="">
+	<input type="hidden" name="memberMytel" id="memberMytel" value="">
+	<input type="hidden" name="memberMyfax" id="memberMyfax" value="">
+	<input type="hidden" name="	expertHomeDetailAddr" id="expertHomeDetailAddr" value="">
+</form>
+ --%>
+
+</body>
+
+</html>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 

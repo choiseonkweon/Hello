@@ -1,0 +1,299 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %> 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="form"	uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="ui"	uri="http://egovframework.gov/ctl/ui"%>
+<%@ taglib prefix="spring"	uri="http://www.springframework.org/tags"%>    
+<!DOCTYPE html>
+<html>
+<link rel='stylesheet' type='text/css' href='css/reset.css' />
+<link rel='stylesheet' type='text/css' href='css/common.css' />
+<link rel='stylesheet' type='text/css' href='css/sub.css' />
+<script type="text/javascript" src="../db/assets/js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="../db/assets/js/jquery.easing.1.3.js"></script>
+<script type="text/javascript" src="../db/assets/js/ui.js"></script>
+                 
+
+<head>
+          
+<script type="text/javaScript" >
+	//$('#loginLogin').click(function () {	
+		
+		/*  $(".tab > ul li").click(function(){
+			   var now_tab = $(this).index();
+			   $(this).parent().find("li").removeClass("on");
+			   $(this).parent().parent().parent().find(".tabBtn").addClass("hidden");
+			   $(this).parent().find("li").eq(now_tab).addClass("on");
+			   $(this).parent().parent().parent().find(".tabBtn").eq(now_tab).removeClass("hidden"); 
+		 }); */
+$(document).ready(function () {
+
+	/*토그버튼 클릭*/
+	$('.loginmorebtn').on('click', function(){
+		 
+		if($('.login_info').hasClass('open')){
+			$('.login_info').removeClass('open');
+			$('.login_info ul').stop().slideUp(300);	
+		}else{
+			$('.login_info').addClass('open');
+			$('.login_info ul').stop().slideDown(300);
+		}
+	});
+	 /*자원안내 버튼.....?*/
+	 $("#resourceBtn").click(function(){
+			$("#resourcePop").show();
+	 });	
+	 /*자원안내 숨기기 버튼?*/
+	 
+	 $(".closeBtn").click(function(){
+			$("#resourcePop").hide();
+	 });	
+
+	 /* 로그인 버튼 클릭 */
+	$("#loginLogin").click(function() {
+		if($.trim($('#memberId').val()) == ''){
+			alert("아이디를 입력해 주세요.");
+			$('#memberId').focus();
+			return;
+		}else if($.trim($('#memberPw').val()) == ''){
+			alert("패스워드를 입력해 주세요.");
+			$('#memberPw').focus();
+			return;
+		}else{
+			var memberId = $('#memberId').val();
+			var memberPw = $('#memberPw').val();
+			
+			$.ajax({
+				type : 'post',
+				url:'/db/frontView/loginCheck.do',
+				data: {
+					memberId : memberId,
+					memberPw : memberPw,
+				},
+				dataType: 'json',
+				success : function(data) {
+					console.log(data);
+					if(data.idCnt == 0){
+					alert("아이디와 비밀번호를 확인해주세요");
+					}else{
+						if(data.memberPw == null){
+							alert("비밀번호를 확인해주세요")
+						}else{
+							if(data.memberStCd == 'N'){
+								alert("관리자 승인이 되지 않았습니다.");
+							}else{
+								alert("로그인 합니다.");
+								window.location.href="/db/main.do";
+							}
+						}
+					}
+				},  
+				    error:function(request,status,error){ //ajax 오류인경우  
+		         	   alert("작업중 에러가 발생했습니다.");      
+		          	  console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+		   			}
+				});
+			}		
+		});//click 종료
+	
+
+	$("#signUp").click(function() {
+		/* alert("test"); */
+		window.location.href="/db/joinStep01.do";
+		fn_signUp();
+	});
+	
+	
+	/* function fn_signUp(){
+		window.localtion.href="/joinStep01.do";
+	} */
+
+
+	function fn_login(){
+		window.location.href="/db/main.do";
+	}
+	
+});
+	
+</script>
+        
+	<style>
+		.hidden { display: none;  }
+ 	</style>
+</head>
+<body>
+	
+<input type="hidden" name="searchType" value="<c:out value='${searchVO.searchType}'/>"/>
+<input type="hidden" name="searchText" value="<c:out value='${searchVO.searchText}'/>"/>
+<input type="hidden" name="memberSt" value="<c:out value='${searchVO.memberSt}'/>"/>
+<input type="hidden" name="pageIndex" value="<c:out value='${searchVO.pageIndex}'/>"/> 
+<div id="wrap" class="sub s2">
+<jsp:include page="menu.jsp"></jsp:include>
+	<div id="contents" class="bg_gray">
+		<div class="layout01">
+			<h2 class="">로그인 - 더 새로워진 전남콘테츠기업육성센터 홈페이지를 만나보세요!</h2>
+			<div class="cont">
+				<div class="login_box">
+					<div class="login_title">
+						<h3>로그인</h3>
+						<p>
+							전남콘텐츠기업육성센터에 오신 것을 환영합니다.<br>
+							<span>전남콘텐츠기업육성센터를 이용하시기 위해서는 아이디,비밀번호<br class="mo"> 입력 후 로그인을 클릭하십시오</span>
+						</p>
+					</div>
+
+					<div class="login_form">
+						<form id="loginFrm" name="loginFrm"  method="post">
+							<fieldset>
+								<legend>로그인 입력 양식</legend>
+								<ul>
+									<li>
+										<input type="text" placeholder="아이디" id="memberId" name="memberId" />
+<%-- 										<input type="text" placeholder="아이디" id="memberId" name="memberId" value="<% if(session.getAttribute("memberId") != null) out.println(session.getAttribute("memberId")); %>"> --%>
+									</li>
+									<li>
+										<input type="password" placeholder="비밀번호" id="memberPw" name="memeberPw" />
+<%-- 										<input type="password" placeholder="비밀번호" id="memberPw" name="memeberPw" value="<% if(session.getAttribute("memberPw") != null) out.println(session.getAttribute("memberPw")); %>"> --%>
+									</li>
+									<li>
+										<a id="loginLogin" class="btn login">로그인</a>
+										<!-- <input type="submit" id="loginLogin" class="loginLogin" value="로그인" /> -->
+									</li>
+									<li class="dashed">
+										<a  id="signUp" class="btn join">회원가입</a>
+										<!-- <input type="submit" id="signUp" class="signUp" value="회원가입" /> -->
+									</li>
+									<li class="infosearch">
+										<a href="#">아이디 찾기</a>
+										<a href="#">비밀번호 찾기</a>
+									</li>
+								</ul>
+							</fieldset>
+						</form>
+					</div>
+
+					<div class="login_info">
+						<div>
+							<strong>로그인 안내</strong>
+							<ul>
+								<li>비밀번호 입력 시 대소문자를 구분하여 입력하세요.</li>
+								<li>자리를 비우게 될 경우에는 정보보호를 위해 반드시 로그아웃을 하시기 바랍니다.</li>
+								<li>비밀번호는 주기적으로 변경 관리하고 타인에게 노출되지 않도록 주의하시기 바랍니다.</li>
+							</ul>
+							<p><a href="#none" class="loginmorebtn">토글 버튼</a></p>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	
+	
+
+<div class="layer" style="display: none;" id="resourcePop">
+	<div class="box boxw600" style="height: 860px; margin-top: -430px;">
+		<div class="ti">자원 예약하기</div>
+		<div class="">
+			<div class="sti">신청인</div>
+			<table class="table01">
+				<colgroup>
+					<col width="30%" /><col width="*" />
+				</colgroup>
+				<tr>
+					<th>업체(기관명)</th>
+					<td>
+						<input type="text" style="width: 100%;" />
+					</td>
+				</tr>
+				<tr>
+					<th>주소</th>
+					<td>
+						<input type="text" style="width: 210px; margin-right: 4px;" />
+						<button class="txtbtn" style="width: 120px;">우편번호검색</button>
+					</td>
+				</tr>
+				<tr>
+					<th>성명</th>
+					<td>
+						<input type="text" style="width: 100%;" />
+					</td>
+				</tr>
+				<tr>
+					<th>연락처</th>
+					<td>
+						<select style="width: 95px;">
+							<option></option>
+						</select>
+						<em>-</em>
+						<input type="text" style="width: 100px;" />
+						<em>-</em>
+						<input type="text" style="width: 100px;" />
+					</td>
+				</tr>
+				<tr>
+					<th>이메일</th>
+					<td>
+						<input type="text" style="width: 120px;" />
+						<em>@</em>
+						<select style="width: 195px">
+							<option></option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<th>인원수</th>
+					<td>
+						<input type="text" style="width: 100%;" />
+					</td>
+				</tr>
+			</table>
+			<div class="sti">사용자원</div>
+			<table class="table01">
+				<colgroup>
+					<col width="30%" /><col width="*" />
+				</colgroup>
+				<tr>
+					<th>자원이름</th>
+					<td>
+						<input type="text" style="width: 100%;" />
+					</td>
+				</tr>
+				<tr>
+					<th>사용목적</th>
+					<td>
+						<input type="text" style="width: 100%;" />
+					</td>
+				</tr>
+				<tr>
+					<th>사용시간</th>
+					<td>
+						<div class="set">
+							<input type="text" style="width: 210px; margin-right: 4px;" />
+							<select style="width: 120px;">
+								<option></option>
+							</select>
+						</div>
+						<div class="set">
+							<input type="text" style="width: 210px; margin-right: 4px;" />
+							<select style="width: 120px;">
+								<option></option>
+							</select>
+						</div>
+					</td>
+				</tr>
+			</table>
+			<div class="submitbtn">
+				<button type="button" class="ok" onclick="javascript:alert('준비중 입니다.');">신청하기</button>
+				<button type="button" class="closeBtn">취소</button>
+
+			</div>
+			<button type="button" class="btn_close closeBtn">X</button>
+		</div>
+	</div>
+</div>
+</div>
+</body>
+</html>

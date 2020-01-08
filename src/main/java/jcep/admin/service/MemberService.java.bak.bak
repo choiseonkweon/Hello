@@ -1,0 +1,543 @@
+package jcep.admin.service;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import jcep.admin.dao.MemberMapper;
+import jcep.admin.model.MemberVO;
+import jcep.admin.model.SiteVO;
+
+/**
+ * @Class Name : MemberService.java
+ * @Description : MemberService Class
+ * @Modification Information
+ * @
+ * @  수정일      수정자              수정내용
+ * @ ---------   ---------   -------------------------------
+ * @ 2019.06.10           최초생성
+ *
+ * @since 2019.06.10
+ * @version 1.0
+ */
+
+@Service("memberService")
+public class MemberService {
+
+	@Autowired
+    private MemberMapper memberMapper;
+
+	/**
+	 * 회원 목록을 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 회원 목록
+	 * @exception Exception
+	 */
+	public ArrayList<MemberVO> selectMemberList(MemberVO params) throws Exception {
+    	return memberMapper.selectMemberList(params);
+    }
+	
+	/**
+	 * 회원 상세 정보를 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 회원정보 상세
+	 * @exception Exception
+	 */
+	public MemberVO selectMemberDetail(MemberVO params) throws Exception {
+    	return memberMapper.selectMemberDetail(params);
+    }
+
+	/**
+	 * 관리자 상세 정보를 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 회원정보 상세
+	 * @exception Exception
+	 */
+	public MemberVO selectMemberDetailAuthList(MemberVO params) throws Exception {
+    	return memberMapper.selectMemberDetailAuthList(params);
+    }
+	
+	
+	/**
+	 * 회원 목록 총 갯수를 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 회원 목록 총 갯수
+	 * @exception
+	 */
+	public int selectMemberListTotCnt(MemberVO params) throws Exception {
+		return memberMapper.selectMemberListTotCnt(params);
+	}
+	
+	/**
+	 * 회원정보를 수정한다.
+	 * @param params - 수정할 정보가 담긴 MemberVO
+	 * @return void형
+	 * @exception Exception
+	 */
+	public Integer memberUpdate(MemberVO params) throws Exception{
+		 return memberMapper.memberUpdate(params);
+	}
+
+	/**
+	 * 회원정보를 수정한다.
+	 * @param params - 수정할 정보가 담긴 MemberVO
+	 * @return void형
+	 * @exception Exception
+	 */
+	public Integer managerDetailAuthUpdate(MemberVO params) throws Exception{
+		 return memberMapper.managerDetailAuthUpdate(params);
+	}
+	
+	/**
+	 * 회원정보를 수정한다.
+	 * @param params - 수정할 정보가 담긴 MemberVO
+	 * @return void형
+	 * @exception Exception
+	 */
+	public Integer memberUpdateOne(MemberVO params) throws Exception{
+		 return memberMapper.memberUpdateOne(params);
+	}
+
+	
+	/**
+	 * 회원정보를 수정한다.
+	 * @param params - 수정할 정보가 담긴 MemberVO
+	 * @return void형
+	 * @exception Exception
+	 */
+	public Integer memberUpdateTwo(MemberVO params) throws Exception{
+		 return memberMapper.memberUpdateTwo(params);
+	}
+
+	/**
+	 * 회원정보를 수정한다.
+	 * @param params - 수정할 정보가 담긴 MemberVO
+	 * @return void형
+	 * @exception Exception
+	 */
+	public Integer memberUpdateThree(MemberVO params) throws Exception{
+		 return memberMapper.memberUpdateThree(params);
+	}
+
+	/**
+	 * 회원정보를 수정한다.
+	 * @param params - 수정할 정보가 담긴 MemberVO
+	 * @return void형
+	 * @exception Exception
+	 */
+	public Integer memberUpdate1(MemberVO params) throws Exception{
+		 return memberMapper.memberUpdate1(params);
+	}
+
+	/**
+	 * 회원정보를 수정한다.
+	 * @param params - 수정할 정보가 담긴 MemberVO
+	 * @return void형
+	 * @exception Exception
+	 */
+	public Integer memberUpdate2(MemberVO params) throws Exception{
+		 return memberMapper.memberUpdate2(params);
+	}
+	
+	/**
+	 * 회원 아이디 중복 체크
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 회원 목록 총 갯수
+	 * @exception
+	 */
+	public int memberIdChk(MemberVO params) throws Exception {
+		return memberMapper.memberIdChk(params);
+	}
+
+	/**
+	 * 관리자 아이디 중복 체크
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 회원 목록 총 갯수
+	 * @exception
+	 */
+	public int mngIdChk(MemberVO params) throws Exception {
+		return memberMapper.mngIdChk(params);
+	}
+	
+	
+	
+	/**
+	 * 회원정보를 등록한다.
+	 * @param params - 수정할 정보가 담긴 MemberVO
+	 * @return void형
+	 * @exception Exception
+	 */
+	public Integer memberInsert(MemberVO params) throws Exception{
+		 return memberMapper.memberInsert(params);
+	}
+
+	/**
+	 * 회원정보를 등록한다.
+	 * @param params - 수정할 정보가 담긴 MemberVO
+	 * @return void형
+	 * @exception Exception
+	 */
+	public Integer memberDetailAuthInsert(MemberVO params) throws Exception{
+		 return memberMapper.memberDetailAuthInsert(params);
+	}
+	
+
+	/**
+	 * 회원정보를 등록한다.
+	 * @param params - 수정할 정보가 담긴 MemberVO
+	 * @return void형
+	 * @exception Exception
+	 */
+	public Integer memberInsertOne(MemberVO params) throws Exception{
+		 return memberMapper.memberInsertOne(params);
+	}
+
+	/**
+	 * 회원정보를 등록한다.
+	 * @param params - 수정할 정보가 담긴 MemberVO
+	 * @return void형
+	 * @exception Exception
+	 */
+	public Integer memberInsertTwo(MemberVO params) throws Exception{
+		 return memberMapper.memberInsertTwo(params);
+	}
+
+	/**
+	 * 회원정보를 등록한다.
+	 * @param params - 수정할 정보가 담긴 MemberVO
+	 * @return void형
+	 * @exception Exception
+	 */
+	public Integer memberInsertThree(MemberVO params) throws Exception{
+		 return memberMapper.memberInsertThree(params);
+	}
+
+	/**
+	 * 회원정보를 승인한다.
+	 * @param params - 수정할 정보가 담긴 MemberVO
+	 * @return void형
+	 * @exception Exception
+	 */
+	public void memberConfirm(MemberVO params) throws Exception{
+		String checkRow = params.getCheckRow();
+		String[] checkRowArray = checkRow.split(",");
+		MemberVO dataVO = new MemberVO();
+		
+		for(String str : checkRowArray) {
+			dataVO.setMemberIdx(str);
+			//memberMapper.memberAuthInsert(dataVO);
+			memberMapper.memberConfirm(dataVO);
+		}
+		
+	}
+	
+	/**
+	 * 권한관리 목록을 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 회원 목록
+	 * @exception Exception
+	 */
+	public ArrayList<MemberVO> selectAuthList(MemberVO params) throws Exception {
+    	return memberMapper.selectAuthList(params);
+    }
+	
+	/**
+	 * 권한관리 목록 총 갯수를 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 회원 목록 총 갯수
+	 * @exception
+	 */
+	public int selectAuthListTotCnt(MemberVO params) throws Exception {
+		return memberMapper.selectAuthListTotCnt(params);
+	}
+
+	/**
+	 * 권한관리 목록을 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 회원 목록
+	 * @exception Exception
+	 */
+	public ArrayList<MemberVO> selectAuthListCompanyInformationList(MemberVO params) throws Exception {
+    	return memberMapper.selectAuthListCompanyInformationList(params);
+    }
+	
+	/**
+	 * 권한관리 목록 총 갯수를 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 회원 목록 총 갯수
+	 * @exception
+	 */
+	public int selectAuthListCompanyInformationListTotCnt(MemberVO params) throws Exception {
+		return memberMapper.selectAuthListCompanyInformationListTotCnt(params);
+	}
+	
+	
+	
+	/**
+	 * 회원권한을 설정한다.
+	 * @param params - 수정할 정보가 담긴 MemberVO
+	 * @return void형
+	 * @exception Exception
+	 */
+	public void memberAuthSave(MemberVO params) throws Exception{
+		
+		String checkRow = params.getCheckRow();
+		String checkauthTpCdAuth = params.getAuthTpCd();
+		String[] checkRowArray = checkRow.split(",");
+		String[] authTpCdAuthArray = checkauthTpCdAuth.split(",");
+		MemberVO dataVO = new MemberVO();
+		
+		for(String str : checkRowArray) {
+				dataVO.setMngId(str);
+				dataVO.setAuthTpCd(authTpCdAuthArray[0]);
+				memberMapper.memberAuthSave(dataVO);
+		}
+		
+	}
+	
+	public int selectCompanyInformationListCheck(MemberVO params, HttpSession session) throws Exception {
+		
+		session.setAttribute("title", params.getTitle());
+		session.setAttribute("field", params.getField());
+		String title = params.getTitle();
+		String field = params.getField();
+		
+		System.out.println("MemberService _ title ::: " + title);
+		System.out.println("MemberService _ field ::: " + field);
+		
+		return memberMapper.selectCompanyInformationListCheck(params);
+	}
+
+	/**
+	 * 권한관리 목록을 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 회원 목록
+	 * @exception Exception
+	 */
+	public MemberVO selectAuthListDetail(MemberVO params) throws Exception {
+    	return memberMapper.selectAuthListDetail(params);
+    }
+
+	/**
+	 * 권한관리 목록을 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 회원 목록
+	 * @exception Exception
+	 */
+	public MemberVO selectAuthListDetailPlus(MemberVO params) throws Exception {
+    	return memberMapper.selectAuthListDetailPlus(params);
+    }
+
+	/**
+	 * 권한관리 목록을 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 회원 목록
+	 * @exception Exception
+	 */
+	public MemberVO selectAuthListDetailMinus(MemberVO params) throws Exception {
+    	return memberMapper.selectAuthListDetailMinus(params);
+    }	
+	
+
+	/**
+	 * 바이어정보 목록을 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 바이어 목록
+	 * @exception Exception
+	 */
+	public ArrayList<MemberVO> selectBuyerInformationList(MemberVO params) throws Exception {
+    	return memberMapper.selectBuyerInformationList(params);
+    }
+	
+	/**
+	 * 바이어정보 목록을 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 바이어 목록
+	 * @exception Exception
+	 */
+	public int selectBuyerInformationListTotCnt(MemberVO params) throws Exception {
+		return memberMapper.selectBuyerInformationListTotCnt(params);
+	}
+	
+
+	/**
+	 * 전문가정보 목록을 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 바이어 목록
+	 * @exception Exception
+	 */
+	public ArrayList<MemberVO> selectExpertInformationList(MemberVO params) throws Exception {
+    	return memberMapper.selectExpertInformationList(params);
+    }
+	
+	/**
+	 * 전문가정보 목록을 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 바이어 목록
+	 * @exception Exception
+	 */
+	public int selectExpertInformationListTotCnt(MemberVO params) throws Exception {
+		return memberMapper.selectExpertInformationListTotCnt(params);
+	}
+	
+
+	/**
+	 * 사업공고정보 목록을 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 바이어 목록
+	 * @exception Exception
+	 */
+	public ArrayList<MemberVO> selectBusinessAnnouncementList(MemberVO params) throws Exception {
+    	return memberMapper.selectBusinessAnnouncementList(params);
+    }
+	
+	/**
+	 * 사업공고정보 목록을 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 바이어 목록
+	 * @exception Exception
+	 */
+	public int selectselectBusinessAnnouncementListTotCnt(MemberVO params) throws Exception {
+		return memberMapper.selectselectBusinessAnnouncementListTotCnt(params);
+	}
+
+	/**
+	 * 사업공고정보 목록을 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 바이어 목록
+	 * @exception Exception
+	 */
+	public MemberVO selectBusinessDetail(MemberVO params) throws Exception {
+    	return memberMapper.selectBusinessDetail(params);
+    }
+
+	/**
+	 * 회원정보를 등록한다.
+	 * @param params - 수정할 정보가 담긴 MemberVO
+	 * @return void형
+	 * @exception Exception
+	 */
+	public Integer businessDetailInsert(MemberVO params) throws Exception{
+		
+		return memberMapper.businessDetailInsert(params);
+	}
+
+	/**
+	 * 기업 정보 파일을 등록한다.
+	 * @param params - 수정할 정보가 담긴 MemberVO
+	 * @return Integer형
+	 * @exception Exception
+	 */
+	public Integer noticeFileUpload1(String originFileName) {
+		
+		return memberMapper.noticeFileUpload1(originFileName);
+	}
+	public Integer noticeFileUpload2(String originFileName) {
+		
+		return memberMapper.noticeFileUpload2(originFileName);
+	}
+
+	/**
+	 * 권한관리 목록을 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 회원 목록
+	 * @exception Exception
+	 */
+	public ArrayList<MemberVO> selectManageList(MemberVO params) throws Exception {
+    	return memberMapper.selectManageList(params);
+    }
+	
+	/**
+	 * 권한관리 목록 총 갯수를 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 회원 목록 총 갯수
+	 * @exception
+	 */
+	public int selectManageListTotCnt(MemberVO params) throws Exception {
+		return memberMapper.selectManageListTotCnt(params);
+	}
+	
+	
+	/**
+	 * 사업공고정보 디테일 페이지.
+	 * @param params - string 형 bussAnncemntNo
+	 * @author 최선권
+	 * @date 20191117
+	 * @return 사업공고 상세페이지 조회
+	 * @exception Exception
+	 */ 
+	public MemberVO selectBusinessDetail(String bussAnncemntNo) throws Exception {
+		return memberMapper.selectBusinessDetail(bussAnncemntNo);
+    }
+	/**
+	 * 사업공고에서 디테일페이지를 들어갈때 파일정보 불러온다.
+	 * @author 최선권
+	 * @Date 20191118
+	 * @param params -  String형 bussAnncemntNo
+	 * @return MemberVO
+	 * @exception Exception
+	 */	
+	public MemberVO selectBusinessFile(String bussAnncemntNo) throws Exception {
+		return memberMapper.selectBusinessFile(bussAnncemntNo);
+	}
+
+	/**
+	 * 사업신청하기
+	 * @param params - 회원정보가 담긴 searchVO
+	 * @author 최선권
+	 * @date 20191117
+	 * @return 사업공고신청하기
+	 * @exception Exception
+	 */ 
+	public int businessDetailUpdate(MemberVO params) throws Exception{
+		
+		return memberMapper.businessDetailUpdate(params);
+	}
+
+	/**
+	 * 기업 정보 파일을 등록한다.
+	 * @param params - 수정할 정보가 담긴 MemberVO
+	 * @return Integer형
+	 * @exception Exception
+	 */
+	public Integer noticeFileUpload1(MemberVO memberVo) {
+		
+		return memberMapper.noticeFileUpload1(memberVo);
+	}
+	public int noticeFileCheck1(MemberVO memberVo) throws Exception{
+		return memberMapper.noticeFileCheck1(memberVo);
+	}
+	public int noticeFileUpdate1(MemberVO memberVo) throws Exception{
+		return memberMapper.noticeFileUpdate1(memberVo);
+	}
+	
+	public Integer noticeFileUpload2(MemberVO memberVo) {
+		
+		return memberMapper.noticeFileUpload2(memberVo);
+	}
+	public int noticeFileUpdate2(MemberVO memberVo) throws Exception{
+		return memberMapper.noticeFileUpdate2(memberVo);
+	}
+	
+	/**
+	 * 기업 정보를 가져온다.
+	 * @author 최선권
+	 * @Date 20191118
+	 * @param params - Session에담긴 String형 memberId
+	 * @return MemberVO
+	 * @exception Exception
+	 */
+	public MemberVO selectenterpriseDetail(String memberId) {
+		return memberMapper.selectenterpriseDetail(memberId);
+	}
+		
+
+	
+	
+}

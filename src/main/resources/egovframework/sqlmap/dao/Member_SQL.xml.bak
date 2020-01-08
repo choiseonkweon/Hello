@@ -1,0 +1,3468 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jcep.admin.dao.MemberMapper">
+
+<!-- 회원 관리 > 회원 관리 -->
+	<select id="selectMemberList" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
+			<!-- SELECT
+				member_idx AS memberIdx,
+				member_id AS memberId,
+				member_pw AS memberPw,
+				member_nm AS memberNm,
+				member_addr AS memberAddr,
+				member_tel AS memberTel,
+				member_hp AS memberHp,
+				member_mail AS memberMail,
+				member_belong AS memberBelong,
+				date_format(member_join_dt, '%Y.%m.%d') AS memberJoinDt,
+				(
+					CASE member_join_type 
+						WHEN 'A' THEN '직원'
+						WHEN 'B' THEN '기업회원'
+						WHEN 'C' THEN '전문가'
+						WHEN 'D' THEN '사업담당자'
+						WHEN 'E' THEN '일반회원'
+						WHEN 'F' THEN '바이어회원'
+					END
+                ) AS memberJoinType,
+				member_st AS memberSt
+			FROM tb_member
+			WHERE 1=1
+			<if test='memberSt != null and memberSt != ""'>
+				AND	member_st = #{memberSt}
+			</if>
+			<if test="searchText != null and searchText != ''">
+		        <choose>
+		        	<when test='searchType eq ""'>
+						AND	member_id LIKE CONCAT('%',#{searchText},'%') OR member_nm LIKE CONCAT('%',#{searchText},'%') OR member_belong LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 1'>
+						AND	member_id LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 2'>
+						AND	member_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+					<when test='searchType eq 3'>
+						AND	member_belong LIKE CONCAT('%',#{searchText},'%')
+					</when>
+				</choose>
+			</if>
+			ORDER BY member_join_dt DESC
+			LIMIT #{recordCountPerPage} OFFSET #{firstIndex} -->
+			
+			/* selectMemberList */
+			select 
+				a.member_id as memberId, 
+				memberNm,
+				(case 
+				when a.join_type_cd = '000000' then '직원'
+				when a.join_type_cd = '000001' then '기업회원'
+				when a.join_type_cd = '000002' then '전문가'
+				when a.join_type_cd = '000003' then '바이어'
+				when a.join_type_cd = '000004' then '사업담당자'
+				when a.join_type_cd = '000005' then '일반회원'
+				else '' end
+				) as joinTypeCd,
+				a.member_nm as memberNm,
+				memberHp as memberHp,
+				memberMail as memberMail,
+				date_format(a.reg_dt, '%Y.%m.%d') as regDt,
+				(case
+				when a.member_st_cd = 'Y' then '승인'
+				when a.member_st_cd = 'N' then '미승인'
+				else '미승인' end) as memberStCd, 
+				memberMail as memberMail
+				from
+				(select b.member_id,b.entpr_nm as memberNm, b.entpr_respsib_hp_no as memberHp, b.entpr_respsib_email as memberMail from tb_enterprise b, tb_member a
+				where a.member_id = b.member_id
+				<if test="searchText != null and searchText != ''">
+		        <choose>
+		        	<when test='searchType eq ""'>
+						AND	a.member_id LIKE CONCAT('%',#{searchText},'%') OR b.entpr_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 1'>
+						AND	a.member_id LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 2'>
+						AND	b.entpr_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            
+				</choose>
+				</if>
+				
+				<if test="joinTypeCdNm != null and joinTypeCdNm != ''">
+		        <choose>
+		        <when test='joinTypeCd eq Y'>
+						AND	a.join_type_cd LIKE CONCAT('%',#{joinTypeCdNm},'%')
+					</when>
+		            <when test='joinTypeCd eq N'>
+						AND	a.join_type_cd LIKE CONCAT('%',#{joinTypeCdNm},'%')
+					</when>
+				</choose>
+				</if>
+				
+				<if test="memberAuthType != null and memberAuthType != ''">
+		        <choose>
+		        <when test='memberStCd eq Y'>
+						AND	a.member_st_cd LIKE CONCAT('%',#{memberAuthType},'%')
+					</when>
+		            <when test='memberStCd eq N'>
+						AND	a.member_st_cd LIKE CONCAT('%',#{memberAuthType},'%')
+					</when>
+				</choose>
+				</if>
+				union
+				select c.member_id, c.expert_nm as memberNm, c.expert_head_tel as memberHp, c.expert_email as memberMail from tb_expert c, tb_member a
+				where a.member_id = c.member_id
+				<if test="searchText != null and searchText != ''">
+		        <choose>
+		        	<when test='searchType eq ""'>
+						AND	a.member_id LIKE CONCAT('%',#{searchText},'%') OR c.expert_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 1'>
+						AND	a.member_id LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 2'>
+						AND	c.expert_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>		
+				</choose>
+				</if>
+				
+				<if test="joinTypeCdNm != null and joinTypeCdNm != ''">
+		        <choose>
+		        <when test='joinTypeCd eq Y'>
+						AND	a.join_type_cd LIKE CONCAT('%',#{joinTypeCdNm},'%')
+					</when>
+		            <when test='joinTypeCd eq N'>
+						AND	a.join_type_cd LIKE CONCAT('%',#{joinTypeCdNm},'%')
+					</when>
+				</choose>
+				</if>
+				
+				<if test="memberAuthType != null and memberAuthType != ''">
+		        <choose>
+		        <when test='memberStCd eq Y'>
+						AND	a.member_st_cd LIKE CONCAT('%',#{memberAuthType},'%')
+					</when>
+		            <when test='memberStCd eq N'>
+						AND	a.member_st_cd LIKE CONCAT('%',#{memberAuthType},'%')
+					</when>
+					
+				</choose>
+				</if>
+				union
+				select d.member_id, d.buyer_nm as memberNm, d.buyer_head_tel as memberHp, d.buyer_ceo_email as memberMail from tb_buyer d, tb_member a
+				where a.member_id = d.member_id
+				<if test="searchText != null and searchText != ''">
+		        <choose>
+		        	<when test='searchType eq ""'>
+						AND	a.member_id LIKE CONCAT('%',#{searchText},'%') OR d.buyer_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 1'>
+						AND	a.member_id LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 2'>
+						AND	d.buyer_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+				</choose>
+				</if>
+				
+				<if test="joinTypeCdNm != null and joinTypeCdNm != ''">
+		        <choose>
+		        <when test='joinTypeCd eq Y'>
+						AND	a.join_type_cd LIKE CONCAT('%',#{joinTypeCdNm},'%')
+					</when>
+		            <when test='joinTypeCd eq N'>
+						AND	a.join_type_cd LIKE CONCAT('%',#{joinTypeCdNm},'%')
+					</when>
+				</choose>
+				</if>
+				
+				
+				<if test="memberAuthType != null and memberAuthType != ''">
+		        <choose>
+		        <when test='memberStCd eq Y'>
+						AND	a.member_st_cd LIKE CONCAT('%',#{memberAuthType},'%')
+					</when>
+		            <when test='memberStCd eq N'>
+						AND	a.member_st_cd LIKE CONCAT('%',#{memberAuthType},'%')
+					</when>
+				</choose>
+				</if>
+				)
+				as bb,
+				tb_member a
+				where 1=1
+				  AND a.member_id = bb.member_id
+				  ORDER BY reg_dt desc
+				  LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+
+			
+			
+			
+	</select>
+	
+	<select id="selectMemberListTotCnt" parameterType="jcep.admin.model.MemberVO" resultType="int">
+			<!-- SELECT COUNT(*) totcnt
+			FROM tb_member
+			WHERE 1=1
+			<if test='memberSt != null and memberSt != ""'>
+				AND	member_st = #{memberSt}
+			</if>
+			<if test="searchText != null and searchText != ''">
+		        <choose>
+		        	<when test='searchType eq ""'>
+						AND	member_id LIKE CONCAT('%',#{searchText},'%') OR member_nm LIKE CONCAT('%',#{searchText},'%') OR member_belong LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 1'>
+						AND	member_id LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 2'>
+						AND	member_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+					<when test='searchType eq 3'>
+						AND	member_belong LIKE CONCAT('%',#{searchText},'%')
+					</when>
+				</choose>
+			</if> -->
+			
+			/* selectMemberListTotCnt */
+			select 
+				COUNT(*) totcnt
+				from
+				(select b.member_id,b.entpr_nm as memberNm, b.entpr_respsib_hp_no as memberHp from tb_enterprise b, tb_member a
+				where a.member_id = b.member_id
+				<if test="searchText != null and searchText != ''">
+		        <choose>
+		        	<when test='searchType eq ""'>
+						AND	a.member_id LIKE CONCAT('%',#{searchText},'%') OR b.entpr_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 1'>
+						AND	a.member_id LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 2'>
+						AND	b.entpr_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+				</choose>
+				</if>
+				
+				<if test="joinTypeCdNm != null and joinTypeCdNm != ''">
+		        <choose>
+		        <when test='joinTypeCd eq Y'>
+						AND	a.join_type_cd LIKE CONCAT('%',#{joinTypeCdNm},'%')
+					</when>
+		            <when test='joinTypeCd eq N'>
+						AND	a.join_type_cd LIKE CONCAT('%',#{joinTypeCdNm},'%')
+					</when>
+				</choose>
+				</if>
+				
+				<if test="memberAuthType != null and memberAuthType != ''">
+		        <choose>
+		        <when test='memberStCd eq Y'>
+						AND	a.member_st_cd LIKE CONCAT('%',#{memberAuthType},'%')
+					</when>
+		            <when test='memberStCd eq N'>
+						AND	a.member_st_cd LIKE CONCAT('%',#{memberAuthType},'%')
+					</when>
+				</choose>
+				</if>
+				union
+				select c.member_id, c.expert_nm as memberNm, c.expert_head_tel as memberHp from tb_expert c, tb_member a
+				where a.member_id = c.member_id
+				<if test="searchText != null and searchText != ''">
+		        <choose>
+		        	<when test='searchType eq ""'>
+						AND	a.member_id LIKE CONCAT('%',#{searchText},'%') OR c.expert_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 1'>
+						AND	a.member_id LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 2'>
+						AND	c.expert_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+				</choose>
+				</if>
+				
+				<if test="joinTypeCdNm != null and joinTypeCdNm != ''">
+		        <choose>
+		        <when test='joinTypeCd eq Y'>
+						AND	a.join_type_cd LIKE CONCAT('%',#{joinTypeCdNm},'%')
+					</when>
+		            <when test='joinTypeCd eq N'>
+						AND	a.join_type_cd LIKE CONCAT('%',#{joinTypeCdNm},'%')
+					</when>
+				</choose>
+				</if>
+				
+				<if test="memberAuthType != null and memberAuthType != ''">
+		        <choose>
+		        <when test='memberStCd eq Y'>
+						AND	a.member_st_cd LIKE CONCAT('%',#{memberAuthType},'%')
+					</when>
+		            <when test='memberStCd eq N'>
+						AND	a.member_st_cd LIKE CONCAT('%',#{memberAuthType},'%')
+					</when>
+				</choose>
+				</if>
+				union
+				select d.member_id, d.buyer_nm as memberNm, d.buyer_head_tel as memberHp from tb_buyer d, tb_member a
+				where a.member_id = d.member_id
+				<if test="searchText != null and searchText != ''">
+		        <choose>
+		        	<when test='searchType eq ""'>
+						AND	a.member_id LIKE CONCAT('%',#{searchText},'%') OR d.buyer_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 1'>
+						AND	a.member_id LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 2'>
+						AND	d.buyer_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+				</choose>
+				</if>
+				
+				<if test="joinTypeCdNm != null and joinTypeCdNm != ''">
+		        <choose>
+		        <when test='joinTypeCd eq Y'>
+						AND	a.join_type_cd LIKE CONCAT('%',#{joinTypeCdNm},'%')
+					</when>
+		            <when test='joinTypeCd eq N'>
+						AND	a.join_type_cd LIKE CONCAT('%',#{joinTypeCdNm},'%')
+					</when>
+				</choose>
+				</if>
+				
+				<if test="memberAuthType != null and memberAuthType != ''">
+		        <choose>
+		        <when test='memberStCd eq Y'>
+						AND	a.member_st_cd LIKE CONCAT('%',#{memberAuthType},'%')
+					</when>
+		            <when test='memberStCd eq N'>
+						AND	a.member_st_cd LIKE CONCAT('%',#{memberAuthType},'%')
+					</when>
+				</choose>
+				</if>
+				)
+				as bb,
+				tb_member a
+				where 1=1
+				  AND a.member_id = bb.member_id
+
+			
+			
+	</select>
+
+	<select id="selectMemberDetail" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
+			/*selectMemberDetail*/			
+		<![CDATA[	
+			select 
+				b.member_id as memberId,
+				b.member_pw as memberPw,
+				b.member_nm as memberNm,
+				a.entpr_respsib_email as entprRespsibEmail,
+				a.entpr_respsib_hp_no as  entprRespsibHpNo,
+				a.entpr_nm as entprNm,
+				a.entpr_ceo as entprCeo,
+				a.entpr_com_reg_num as entprComRegNum,
+				a.entpr_ceo_email as entprCeoEmail,
+				a.large_buss_area_cd as largeBussAreaCd,
+				a.medium_buss_area_cd as mediumBussAreaCd,
+				a.entpr_site as entprSite,
+				b.join_type_cd as joinTypeCd,
+				a.entpr_head_addr as entprHeadAddr,
+				a.entpr_head_tel as entprHeadTel,
+				a.entpr_head_fax as entprHeadFax,
+				a.entpr_branch_addr as entprBranchAddr,
+				a.entpr_branch_tel as entprBranchTel,
+				a.entpr_branch_fax as entprBranchFax
+				from 
+				tb_enterprise a, tb_member b
+			where a.member_id = b.member_id
+			and a.member_id = #{memberId}
+		]]>
+
+	</select>
+	
+	<select id="selectMemberDetail1" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
+			/*selectMemberDetail1*/
+			
+	<![CDATA[	
+		select 
+			a.member_id as memberId,
+			b.join_type_cd as joinTypeCd,
+			b.member_pw as memberPw,
+			b.member_nm as memberNm,
+			a.expert_st_reg_no as expertStRegNo,
+			a.expert_head_tel as expertHeadTel,
+			a.expert_reg_no as expertRegNo,
+			a.expert_email as expertEmail,
+			a.expert_fnal_edu_cd as expertFnalEduCd,
+			a.expert_final_school_nm as expertFinalSchoolNm,
+			a.expert_major_nm as expertMajorNm,
+			a.expert_head_addr_nm as expertHeadAddrNm,
+			a.expert_dptm_nm as expertDptmNm,
+			a.expert_offi_duty_nm as expertOffiDutyNm,
+			a.expert_inds_edu_cd as expertIndsEduCd,
+			a.large_special_area_cd as largeSpecialAreaCd,
+			a.detail_special_area_cd as detailSpecialAreaCd,
+			a.expert_home_addr as expertHomeAddr,
+			a.expert_home_detail_addr as expertHomeDetailAddr,
+			a.expert_offi_addr as expertOffiAddr,
+			a.expert_offi_tel as expertOffiTel,
+			a.expert_offi_fax as expertOffiFax,
+			a.reg_dt as regDt
+	from tb_expert a, tb_member b 
+	where a.member_id = b.member_id 
+	   and a.member_id = #{memberId}
+	]]>
+			
+	</select>
+	
+	
+	<select id="selectMemberDetail2" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
+			/*selectMemberDetail2*/
+			
+	<![CDATA[	
+		
+	select 
+		a.member_id as memberId,
+		a.member_pw as memberPw,
+		b.buyer_nm as memberNm,
+		b.buyer_ceo_email as buyerCeoEmail,
+		b.company_nm as companyNm,
+		b.buyer_ceo as buyerCeo,
+		b.buyer_com_reg_num as buyerComRegNum,
+		b.buyer_bus_area as buyerBusArea,
+		b.buyer_site as buyerSite,
+		a.join_type_cd as joinTypeCd,
+		b.buyer_head_addr as buyerHeadAddr,
+		b.buyer_head_tel as buyerHeadTel,
+		b.buyer_head_fax as buyerHeadFax,
+		b.buyer_branch_addr as buyerBranchAddr,
+		b.buyer_branch_tel as buyerBranchTel,
+		b.buyer_branch_fax as buyerBranchFax
+		from
+		tb_buyer b, tb_member a
+	where a.member_id = b.member_id
+		and a.member_id = #{memberId}
+	]]>
+
+	</select>
+	
+	
+
+	<update id="memberUpdate" parameterType="jcep.admin.model.MemberVO">
+			/* memberUpdate */
+			<!-- UPDATE tb_member
+			SET 
+				<if test="memberPw != null and memberPw != ''"> member_pw = #{memberPw},</if>
+				<if test="memberBelong != null and memberBelong != ''"> member_belong = #{memberBelong},</if>
+				<if test="memberAddr != null and memberAddr != ''"> member_addr = #{memberAddr},</if>
+				<if test="memberMail != null and memberMail != ''"> member_mail = #{memberMail},</if>
+				<if test="memberTel != null and memberTel != ''"> member_tel = #{memberTel},</if>
+				<if test="memberHp != null and memberHp != ''"> member_hp = #{memberHp},</if>
+				<if test="memberJoinType != null and memberJoinType != ''">member_join_type = #{memberJoinType}</if>
+				<if test="joinTypeCd != null and joinTypeCd != ''"> join_type_cd = case when #{joinTypeCd} = '기업회원' then '000001' when #{joinTypeCd} = '전문가' then '000002' when #{joinTypeCd} = '바이어' then '000003' else '' end</if>
+			WHERE member_idx = #{memberIdx} -->
+			
+			UPDATE tb_member
+			SET
+				<if test="memberPw != null and memberPw != '' "> member_pw = #{memberPw},</if>
+				<if test="memberNm != null and memberNm != '' "> member_nm = #{memberNm}</if>
+			WHERE member_id = #{memberId} 
+
+	</update>
+	
+
+	<update id="managerDetailAuthUpdate" parameterType="jcep.admin.model.MemberVO">
+			/* managerDetailAuthUpdate */
+			<!-- UPDATE tb_member
+			SET 
+				<if test="memberPw != null and memberPw != ''"> member_pw = #{memberPw},</if>
+				<if test="memberBelong != null and memberBelong != ''"> member_belong = #{memberBelong},</if>
+				<if test="memberAddr != null and memberAddr != ''"> member_addr = #{memberAddr},</if>
+				<if test="memberMail != null and memberMail != ''"> member_mail = #{memberMail},</if>
+				<if test="memberTel != null and memberTel != ''"> member_tel = #{memberTel},</if>
+				<if test="memberHp != null and memberHp != ''"> member_hp = #{memberHp},</if>
+				<if test="memberJoinType != null and memberJoinType != ''">member_join_type = #{memberJoinType}</if>
+			WHERE member_idx = #{memberIdx} -->
+			<![CDATA[
+			UPDATE ta_manager
+			SET
+				mng_pw = #{mngPw},
+				mng_addr = #{mngAddr},
+				mng_email = #{mngEmail},
+				mng_tel = #{mngTel},
+				mng_hp = #{mngHp},
+				mng_belong = #{mngBelong},
+				auth_tp_cd = #{authTpCd}
+			WHERE mng_id = #{mngId} 
+			]]>
+	</update>
+	
+	<update id="memberUpdateOne" parameterType="jcep.admin.model.MemberVO">
+			/* memberUpdateOne */
+			<![CDATA[
+			UPDATE tb_enterprise
+			SET
+				entpr_respsib_nm = #{memberNm},
+				entpr_respsib_email = #{entprRespsibEmail},
+				entpr_respsib_hp_no = #{entprRespsibHpNo},
+				entpr_nm = #{entprNm},
+				entpr_ceo = #{entprCeo},
+				entpr_com_reg_num = #{entprComRegNum},
+				entpr_ceo_email = #{entprCeoEmail},
+				large_buss_area_cd = #{largeBussAreaCd},
+				medium_buss_area_cd = #{mediumBussAreaCd},
+				entpr_site = #{entprSite},
+				entpr_head_addr = #{entprHeadAddr},
+				entpr_head_tel = #{entprHeadTel},
+				entpr_head_fax = #{entprHeadFax},
+				entpr_branch_addr = #{entprBranchAddr},
+				entpr_branch_tel = #{entprBranchTel},
+				entpr_branch_fax = #{entprBranchFax}
+			WHERE member_id = #{memberId} 
+			]]>
+	</update>
+	
+	<update id="memberUpdateTwo" parameterType="jcep.admin.model.MemberVO">
+			/* memberUpdateTwo */
+			<![CDATA[
+			UPDATE tb_expert
+			SET 
+				expert_nm = #{memberNm},
+				expert_st_reg_no = #{expertStRegNo},
+				expert_head_tel = #{expertHeadTel},
+				expert_reg_no = #{expertRegNo},
+				expert_email = #{expertEmail},
+				expert_fnal_edu_cd = #{expertFnalEduCd},
+				expert_final_school_nm = #{expertFinalSchoolNm},
+				expert_major_nm = #{expertMajorNm},
+				expert_head_addr_nm = #{expertHeadAddrNm},
+				expert_dptm_nm = #{expertDptmNm},
+				expert_offi_duty_nm = #{expertOffiDutyNm},
+				expert_inds_edu_cd = #{expertIndsEduCd},
+				large_special_area_cd = #{largeSpecialAreaCd},
+				detail_special_area_cd = #{detailSpecialAreaCd},
+				expert_home_addr = #{expertHomeAddr},
+				expert_home_detail_addr = #{expertHomeDetailAddr},
+				expert_offi_addr = #{expertOffiAddr},
+				expert_offi_tel = #{expertOffiTel},
+				expert_offi_fax = #{expertOffiFax}
+			WHERE member_id = #{memberId}
+			]]>
+	</update>
+	
+	<update id="memberUpdateThree" parameterType="jcep.admin.model.MemberVO">
+			/* memberUpdateThree */
+			<![CDATA[
+			UPDATE tb_buyer
+			SET 
+				buyer_nm = #{memberNm},
+				buyer_ceo_email = #{buyerCeoEmail},
+				company_nm = #{companyNm},
+				buyer_ceo = #{buyerCeo},
+				buyer_com_reg_num = #{buyerComRegNum},
+				buyer_bus_area = #{buyerBusArea},
+				buyer_site = #{buyerSite},
+				buyer_head_addr = #{buyerHeadAddr},
+				buyer_head_tel = #{buyerHeadTel},
+				buyer_head_fax = #{buyerHeadFax},
+				buyer_branch_addr = #{buyerBranchAddr},
+				buyer_branch_tel = #{buyerBranchTel},
+				buyer_branch_fax = #{buyerBranchFax}
+			WHERE member_id = #{memberId}
+			]]>
+	</update>
+	
+	<select id="memberIdChk" parameterType="jcep.admin.model.MemberVO" resultType="int">
+			/* memberIdChk */
+			<![CDATA[
+			SELECT COUNT(*) idCnt
+			FROM tb_member
+			WHERE 1=1
+			AND  member_id = #{memberId}
+			]]>
+	</select>
+	
+	<select id="mngIdChk" parameterType="jcep.admin.model.MemberVO" resultType="int">
+			/* mngIdChk */
+			SELECT COUNT(*) idCnt
+			FROM ta_manager
+			WHERE 1=1
+			AND mng_id = #{mngId}
+	</select>
+	
+	
+	
+	<insert id="memberDetailAuthInsert" parameterType="jcep.admin.model.MemberVO">
+			/*memberDetailAuthInsert*/
+			
+			INSERT INTO ta_manager (
+				mng_no,
+				mng_id,
+				mng_pw,
+				mng_nm,
+				mng_tel,
+				mng_flag,
+				mng_addr,
+				mng_hp,
+				mng_email,
+				mng_belong,
+				auth_tp_cd,
+				reg_dt,
+				reg_id
+			)
+			VALUES(
+				(SELECT  CONCAT(LEFT(IFNULL(MAX(mng_no),'P'),0), 
+    				LPAD((RIGHT(IFNULL(MAX(mng_no),'P'),1)+1),1,1))  
+				FROM ta_manager a),
+			    #{mngId},
+				#{mngPw},
+				#{mngNm},
+				#{mngTel},
+				#{mngFlag},
+				#{mngAddr},
+				#{mngHp},
+				#{mngEmail},
+				#{mngBelong},
+				#{authTpCd},
+				DATE_FORMAT(now(),'%Y%m%d'),
+				''
+			)
+	</insert>
+	
+	<insert id="memberInsert" parameterType="jcep.admin.model.MemberVO">
+			/*memberInsert*/
+			<![CDATA[
+			INSERT INTO tb_member (
+				 member_id
+				,member_pw
+				,member_nm
+				,join_dt
+				,join_type_cd
+				,member_st_cd
+				,reg_dt
+				,reg_id
+			)
+			VALUES(
+				 #{memberId}
+				,#{memberPw}
+				,#{memberNm}
+				,DATE_FORMAT(now(),'%Y%m%d')
+				,#{joinTypeCd}
+				,'Y'
+				,CURRENT_TIMESTAMP
+				,''
+			)
+			]]>
+	</insert>
+	
+	
+	
+	<insert id="memberInsertOne" parameterType="jcep.admin.model.MemberVO">
+			/*memberInsertOne*/
+			<![CDATA[
+			INSERT INTO tb_enterprise (
+				 member_id
+				,entpr_respsib_nm
+				,entpr_ceo 
+				,entpr_nm
+				,entpr_head_addr
+				,entpr_respsib_email
+				,entpr_head_tel
+				,entpr_respsib_hp_no
+				,reg_dt
+			)
+			VALUES(
+				 #{memberId}
+				,#{memberNm}
+				,#{memberNm}
+				,#{joinTypeCdNm}
+				,#{memberAddr}
+				,#{memberMail}
+				,#{memberTel}
+				,#{memberHp}
+				,CURRENT_TIMESTAMP
+			)
+			]]>
+	</insert>
+	
+	<insert id="memberInsertTwo" parameterType="jcep.admin.model.MemberVO">
+			/*memberInsertTwo*/
+			<![CDATA[
+			INSERT INTO tb_expert (
+				 member_id
+				,expert_nm 
+				,expert_st_reg_no
+				,expert_head_tel
+				,expert_reg_no
+				,expert_email
+				,expert_fnal_edu_cd
+				,expert_final_school_nm
+				,expert_major_nm
+				,expert_head_addr_nm
+				,expert_dptm_nm
+				,expert_offi_duty_nm
+				,expert_inds_edu_cd
+				,large_special_area_cd
+				,detail_special_area_cd
+				,expert_home_addr
+				,expert_home_detail_addr
+				,expert_offi_addr
+				,expert_offi_tel
+				,expert_offi_fax
+				,reg_dt
+			)
+			VALUES(
+				 #{memberId}
+				,#{memberNm}
+				,#{expertStRegNo}
+				,#{expertHeadTel}
+				,#{expertRegNo}
+				,#{expertEmail}
+				,#{expertFnalEduCd}
+				,#{expertFinalSchoolNm}
+				,#{expertMajorNm}
+				,#{expertHeadAddrNm}
+				,#{expertDptmNm}
+				,#{expertOffiDutyNm}
+				,#{expertIndsEduCd}
+				,#{largeSpecialAreaCd}
+				,#{detailSpecialAreaCd}
+				,#{expertHomeAddr}
+				,#{expertHomeDetailAddr}
+				,#{expertOffiAddr}
+				,#{expertOffiTel}
+				,#{expertOffiFax}
+				,CURRENT_TIMESTAMP
+			)
+			]]>
+	</insert>
+	
+	<insert id="memberInsertThree" parameterType="jcep.admin.model.MemberVO">
+			/*memberInsertThree*/
+			<![CDATA[
+			INSERT INTO tb_buyer (
+				 member_id
+				,buyer_nm 
+				,buyer_ceo 
+				,buyer_ceo_email
+				,company_nm
+				,buyer_com_reg_num
+				,buyer_bus_area
+				,buyer_site
+				,buyer_head_addr
+				,buyer_head_tel
+				,buyer_head_fax
+				,buyer_branch_addr
+				,buyer_branch_tel
+				,buyer_branch_fax
+				,reg_dt
+			)
+			VALUES(
+				 #{memberId}
+				,#{memberNm}
+				,#{buyerCeo}
+				,#{buyerCeoEmail}
+				,#{companyNm}
+				,#{buyerComRegNum}
+				,#{buyerBusArea}
+				,#{buyerSite}
+				,#{buyerHeadAddr}
+				,#{buyerHeadTel}
+				,#{buyerHeadFax}
+				,#{buyerBranchAddr}
+				,#{buyerBranchTel}
+				,#{buyerBranchFax}
+				,CURRENT_TIMESTAMP
+			)
+			]]>
+	</insert>
+	
+	<insert id="memberAuthInsert" parameterType="jcep.admin.model.MemberVO">
+			/*memberAuthInsert*/
+			
+			INSERT INTO tb_member_auth (
+				 member_idx
+				,member_auth
+			)
+			VALUES(
+				 (select member_idx from tb_member where member_idx = #{memberIdx})
+				,'AA'
+			)
+		   ON
+		      DUPLICATE KEY
+		   UPDATE
+		     	member_idx = (select member_idx from tb_member where member_idx = #{memberIdx})
+		       ,member_auth = 'AA'
+
+	</insert>
+	
+	<update id="memberConfirm" parameterType="jcep.admin.model.MemberVO">
+			UPDATE tb_member
+			SET 
+				member_st_cd = 'Y'
+			WHERE member_id LIKE CONCAT('%',#{memberIdx},'%')
+	</update>
+	
+	<!-- 회원관리 > 권한관리 -->
+	<select id="selectAuthList" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
+			/*selectAuthList*/
+				<![CDATA[
+			SELECT 		expert_nm	 						as	expertNm
+						,(	SELECT	common_nm 
+							FROM		ta_common 
+							WHERE 	group_Cd 			=	'G00012'
+							AND 		common_cd 		=	large_special_area_cd
+						) 										as	largeSpecialAreaCd
+						,(	SELECT	common_nm 
+							FROM		ta_common 
+							WHERE 	group_Cd 			=	'G00014'
+							AND 		common_cd 		=	detail_special_area_cd
+						) 										as	detailSpecialAreaCd
+						,(	SELECT	common_nm 
+							FROM		ta_common 
+							WHERE 	group_Cd 			=	'G00017'
+							AND 		common_cd 		=	expert_inds_edu_cd
+						) 										as	expertIndsEduCd       
+						,(	SELECT	common_nm 
+							FROM		ta_common 
+							WHERE 	group_Cd 			=	'G00044'
+							AND 		common_cd 		=	expert_fnal_edu_cd
+						) 										as expertFnalEduCd     
+						,	IF(	expert_offi_addr			=	null
+								,substr(expert_home_addr,9,7)
+								,substr(expert_offi_addr,9,7)
+								)								as	expertOffiAddr
+						  
+						,	expert_final_school_nm		as	expertFinalSchoolNm
+						,	expert_major_nm	 			as	expertMajorNm
+						,	expert_head_addr_nm	 	as	expertHeadAddrNm
+						,	expert_dptm_nm	 			as	expertDptmNm
+						,	expert_offi_duty_nm	 		as	expertOffiDutyNm
+						,	expert_career_num	 		as	expertCareerNum
+						,	member_id						as	memberId
+			from 		tb_expert
+			WHERE	1										=1
+			ORDER BY reg_dt DESC
+			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+				]]>
+	</select>
+	
+	
+	<select id="selectMemberDetailAuthList" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
+			/*selectMemberDetailAuthList*/
+			<!-- SELECT
+				member_idx AS memberIdx,
+				member_id AS memberId,
+				member_pw AS memberPw,
+				member_nm AS memberNm,
+				member_addr AS memberAddr,
+				member_tel AS memberTel,
+				member_hp AS memberHp,
+				member_mail AS memberMail,
+				member_belong AS memberBelong,
+				date_format(member_join_dt, '%Y.%m.%d') AS memberJoinDt,
+				member_join_type AS memberJoinType,
+				member_st AS memberSt
+			FROM tb_member
+			WHERE 1=1
+			AND member_idx = #{memberIdx} -->
+			
+			<!-- SELECT
+				member_id as memberId,
+				member_st_cd as memberStCd,
+				(case 
+				when join_type_cd = 'A' then '기업'
+				when join_type_cd = 'B' then '전문가'
+				when join_type_cd = 'C' then '바이어'
+				when join_type_cd = 'D' then '일반'
+				else '' end
+				) as joinTypeCd,
+				member_nm as memberNm,
+				'' as memberHp,
+				'' as memberMail,
+				date_format(reg_dt, '%Y.%m.%d') as regDt,
+				(case
+				when member_st_cd = 'Y' then '승인'
+				when member_st_cd = 'N' then '미승인'
+				else '' end) as memberStCd 
+			FROM tb_member
+			WHERE 1=1
+			AND member_id = #{memberId} -->
+		
+		select 
+			mng_no as mngNo,
+			mng_pw as mngPw,
+			mng_id as mngId,
+			mng_nm as mngNm,
+			(
+			case 
+				when auth_tp_cd = '000001' then '마스터'
+				when auth_tp_cd = '000002' then '사업담당자'
+				when auth_tp_cd = '000003' then '시설담당자'
+				when auth_tp_cd = '000004' then '자문담당자'
+				else ''
+			end
+			) as authTpCd, 
+			mng_tel as mngTel,
+			mng_flag as mngFlag,
+			mng_addr as mngAddr,
+			mng_hp as mngHp,
+			mng_email as mngEmail,
+			(
+			case
+				when mng_belong = '000001' then '경영지원팀'
+				when mng_belong = '000002' then '콘텐츠산업진흥단'
+				when mng_belong = '000003' then 'ICT산업진흥단'
+				when mng_belong = '000004' then '4차산업혁명대응TF'
+				else ''
+			end
+			) as mngBelong,
+			date_format(reg_dt, '%Y.%m.%d') as regDt,
+			reg_id as regId
+		from ta_manager 
+			where mng_id = #{mngId}
+			
+	</select>
+	
+	
+	
+ 	<!-- 회원관리 > 권한관리 -->
+<!--	<select id="selectAuthListCompanyInformationList" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
+			/*selectAuthListCompanyInformationList*/
+				SELECT 
+				   sno,
+				   title,
+			       field,
+			       companyname,
+			       DateInserted
+			FROM tb_companyInformation
+			WHERE 1=1
+			<if test='searchText != null and searchText != ""'>
+			    <choose>
+				    <when test='searchType eq ""'>
+				 		AND title LIKE CONCAT('%',#{searchText},'%') OR field LIKE CONCAT('%',#{searchText},'%')
+				 	</when>	
+				 	<when test='searchType eq 1'>
+				 		AND title LIKE CONCAT('%',#{searchText},'%')
+				 	</when>
+				 	<when test='searchType eq 2'>
+				 		AND field LIKE CONCAT('%',#{searchText},'%')
+				 	</when>
+			 	</choose>
+			 </if>
+			ORDER BY sno ASC
+	</select> -->
+	
+	<!-- 20191114 최선권 시장정보 > 기업정보 List -->
+	<select id="selectAuthListCompanyInformationList" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
+			/*selectAuthListCompanyInformationList*/
+			<![CDATA[
+				SELECT	@rownum:=@rownum+1 						as pageNum,
+							entpr_nm 											as entprNm,
+							date_format(reg_dt, '%Y.%m.%d') 			as entprEstDt,
+							member_id 											as memberId,
+							(SELECT common_nm
+							 FROM ta_common 
+							 WHERE group_cd 								='G00002'
+							 AND common_cd = large_buss_area_cd) 	as largeBussAreaCd
+				FROM tb_enterprise
+			 	WHERE 1=1 and (SELECT @ROWNUM:=0)=0
+
+			]]>
+			<if test='searchText != null and searchText != ""'>
+			    <choose>
+				    <when test='searchType eq ""'>
+				 		AND entpr_nm LIKE CONCAT('%',#{searchText},'%') OR large_buss_area_cd LIKE CONCAT('%',#{searchText},'%')
+				 	</when>	
+				 	<when test='searchType eq 1'>
+				 		AND entpr_nm LIKE CONCAT('%',#{searchText},'%')
+				 	</when>
+				 	<when test='searchType eq 2'>
+				 		AND large_buss_area_cd LIKE CONCAT('%',#{searchText},'%')
+				 	</when>
+			 	</choose>
+			 </if>	
+			 	ORDER BY reg_dt ASC
+				LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+	</select>
+
+	<!-- 최선권 수정 20191114 목록글 카운트-->
+	 <select id="selectAuthListCompanyInformationListTotCnt" parameterType="jcep.admin.model.MemberVO" resultType="int">
+			/*selectAuthListCompanyInformationListTotCnt*/
+			SELECT
+				COUNT(*) totCnt
+			FROM tb_enterprise
+			WHERE 1=1
+				<if test='searchText != null and searchText != ""'>
+				    <choose>
+					    <when test='searchType eq ""'>
+					 		AND entpr_nm LIKE CONCAT('%',#{searchText},'%') OR large_buss_area_cd LIKE CONCAT('%',#{searchText},'%')
+					 	</when>	
+					 	<when test='searchType eq 1'>
+					 		AND entpr_nm LIKE CONCAT('%',#{searchText},'%')
+					 	</when>
+					 	<when test='searchType eq 2'>
+					 		AND large_buss_area_cd LIKE CONCAT('%',#{searchText},'%')
+					 	</when>
+				 	</choose>
+				 </if>	
+			ORDER BY reg_dt ASC
+	</select>
+	
+	
+	<!-- 20191126 신승원 고객광장 > 문의하기 List -->
+	<select id="selectContactUsList" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
+			/*selectContactUsList*/
+			<![CDATA[
+				SELECT  @rownum:=@rownum+1 as pageNum,
+							question_idx as questionIdx,
+							question_title as questionTitle,
+							write_nm as writeNm,
+							write_dt as writeDt,
+							question_cont as questionCont,
+							question_pw as questionPw,
+							(case answer_cont 
+							    when 'Y' then '답변완료'
+							    else '접수'
+							    end) as answerCont,
+							reg_dt as regDt
+				from ta_question
+				WHERE 1=1 and (SELECT @ROWNUM:=0)=0
+			]]>
+			<if test='searchText != null and searchText != ""'>
+			    <choose>
+				    <when test='searchType eq ""'>
+				 		AND question_title LIKE CONCAT('%',#{searchText},'%')
+				 	</when>	
+				 	<when test='searchType eq 1'>
+				 		AND question_title LIKE CONCAT('%',#{searchText},'%')
+				 	</when>
+			 	</choose>
+			 </if>	
+			 	ORDER BY question_idx ASC
+	</select>
+
+	<!-- 신승원 수정 20191126 신승원 고객광장 > 문의하기 목록글 카운트-->
+	 <select id="selectContactUsListTotCnt" parameterType="jcep.admin.model.MemberVO" resultType="int">
+			/*selectContactUsListTotCnt*/
+			SELECT
+				COUNT(*) totcnt
+			FROM ta_question
+			WHERE 1=1
+				<if test='searchText != null and searchText != ""'>
+				    <choose>
+				    <when test='searchType eq ""'>
+				 		AND question_title LIKE CONCAT('%',#{searchText},'%')
+				 	</when>	
+				 	<when test='searchType eq 1'>
+				 		AND question_title LIKE CONCAT('%',#{searchText},'%')
+				 	</when>
+			 	</choose>
+				 </if>	
+			ORDER BY question_idx ASC
+	</select>
+	
+	<select id="selectContactUsDetailList" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
+		/*selectContactUsDetailList*/
+		SELECT  		
+			question_idx as questionIdx,
+			question_title as questionTitle,
+			write_nm as writeNm,
+			write_dt as writeDt,
+			question_cont as questionCont,
+			question_pw as questionPw,
+			answer_cont as answerCont,
+			reg_dt as regDt
+		from ta_question
+		where question_idx = #{questionIdx}
+		   AND question_title = #{questionTitle}
+		   AND question_pw = #{questionPw}
+	</select>
+	
+	<!-- 20191120 신승원 문의하기 목록 > 문의하기 패스워드 List -->
+	<select id="selectContactUsListPassWd" parameterType="jcep.admin.model.MemberVO" resultType="int">
+		/*selectContactUsListPassWd*/
+			<![CDATA[
+				SELECT  COUNT(*) totcnt
+				FROM ta_question
+				WHERE 1=1 
+					AND question_idx = #{questionIdx}
+					AND question_title = #{questionTitle}
+					AND question_pw = #{questionPw}
+			]]>	
+	</select>
+	
+	<!-- 20191128 신승원 문의하기 등록 > 문의하기 -->
+	<insert id="contactUsDetailInsert" parameterType="jcep.admin.model.MemberVO">
+			/*contactUsDetailInsert*/
+			insert into ta_question
+			(
+				question_idx,
+				question_title,
+				write_nm,
+				write_dt,
+				question_cont,
+				question_pw,
+				reg_dt
+			)
+			values
+			(
+				(select concat('Q',IFNULL(LPAD(MAX(SUBSTRING(question_idx,2,LENGTH(question_idx))) + 1,4,'0'),'0000')) from ta_question a),
+				#{questionTitle},
+				#{writeNm},
+				#{writeDt},
+				#{questionCont},
+				#{questionPw},
+				CURRENT_TIMESTAMP
+			)
+	</insert>
+	
+	
+
+	<!-- 20191120 신승원 공지사항 목록 > 공지사항 목록 List -->
+	<select id="selectNoticeListCompanyInformationList" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
+			/*selectNoticeListCompanyInformationList*/
+			<![CDATA[
+				SELECT  @rownum:=@rownum+1 as pageNum,
+					notice_idx as noticeIdx,
+					notice_title as noticeTitle,
+				    notice_cont as noticeCont,
+				    notice_open_yn as noticeOpenYn,
+				    notice_impt_yn as noticeImptYn,
+				    file_course as fileCourse,
+				    org_file_nm as orgFileNm,
+				    date_format(reg_dt, '%Y.%m.%d') as regDt
+				FROM ta_notice
+				WHERE 1=1 
+					AND (SELECT @ROWNUM:=0)=0
+					AND notice_open_yn = 'Y'
+			]]>
+			<if test='searchText != null and searchText != ""'>
+			    <choose>
+				    <when test='searchType eq ""'>
+				 		AND notice_title LIKE CONCAT('%',#{searchText},'%')
+				 	</when>	
+				 	<when test='searchType eq 1'>
+				 		AND notice_title LIKE CONCAT('%',#{searchText},'%')
+				 	</when>
+			 	</choose>
+			 </if>	
+			 	ORDER BY notice_idx ASC
+	</select>
+
+	<!-- 20191120 신승원 공지사항 목록 > 공지사항 목록 카운트 -->
+	 <select id="selectNoticeListCompanyInformationListTotCnt" parameterType="jcep.admin.model.MemberVO" resultType="int">
+			/*selectNoticeListCompanyInformationListTotCnt*/
+			<![CDATA[
+				SELECT COUNT(*) totcnt
+				FROM ta_notice
+				WHERE 1=1 
+					AND (SELECT @ROWNUM:=0)=0
+					AND notice_open_yn = 'Y'
+			]]>
+			<if test='searchText != null and searchText != ""'>
+			    <choose>
+				    <when test='searchType eq ""'>
+				 		AND notice_title LIKE CONCAT('%',#{searchText},'%')
+				 	</when>	
+				 	<when test='searchType eq 1'>
+				 		AND notice_title LIKE CONCAT('%',#{searchText},'%')
+				 	</when>
+			 	</choose>
+			 </if>	
+			 	ORDER BY notice_idx ASC
+	</select>
+	
+
+	
+	<!-- 회원관리 > 권한관리 -->
+<!-- 	<select id="selectAuthListDetail" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
+			/*selectAuthListDetail*/
+				SELECT 
+				   sno as sno,
+				   title as title,
+			       field as field,
+			       companyname as companyname,
+			       dateInserted as dateInserted,
+			       homepage as homepage,
+			       mainphone as mainphone,
+			       fax as fax,
+			       address as address,
+			       touchmoney as touchmoney,
+			       capital as capital,
+			       employees as employees,
+			       establishmentdate as establishmentdate
+			FROM tb_companyInformation
+			WHERE 1=1
+			 AND	sno LIKE CONCAT('%',#{sno},'%')
+				
+	</select> -->
+	<!-- 20191114 최선권 쿼리수정 -->
+	<select id="selectAuthListDetail" 					parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
+			/*selectAuthListDetail*/
+			<![CDATA[
+				SELECT  a.entpr_nm 											as entprNm,
+							a.entpr_site 											as entprSite,	
+							(select common_nm from ta_common where group_cd ='G00002'and common_cd = large_buss_area_cd) 
+																						as largeBussAreaCd,
+							(select common_nm from ta_common where group_cd ='G00003'and common_cd = medium_buss_area_cd) 
+																						as mediumBussAreaCd,
+							a.entpr_head_tel 										as entprHeadTel,
+							a.entpr_head_fax 									as entprHeadFax,
+							a.entpr_branch_addr 								as entprBranchAddr,
+                            a.entpr_branch_detail_addr 						as entprBranchDetailAddr,
+                            
+							max(b.entpr_capital_amt) 							as entprCapitalAmt,
+							max(b.entpr_result_emp_cnt) 					as entprResultEmpCnt,
+							max(b.entpr_result_take_amt)					as entprResultTakeAmt,
+							a.entpr_est_dt											as entprEstDt,
+
+							c.remark						 							as remark
+				FROM tb_enterprise 												a
+				JOIN tb_enterprise_result b ON a.member_id 				= b.member_id
+				JOIN tb_enterprise_intlt_propty c ON a.member_id 		= c.member_id
+				AND	a.member_id = 											#{memberId}
+			]]>
+	</select>
+	
+	<!-- 회원관리 > 권한관리 -->
+<!-- 	<select id="selectAuthListDetailPlus" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
+			/*selectAuthListDetailPlus*/
+				SELECT 
+				   sno as sno,
+				   sno-1 as snominus,
+				   sno+1 as snoplus,
+				   title as title,
+				   title as titleminus,
+				   title as titleplus,
+			       field as field,
+			       companyname as companyname,
+			       dateInserted as dateInserted,
+			       homepage as homepage,
+			       mainphone as mainphone,
+			       fax as fax,
+			       address as address,
+			       touchmoney as touchmoney,
+			       capital as capital,
+			       employees as employees,
+			       establishmentdate as establishmentdate
+			FROM tb_companyInformation
+			WHERE 1=1
+			 AND	sno LIKE CONCAT('%',#{snoplus},'%')
+				
+	</select>
+ -->	<!--  20191114 최선권  수정 시장정보 > 기업정보 > 상세페이지 > 다음글-->
+	<select id="selectAuthListDetailPlus" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
+			/*selectAuthListDetailPlus*/
+			<![CDATA[
+				select a.*
+				from(SELECT  @rownum:=@rownum+1 as pageNum,
+						entpr_nm as entprNm,
+						large_buss_area_cd as largeBussAreaCd,
+						reg_dt as entprEstDt,
+						member_id as memberId
+				FROM tb_enterprise
+				WHERE 1=1 and (SELECT @ROWNUM:=0)=0
+				ORDER BY large_buss_area_cd ASC) a
+				where a.pageNum = #{pageNum}+1				
+			]]>
+	</select>
+	
+	
+	<!--  20191114 최선권  수정 시장정보 > 기업정보 > 상세페이지 > 이전글-->
+	<select id="selectAuthListDetailMinus" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
+			/*selectAuthListDetailMinus*/
+			<![CDATA[
+				select a.*
+				from(SELECT  @rownum:=@rownum+1 as pageNum,
+						entpr_nm as entprNm,
+						large_buss_area_cd as largeBussAreaCd,
+						reg_dt as entprEstDt,
+						member_id as memberId
+				FROM tb_enterprise
+				WHERE 1=1 and (SELECT @ROWNUM:=0)=0
+				ORDER BY large_buss_area_cd ASC) a
+				where a.pageNum = #{pageNum}-1	
+			]]>
+	</select>
+
+	<!-- 20191121 신승원 공지사항 쿼리 추가 -->
+	<select id="selectNoticeDetail" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
+		/*selectNoticeDetail*/
+		<![CDATA[
+	SELECT	notice_idx 					AS noticeIdx
+				,notice_title 				AS noticeTitle
+				,notice_cont 				AS noticeCont
+				,SUBSTRING_INDEX(org_file_nm, '_', -1)
+												 AS orgFileNm
+				,date_format(reg_dt, '%Y.%m.%d') 
+												AS regDt
+	  FROM ta_notice
+	WHERE 1=1
+	    AND notice_idx = #{noticeIdx}
+		]]>
+	</select>
+	<!--  20191121 신승원 공지사항 > 다음글-->
+	<select id="selectNoticeDetailPlus" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
+			/*selectNoticeDetailPlus*/
+			<![CDATA[
+				select a.*
+				from(SELECT  @rownum:=@rownum+1 as pageNum,
+						        	notice_idx 					AS noticeIdx
+									,notice_title 				AS noticeTitle
+									,notice_cont 				AS noticeCont
+									,SUBSTRING_INDEX(org_file_nm, '_', -1)
+																	 AS orgFileNm
+									,date_format(reg_dt, '%Y.%m.%d') 
+																	AS regDt
+				FROM ta_notice
+				WHERE 1=1 and (SELECT @ROWNUM:=0)=0
+			ORDER BY notice_idx ASC) a
+				where a.pageNum = #{pageNum}+1				
+			]]>
+	</select>
+	
+	
+	<!--  20191121 신승원 공지사항 > 이전글-->
+	<select id="selectNoticeDetailMinus" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
+			/*selectNoticeDetailMinus*/
+			<![CDATA[
+				select a.*
+				from(SELECT  @rownum:=@rownum+1 as pageNum,
+					notice_idx as noticeIdx,
+					notice_title as noticeTitle,
+				    notice_cont as noticeCont,
+				    org_file_nm as orgFileNm,
+				    date_format(reg_dt, '%Y.%m.%d') as regDt
+				FROM ta_notice 
+				WHERE 1=1 and (SELECT @ROWNUM:=0)=0
+			ORDER BY notice_idx ASC) a
+				where a.pageNum = #{pageNum}-1
+			]]>
+	</select>
+	
+<!--
+	<select id="selectAuthListDetailMinus" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
+			/*selectAuthListDetailMinus*/
+				SELECT 
+				   sno as sno,
+				   sno-1 as snominus,
+				   sno+1 as snoplus,
+				   title as title,
+				   title as titleminus,
+				   title as titleplus,
+			       field as field,
+			       companyname as companyname,
+			       dateInserted as dateInserted,
+			       homepage as homepage,
+			       mainphone as mainphone,
+			       fax as fax,
+			       address as address,
+			       touchmoney as touchmoney,
+			       capital as capital,
+			       employees as employees,
+			       establishmentdate as establishmentdate
+			FROM tb_companyInformation
+			WHERE 1=1
+			 AND	sno LIKE CONCAT('%',#{snominus},'%')
+				
+	</select> -->
+	
+	
+	
+	<select id="selectAuthListTotCnt" parameterType="jcep.admin.model.MemberVO" resultType="int">
+			/*selectAuthListTotCnt*/
+			<![CDATA[
+			SELECT 		count(*) as totcnt
+			from 		tb_expert
+			WHERE	1				=1
+			ORDER BY reg_dt DESC
+			]]>
+	</select>
+	
+	
+<!-- 	<select id="selectAuthListCompanyInformationListTotCnt" parameterType="jcep.admin.model.MemberVO" resultType="int">
+			/*selectAuthListCompanyInformationListTotCnt*/
+			SELECT
+				COUNT(*) totcnt
+			FROM tb_companyInformation
+			WHERE 1=1
+			<if test='searchText != null and searchText != ""'>
+			    <choose>
+				    <when test='searchType eq ""'>
+				 		AND title LIKE CONCAT('%',#{searchText},'%') OR field LIKE CONCAT('%',#{searchText},'%')
+				 	</when>	
+				 	<when test='searchType eq 1'>
+				 		AND title LIKE CONCAT('%',#{searchText},'%')
+				 	</when>
+				 	<when test='searchType eq 2'>
+				 		AND field LIKE CONCAT('%',#{searchText},'%')
+				 	</when>
+			 	</choose>
+			 </if>
+			ORDER BY sno ASC
+
+	</select>
+ -->	
+	<select id="selectCompanyInformationListCheck" parameterType="jcep.admin.model.MemberVO" resultType="int">
+		/*selectCompanyInformationListCheck*/
+			SELECT
+				COUNT(*) totcnt,
+				title,
+				field
+			FROM tb_companyInformation
+			WHERE 1=1
+			<if test="searchText != null and searchText != ''">
+		        <choose>
+					<when test='searchType eq ""'>
+						AND	title LIKE CONCAT('%',#{searchText},'%') OR field LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 1'>
+						AND	title LIKE CONCAT('%',#{title},'%')
+					</when>
+		            <when test='searchType eq 2'>
+						AND	field LIKE CONCAT('%',#{field},'%')
+					</when>
+				</choose>
+			</if>
+			ORDER BY sno ASC
+	</select>
+	
+	<select id="selectBuyerInformationList" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
+			/*selectBuyerInformationList*/
+				SELECT 
+					member_id 					as memberId
+					,buyer_nm 					as buyerNm
+					,buyer_ceo 					as buyerCeo
+					,buyer_com_reg_num 	as buyerComRegNum
+					,buyer_ceo_email 		as buyerCeoEmail
+				   	,( SELECT	common_nm 
+   	                     FROM	ta_common 
+   	                   WHERE 	group_Cd 		= 'G00015'
+   	               	       AND 	common_cd 	= buyer_bus_area_cd
+   	            	)								as buyerBusAreaCd
+					,buyer_site 					as buyerSite
+					,buyer_head_addr 			as buyerHeadAddr
+					,buyer_head_detail_addr as buyerHeadDetailAddr
+					,buyer_head_tel 			as buyerHeadTel
+					,buyer_head_fax 			as buyerHeadFax
+					,buyer_branch_addr 		as buyerBranchAddr
+					,buyer_branch_detail_addr as buyerBranchDetailAddr
+					,buyer_branch_tel 		as buyerBranchTel
+					,reg_dt 						as regDt
+					,reg_id 						as regId
+			FROM tb_buyer
+			WHERE 1=1
+			<if test='searchText != null and searchText != ""'>
+			    <choose>
+				    <when test='searchType eq ""'>
+				 		AND buyer_nm LIKE CONCAT('%',#{searchText},'%') OR buyer_bus_area LIKE CONCAT('%',#{searchText},'%')
+				 	</when>
+				 	<when test='searchType eq 1'>
+				 		AND buyer_nm LIKE CONCAT('%',#{searchText},'%')
+				 	</when>
+				 	<when test='searchType eq 2'>
+				 		AND buyer_bus_area LIKE CONCAT('%',#{searchText},'%')
+				 	</when>
+			 	</choose>
+			 </if>
+			ORDER BY member_id ASC
+	</select>
+	
+	<select id="selectBuyerInformationListTotCnt" parameterType="jcep.admin.model.MemberVO" resultType="int">
+			/*selectBuyerInformationListTotCnt*/
+				SELECT 
+					COUNT(*) totcnt
+			FROM tb_buyer
+			WHERE 1=1
+			<if test='searchText != null and searchText != ""'>
+			    <choose>
+				    <when test='searchType eq ""'>
+				 		AND buyer_nm LIKE CONCAT('%',#{searchText},'%') or buyer_bus_area LIKE CONCAT('%',#{searchText},'%')
+				 	</when>	
+				 	<when test='searchType eq 1'>
+				 		AND buyer_nm LIKE CONCAT('%',#{searchText},'%')
+				 	</when>
+				 	<when test='searchType eq 2'>
+				 		AND buyer_bus_area LIKE CONCAT('%',#{searchText},'%')
+				 	</when>
+			 	</choose>
+			 </if>
+			ORDER BY member_id ASC
+	</select>
+	
+
+
+
+	<select id="selectExpertInformationList"		parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
+		/*selectExpertInformationList*/
+			<![CDATA[ 
+				SELECT 
+				    a.member_id 																as memberId
+					,a.expert_nm 																as expertNm
+			        ,a.expert_email 															as expertEmail
+			        ,a.expert_gender 															as expertGender
+			        ,a.expert_career_num 													as expertCareerNum
+			        ,(	SELECT		common_nm 
+   	            	    	FROM		ta_common 
+   	            	    	WHERE 	group_Cd 		= 'G00012'
+   	            	    	AND 		common_cd 	= a.large_special_area_cd
+   	            	    ) 									as largeSpecialAreaCd
+			        ,(	SELECT		common_nm 
+   	            	    	FROM		ta_common 
+   	            	    	WHERE 	group_Cd 		= 'G00014'
+   	            	    	AND 		common_cd 	= a.detail_special_area_cd
+   	            	    ) 									as detailSpecialAreaCd
+			        ,(	SELECT		common_nm 
+   	            	    	FROM		ta_common 
+   	            	    	WHERE 	group_Cd 		= 'G00015'
+   	            	    	AND 		common_cd 	= a.expert_interest_area_cd
+   	            	    ) 									as expertInterestAreaCd
+			        ,(	SELECT		common_nm 
+   	            	    	FROM		ta_common 
+   	            	    	WHERE 	group_Cd 		= 'G00016'
+   	            	    	AND 		common_cd 	= a.expert_detail_intrt_area_cd
+   	            	    ) 									as expertDetailIntrtAreaCd
+
+			        ,a.expert_inds_edu_cd 													as expertIndsEduCd
+			        ,a.expert_st_reg_no 														as expertStRegNo
+			        ,a.expert_reg_no 															as expertRegNo
+			        ,a.expert_final_school_nm							 					as expertFinalSchoolNm
+			        ,a.expert_major_nm 														as expertMajorNm
+			        ,a.expert_fnal_edu_cd 													as expertFnalEduCd
+			        ,a.expert_head_addr_nm 												as expertHeadAddrNm
+			        ,a.expert_dptm_nm 														as expertDptmNm
+			        ,a.expert_offi_duty_nm 													as expertOffiDutyNm
+			        ,a.expert_offi_addr 														as expertOffiAddr
+			        ,a.expert_offi_detail_addr 												as expertOffiDetailAddr
+			        ,a.expert_offi_tel 															as expertOffiTel
+			        ,a.expert_offi_fax 														as expertOffiFax
+			        ,a.expert_head_tel 														as expertHeadTel
+			        ,a.expert_home_addr 													as expertHomeAddr
+			        ,a.expert_home_detail_addr								 			as expertHomeDetailAddr
+			        ,a.benefit_bank_cd 														as benefitBankCd
+			        ,a.benefit_accnt_no 														as benefitAccntNo
+			        ,a.benefit_birth_dt 														as benefitBirthDt
+			        ,a.benefit_respsib_hp_no							 					as benefitRespsibHpNo
+			        ,a.file_course 																as fileCourse
+			        ,a.org_file_nm 																as orgFileNm
+			        ,a.upload_file_nm 														as uploadFileNm
+			        ,a.reg_dt 																	as regDt
+			        ,a.reg_id 																	as regId
+				   ,group_concat(b.expert_delibr_dt ,' ',b.expert_delibr_title SEPARATOR '</BR>') as expertDelibrDt
+			FROM tb_expert a 
+            JOIN 	tb_expert_deliberate b ON a.member_id 							=	b.member_id
+			WHERE 1																				=	1
+		]]>
+		<if test='searchText != null and searchText != ""'>
+		    <choose>
+			    <when test='searchType eq ""'>
+			 		<![CDATA[AND a.expert_nm LIKE CONCAT('%',#{searchText},'%') OR a.expert_email LIKE CONCAT('%',#{searchText},'%')]]>
+			 	</when>	
+			 	<when test='searchType eq 1'>
+			 		<![CDATA[AND a.expert_nm LIKE CONCAT('%',#{searchText},'%')]]>
+			 	</when>
+			 	<when test='searchType eq 2'>
+			 		<![CDATA[AND a.expert_email LIKE CONCAT('%',#{searchText},'%')]]>
+			 	</when>
+		 	</choose>
+		 </if>
+		<![CDATA[ 
+			ORDER BY a.reg_dt ASC
+		]]>
+	</select>
+	
+	<select id="selectExpertInformationListTotCnt" parameterType="jcep.admin.model.MemberVO" resultType="int">
+			/*selectExpertInformationListTotCnt*/
+				SELECT 
+					COUNT(*) totcnt
+			FROM tb_expert
+			WHERE 1=1
+			<if test='searchText != null and searchText != ""'>
+			    <choose>
+				    <when test='searchType eq ""'>
+				 		AND expert_nm LIKE CONCAT('%',#{searchText},'%') OR expert_email LIKE CONCAT('%',#{searchText},'%')
+				 	</when>	
+				 	<when test='searchType eq 1'>
+				 		AND expert_nm LIKE CONCAT('%',#{searchText},'%')
+				 	</when>
+				 	<when test='searchType eq 2'>
+				 		AND expert_email LIKE CONCAT('%',#{searchText},'%')
+				 	</when>
+			 	</choose>
+			 </if>
+			ORDER BY reg_dt ASC
+	</select>
+	
+		
+		
+<!-- 	<select id="selectBusinessAnnouncementList" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
+			/*selectBusinessAnnouncementList*/
+				SELECT 
+				    business_id as business_id, 
+					business_nm as business_nm, 
+					business_ceo as business_ceo, 
+					business_com_reg_num as business_com_reg_num, 
+					business_ceo_email as business_ceo_email, 
+					business_bus_area as business_bus_area, 
+					business_site as business_site, 
+					business_head_addr as business_head_addr, 
+					business_head_detail_addr as business_head_detail_addr, 
+					business_head_tel as business_head_tel, 
+					business_head_fax as business_head_fax, 
+					business_branch_addr as business_branch_addr, 
+					business_branch_detail_addr as business_branch_detail_addr, 
+					business_branch_tel as business_branch_tel, 
+					business_branch_fax as business_branch_fax, 
+					business_est_dt as business_est_dt, 
+					business_capital as business_capital, 
+					business_reg_dt as business_reg_dt, 
+					business_reg_id as buyer_reg_id, 
+					business_hist_nm as business_hist_nm, 
+					business_hist_spec as business_hist_spec, 
+					business_hist_content as business_hist_content,
+					(case business_level when '1' then '진행중'
+							when '2' then '진행예정'
+                            when '3' then '진행완료'
+	  					 else null end) as business_level
+			FROM tb_businessAnnouncement
+			WHERE 1=1
+			AND DATE(business_est_dt) BETWEEN #{startDate} AND #{endDate}
+			<if test='searchText != null and searchText != "" '>
+			    <choose>
+				    <when test='datepicker1 eq datepicker2 eq searchType eq "" '>
+				 		AND business_est_dt BETWEEN CONCAT(#{datepicker1}) AND CONCAT(#{datepicker2}) OR business_nm LIKE CONCAT('%',#{searchText},'%') OR business_ceo LIKE CONCAT('%',#{searchText},'%')
+				 	</when>	
+				 	<when test='datepicker1 and datepicker2'>
+				 		AND business_est_dt BETWEEN CONCAT(#{datepicker1}) AND CONCAT(#{datepicker2})
+				 	</when>
+				 	<when test='searchType eq 1'>
+				 		AND business_nm LIKE CONCAT('%',#{searchText},'%')
+				 	</when>
+				 	<when test='searchType eq 2'>
+				 		AND business_ceo LIKE CONCAT('%',#{searchText},'%')
+				 	</when>
+			 	</choose>
+			 </if>
+			ORDER BY business_id ASC
+			LIMIT #{startNum}, #{endNum}
+	</select> -->
+	
+	<!-- 최선권 20191116 기업정보 글목록 조회	 -->
+	<select id="selectBusinessAnnouncementList" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
+			/*selectBusinessAnnouncementList*/
+				<![CDATA[
+					SELECT *
+					FROM (SELECT 
+							buss_anncemnt_no as bussAnncemntNo,
+							buss_anncemnt_nm as bussAnncemntNm,
+							buss_fr_dt as bussFrDt,
+							buss_to_dt as bussToDt,
+							reg_dt as regDt,
+							buss_cont as bussCont
+					FROM tb_business_announcement) a
+					WHERE 1= 1
+					AND bussFrDt BETWEEN #{startDate} AND #{endDate}
+				]]>
+				<if test='searchText != null and searchText != "" '>
+				    <choose>
+					    <when test='datepicker1 eq datepicker2 eq searchType eq "" '>
+					 		AND bussFrDt BETWEEN CONCAT(#{datepicker1}) AND CONCAT(#{datepicker2}) OR bussAnncemntNm LIKE CONCAT('%',#{searchText},'%') OR bussAnncemntNo LIKE CONCAT('%',#{searchText},'%')
+					 	</when>	
+					 	<when test='datepicker1 and datepicker2'>
+					 		AND bussFrDt BETWEEN CONCAT(#{datepicker1}) AND CONCAT(#{datepicker2})
+					 	</when>
+					 	<when test='searchType eq 1'>
+					 		AND bussAnncemntNm LIKE CONCAT('%',#{searchText},'%')
+					 	</when>
+					 	<when test='searchType eq 2'>
+					 		AND bussAnncemntNo LIKE CONCAT('%',#{searchText},'%')
+					 	</when>
+				 	</choose>
+				 </if>
+				<![CDATA[
+					ORDER BY bussAnncemntNo
+					LIMIT #{startNum}, #{endNum}
+				]]>
+	</select>
+
+	<!-- 최선권 20191116 기업정보 글목록 조회 카운트	 -->
+	<select id="selectselectBusinessAnnouncementListTotCnt" parameterType="jcep.admin.model.MemberVO" resultType="int">
+			/*selectselectBusinessAnnouncementListTotCnt*/
+				<![CDATA[
+					SELECT	COUNT(*) as totcnt
+					FROM (SELECT 
+							buss_anncemnt_no as bussAnncemntNo,
+							buss_anncemnt_nm as bussAnncemntNm,
+							buss_fr_dt as bussFrDt,
+							buss_to_dt as bussToDt,
+							reg_dt as regDt,
+							buss_cont as bussCont
+					FROM tb_business_announcement) a
+					WHERE 1= 1
+					AND bussFrDt BETWEEN #{startDate} AND #{endDate}
+				]]>
+				<if test='searchText != null and searchText != "" '>
+				    <choose>
+					    <when test='datepicker1 eq datepicker2 eq searchType eq "" '>
+					 		AND bussFrDt BETWEEN CONCAT(#{datepicker1}) AND CONCAT(#{datepicker2}) OR bussAnncemntNm LIKE CONCAT('%',#{searchText},'%') OR bussAnncemntNo LIKE CONCAT('%',#{searchText},'%')
+					 	</when>	
+					 	<when test='datepicker1 and datepicker2'>
+					 		AND bussFrDt BETWEEN CONCAT(#{datepicker1}) AND CONCAT(#{datepicker2})
+					 	</when>
+					 	<when test='searchType eq 1'>
+					 		AND bussAnncemntNm LIKE CONCAT('%',#{searchText},'%')
+					 	</when>
+					 	<when test='searchType eq 2'>
+					 		AND bussAnncemntNo LIKE CONCAT('%',#{searchText},'%')
+					 	</when>
+				 	</choose>
+				 </if>
+				<![CDATA[
+					ORDER BY bussAnncemntNo
+					LIMIT #{startNum}, #{endNum}
+				]]>
+	</select>
+
+	
+			<!-- 최선권 20191116 사업공고 글 상세페이지	 -->
+	<select id="selectBusinessDetail" parameterType="String" resultType="jcep.admin.model.MemberVO">
+			/*selectBusinessDetail*/
+				<![CDATA[
+					SELECT 
+					buss_anncemnt_no as bussAnncemntNo,
+					buss_anncemnt_nm as bussAnncemntNm,
+					buss_fr_dt as bussFrDt,
+					buss_to_dt as bussToDt,
+					reg_dt as regDt,
+					buss_cont as bussCont
+			FROM tb_business_announcement
+			where 1= 1
+			and buss_anncemnt_no = #{bussAnncemntNo}
+				]]>
+		</select>
+	
+	
+	<select id="selectBusinessFile" parameterType="String" resultType="jcep.admin.model.MemberVO">
+					/*selectBusinessFile*/
+				<![CDATA[
+						SELECT 	buss_anncemnt_no as bussAnncemntNo,
+									attch_file_no as attchFileNo,
+									file_course as fileCourse,
+									org_file_nm as orgFileNm,
+									reg_dt as regDt
+						FROM tb_buss_attch_file
+						WHERE 1=1
+						and buss_anncemnt_no = #{bussAnncemntNo}
+					]]>
+	
+	</select>
+<!-- 	<insert id="businessDetailInsert" parameterType="jcep.admin.model.MemberVO">
+			/*businessDetailInsert*/
+			INSERT INTO tb_businessAnnouncement (
+				 business_id
+				,business_nm
+				,business_ceo
+				,business_com_reg_num
+				,business_ceo_email
+				,business_level
+			)
+			VALUES(
+			(SELECT  CONCAT(LEFT(IFNULL(MAX(business_id),'P'),1), 
+    			LPAD((RIGHT(IFNULL(MAX(business_id),'P'),4)+1),4,0))  
+			FROM tb_businessAnnouncement a)
+				,#{business_nm}
+				,#{business_ceo}
+				,#{business_com_reg_num}
+				,#{business_ceo_email}
+				,'1'
+			)
+	</insert>
+ -->
+ <!-- 사업공고 신청 업데이트 -->
+	 <update id="businessDetailUpdate" parameterType="jcep.admin.model.MemberVO">
+			/*businessDetailUpdate*/
+		<![CDATA[
+			update	tb_buss_anncemnt_appl
+			set		remark = #{remark}
+			where	member_id = #{memberId}
+			and		buss_anncemnt_no = #{bussAnncemntNo}
+		]]>
+	</update>
+	
+	<select id="selectManageList" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
+			/*selectManageList*/
+				<!-- SELECT 
+				    business_id as business_id, 
+					business_nm as business_nm, 
+					business_ceo as business_ceo, 
+					business_com_reg_num as business_com_reg_num, 
+					business_ceo_email as business_ceo_email, 
+					business_bus_area as business_bus_area, 
+					business_site as business_site, 
+					business_head_addr as business_head_addr, 
+					business_head_detail_addr as business_head_detail_addr, 
+					business_head_tel as business_head_tel, 
+					business_head_fax as business_head_fax, 
+					business_branch_addr as business_branch_addr, 
+					business_branch_detail_addr as business_branch_detail_addr, 
+					business_branch_tel as business_branch_tel, 
+					business_branch_fax as business_branch_fax, 
+					business_est_dt as business_est_dt, 
+					business_capital as business_capital, 
+					business_reg_dt as business_reg_dt, 
+					business_reg_id as buyer_reg_id, 
+					business_hist_nm as business_hist_nm, 
+					business_hist_spec as business_hist_spec, 
+					business_hist_content as business_hist_content,
+					(case business_level when '1' then '진행중'
+							when '2' then '진행예정'
+                            when '3' then '진행완료'
+	  					 else null end) as business_level
+			FROM tb_businessAnnouncement
+			WHERE 1=1
+			AND DATE(business_est_dt) BETWEEN #{startDate} AND #{endDate}
+			<if test='searchText != null and searchText != "" '>
+			    <choose>
+				    <when test='datepicker1 eq datepicker2 eq searchType eq "" '>
+				 		AND business_est_dt BETWEEN CONCAT(#{datepicker1}) AND CONCAT(#{datepicker2}) OR business_nm LIKE CONCAT('%',#{searchText},'%') OR business_ceo LIKE CONCAT('%',#{searchText},'%')
+				 	</when>	
+				 	<when test='datepicker1 and datepicker2'>
+				 		AND business_est_dt BETWEEN CONCAT(#{datepicker1}) AND CONCAT(#{datepicker2})
+				 	</when>
+				 	<when test='searchType eq 1'>
+				 		AND business_nm LIKE CONCAT('%',#{searchText},'%')
+				 	</when>
+				 	<when test='searchType eq 2'>
+				 		AND business_ceo LIKE CONCAT('%',#{searchText},'%')
+				 	</when>
+			 	</choose>
+			 </if>
+			ORDER BY business_id ASC
+			LIMIT #{startNum}, #{endNum} -->
+			
+			select 
+				mng_no as mngNo,
+				mng_pw as mngPw,
+				mng_id as mngId,
+				mng_nm as mngNm,
+				(case 
+				when auth_tp_cd = '000001' then '마스터' 
+				when auth_tp_cd = '000002' then '사업담당자' 
+				when auth_tp_cd = '000003' then '시설담당자' 
+				when auth_tp_cd = '000004' then '자문담당자' 
+				else '' end
+				) as authTpCd, 
+				mng_tel as mngTel,
+				mng_flag as mngFlag,
+				(case
+				when mng_belong = '000001' then '경영지원팀'
+				when mng_belong = '000002' then '콘텐츠산업진흥단'
+				when mng_belong = '000003' then 'ICT산업진흥단'
+				when mng_belong = '000004' then '4차산업혁명대응TF'
+				else '' end
+				) as mngBelong,
+				date_format(reg_dt, '%Y.%m.%d') as regDt,
+				reg_id as regId
+			from ta_manager
+			WHERE 1=1
+			<if test='authTpCd != null and authTpCd != ""'>
+				AND	auth_tp_cd = #{authTpCd}
+			</if>
+			<if test="searchText != null and searchText != ''">
+		        <choose>
+		        	<when test='searchType eq ""'>
+						AND	mng_id LIKE CONCAT('%',#{searchText},'%') OR mng_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 1'>
+						AND	mng_id LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 2'>
+						AND	mng_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+				</choose>
+			</if>
+			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+			
+	</select>
+	
+	<select id="selectManageListTotCnt" parameterType="jcep.admin.model.MemberVO" resultType="int">
+			/*selectManageListTotCnt*/
+				<!-- SELECT 
+					COUNT(*) totcnt
+			FROM tb_businessAnnouncement
+			WHERE 1=1
+			AND DATE(business_est_dt) BETWEEN #{startDate} AND #{endDate}
+			<if test='searchText != null and searchText != "" '>
+			    <choose>
+				    <when test='datepicker1 eq datepicker2 eq searchType eq "" '>
+				 		AND business_est_dt BETWEEN CONCAT(#{datepicker1}) AND CONCAT(#{datepicker2}) OR business_nm LIKE CONCAT('%',#{searchText},'%') OR business_ceo LIKE CONCAT('%',#{searchText},'%')
+				 	</when>	
+				 	<when test='datepicker1 and datepicker2'>
+				 		AND business_est_dt BETWEEN CONCAT(#{datepicker1}) AND CONCAT(#{datepicker2})
+				 	</when>
+				 	<when test='searchType eq 1'>
+				 		AND business_nm LIKE CONCAT('%',#{searchText},'%')
+				 	</when>
+				 	<when test='searchType eq 2'>
+				 		AND business_ceo LIKE CONCAT('%',#{searchText},'%')
+				 	</when>
+			 	</choose>
+			 </if>
+			ORDER BY business_id ASC -->
+			
+			select count(*) as totCnt
+			from ta_manager
+			WHERE 1=1
+			<if test="searchText != null and searchText != ''">
+		        <choose>
+		        	<when test='searchType eq ""'>
+						AND	mng_id LIKE CONCAT('%',#{searchText},'%') OR mng_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 1'>
+						AND	mng_id LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 2'>
+						AND	mng_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+				</choose>
+			</if>
+			
+	</select>
+	
+	
+	<update id="memberAuthSave" parameterType="jcep.admin.model.MemberVO">
+		    /* memberAuthSave */
+		    
+		    UPDATE ta_manager
+			<set>
+				<if test="authTpCd != null and authTpCd != ''"> auth_tp_cd = case when #{authTpCd} = '000001' then '000001' when #{authTpCd} = '000002' then '000002' when #{authTpCd} = '000003' then '000003' when #{authTpCd} = '000004' then '000004' else '' end,</if>
+			</set>
+				<if test="mngFlag != null and mngFlag != ''"> mng_flag = 'Y'</if>
+			
+			WHERE mng_id LIKE CONCAT('%',#{mngId},'%') 
+			   
+				
+	</update>
+		
+
+	<insert id="bussFileUpload" parameterType="jcep.admin.model.MemberVO">
+		/*bussFileUpload*/
+		<![CDATA[
+			INSERT
+			INTO tb_buss_anncemnt_attch_file(member_id,
+															buss_anncemnt_no,
+															attch_file_no,
+															file_course,
+															org_file_nm,
+															reg_dt,
+															reg_id)
+			VALUES(										#{memberId},
+															#{bussAnncemntNo},
+															#{attchFileNo},
+															#{fileCourse},
+															#{orgFileNm},
+															sysdate(),
+															#{regId})
+		]]>		
+	</insert>
+	<select id="bussFileCheck" parameterType="jcep.admin.model.MemberVO" resultType="int">
+		/*bussFileCheck*/
+		<![CDATA[
+			SELECT 	count(*)
+			FROM tb_buss_anncemnt_attch_file
+			WHERE 1=1
+			and attch_file_no = #{attchFileNo}
+		]]>
+	</select>
+
+	
+	
+		<select id="selectOnlineCounselingStatus" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
+		/* 온라인 상담신청 현황 */
+		/* selectOnlineCounselingStatus */		
+			
+			select
+				@rownum:=@rownum+1 as pageNum,
+				a.member_id as memberId,
+				a.onestop_support_no as onestopSupportNo,
+                a.supp_buss_area_cd as suppBussAreaCd,
+                a.comp_appl_nm as compApplNm,
+				a.applicat_dt as applicatDt,
+                (case 
+				when a.applic_st_cd = 'Y' then '지문완료' 
+				when a.applic_st_cd = 'N' then '진행중' 
+				else '접수' end) as applicStCd,
+				a.comp_tel_no as compTelNo,
+				a.advice_hope_dt as adviceHopeDt,
+				a.advice_place_cd as advicePlaceCd,
+				a.advice_area_cd as adviceAreaCd,
+				a.advice_applic_cont as adviceApplicCont
+			from tb_onestop_support a
+			where 1=1
+			  AND a.member_id = CONCAT(#{memberIdx}) 
+			   and (SELECT @ROWNUM:=0)=0
+			  ORDER BY reg_dt asc
+	
+	</select>
+	
+	
+		<select id="selectOnlineCounselingStatusCount" parameterType="jcep.admin.model.MemberVO"  resultType="int">
+		/* 온라인 상담신청 현황 갯수 */
+		/* selectOnlineCounselingStatusCount */		
+			
+			select
+				COUNT(*) as totCnt
+			from tb_onestop_support a
+			where 1=1
+			  AND a.member_id = CONCAT(#{memberIdx}) 
+	
+	</select>
+	
+	<select id="selectOnlineCounselingStatusPopup" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
+			/* 온라인 상담신청 현황 팝업창 내용 */
+			/*selectOnlineCounselingStatusPopup*/
+		select	count(*) totCnt,
+			a.member_id as memberId, 
+			a.member_pw as memberPw, 
+			a.member_st_cd as memberStCd, 
+			a.member_nm as memberNm, 
+			joinTypeCdNm as joinTypeCdNm, 
+			a.join_type_cd as joinTypeCd, 
+			memberAddr as memberAddr, 
+			a.member_nm as memberNm, 
+			memberHp as memberHp, 
+			memberMail as memberMail, 
+			date_format(a.reg_dt, '%Y.%m.%d') as regDt, 
+			(case 
+			when a.member_st_cd = 'Y' then '승인' 
+			when a.member_st_cd = 'N' then '미승인' 
+			else '' end) as memberStCd,
+			memberTel as memberTel,
+            bb.memberCeo as memberCeo,
+            bb.memberHeadTel as memberHeadTel,
+            bb.entprResultEmpCnt as entprResultEmpCnt,
+            bb.entprEmployeePosition as entprEmployeePosition
+		from (
+			select 
+			b.member_id,
+			'', 
+			b.entpr_respsib_hp_no as memberHp, 
+			b.entpr_head_addr as memberAddr, 
+			b.entpr_nm as joinTypeCdNm,
+			b.entpr_respsib_email as memberMail,
+			b.entpr_head_tel as memberTel,
+            b.entpr_ceo as memberCeo,
+            b.entpr_head_tel as memberHeadTel,
+            (select entpr_result_emp_cnt
+            from tb_enterprise_result b1
+            where b1.member_id = CONCAT(#{memberIdx})) as entprResultEmpCnt,
+            (select entpr_employee_position
+            from tb_enterprise_employee b2
+            where b2.member_id = CONCAT(#{memberIdx})) as entprEmployeePosition
+			from tb_enterprise b, tb_member a 
+			where a.member_id = b.member_id 
+			AND a.member_id = CONCAT(#{memberIdx}) 
+			union 
+			select 
+			c.member_id, 
+			'' as memberNm, 
+			c.expert_head_tel as memberHp, 
+			c.expert_offi_addr as memberAddr, 
+			c.expert_head_addr_nm as joinTypeCdNm,
+			c.expert_email as memberMail,
+			c.expert_offi_tel as memberTel,
+            "" as memberCeo,
+            c.expert_offi_tel as memberHeadTel,
+            "" as entprResultEmpCnt,
+            expert_offi_duty_nm as entprEmployeePosition
+			from tb_expert c, tb_member a 
+			where a.member_id = c.member_id 
+			AND a.member_id = CONCAT(#{memberIdx}) 
+			union 
+			select 
+			d.member_id, 
+			'' as memberNm, 
+			d.buyer_head_tel as memberHp, 
+			d.buyer_head_addr as memberAddr, 
+			d.company_nm as joinTypeCdNm,
+			d.buyer_ceo_email as memberMail,
+			d.buyer_head_tel as memberTel,
+            d.buyer_ceo as memberCeo,
+            d.buyer_head_tel as memberHeadTel,
+            "" as entprResultEmpCnt,
+            "" as entprEmployeePosition
+			from tb_buyer d, tb_member a 
+			where a.member_id = d.member_id 
+			AND a.member_id = CONCAT(#{memberIdx}) 
+			) as bb, 
+			tb_member a 
+			where 1=1
+			  AND a.member_id = bb.member_id
+			  ORDER BY reg_dt asc
+	</select>
+	
+	
+	<select id="selectOnlineCounselingStatusPopup1" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
+			/* 온라인 상담신청 현황 팝업창 내용 */
+			/*selectOnlineCounselingStatusPopup1*/
+		SELECT 
+			onestop_support_no as onestopSupportNo,
+			member_id,
+			applicat_dt,
+			pro_member_id,
+			supp_buss_area_cd,
+			buss_area_others,
+			comp_empl_cnt,
+			comp_appl_nm,
+			comp_posit,
+			comp_tel_no as compTelNo,
+			comp_fax_no,
+			comp_hp_no,
+			comp_mail,
+			advice_hope_dt as adviceHopeDt,
+			advice_place_cd as advicePlaceCd,
+			advice_area_cd as adviceAreaCd,
+			advice_applic_cont as adviceApplicCont,
+			file_course,
+			org_file_nm,
+			upload_file_nm,
+			applic_st_cd,
+			reg_dt,
+			reg_id
+		FROM tb_onestop_support
+		where member_id = CONCAT(#{memberIdx})
+		   and onestop_support_no = CONCAT(#{onestopSupportNo})
+	</select>
+	
+
+
+
+	<select id="selectFacilitiesResourcesApplicationStatus" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
+		/* 추후 시설 및 사용신청 현황 쿼리 작업 해야 함 */
+		/* selectFacilitiesResourcesApplicationStatus */		
+			select	
+				a.member_id as memberId, 
+				a.member_pw as memberPw, 
+				a.member_st_cd as memberStCd, 
+				a.member_nm as memberNm, 
+				joinTypeCdNm as joinTypeCdNm, 
+				a.join_type_cd as joinTypeCd, 
+				memberAddr as memberAddr, 
+				a.member_nm as memberNm, 
+				memberHp as memberHp, 
+				memberMail as memberMail, 
+				date_format(a.reg_dt, '%Y.%m.%d') as regDt, 
+				(case 
+				when a.member_st_cd = 'Y' then '승인' 
+				when a.member_st_cd = 'N' then '미승인' 
+				else '' end) as memberStCd,
+				memberTel as memberTel,
+				bb.memberCeo as memberCeo,
+	            bb.memberHeadTel as memberHeadTel,
+	            bb.entprResultEmpCnt as entprResultEmpCnt
+			from (
+			select 
+				b.member_id,
+				'', 
+				b.entpr_respsib_hp_no as memberHp, 
+				b.entpr_head_addr as memberAddr, 
+				b.entpr_nm as joinTypeCdNm,
+				b.entpr_respsib_email as memberMail,
+				b.entpr_head_tel as memberTel,
+	            b.entpr_ceo as memberCeo,
+	            b.entpr_head_tel as memberHeadTel,
+	            (select entpr_result_emp_cnt
+	            from tb_enterprise_result b1
+	            where b1.member_id = CONCAT(#{memberIdx})) as entprResultEmpCnt
+				from tb_enterprise b, tb_member a 
+				where a.member_id = b.member_id 
+				AND a.member_id = CONCAT(#{memberIdx}) 
+			union 
+			select 
+				c.member_id, 
+				'' as memberNm, 
+				c.expert_head_tel as memberHp, 
+				c.expert_offi_addr as memberAddr, 
+				c.expert_head_addr_nm as joinTypeCdNm,
+				c.expert_email as memberMail,
+				c.expert_offi_tel as memberTel,
+	            "" as memberCeo,
+	            c.expert_offi_tel as memberHeadTel,
+	            "" as entprResultEmpCnt
+				from tb_expert c, tb_member a 
+				where a.member_id = c.member_id 
+				AND a.member_id = CONCAT(#{memberIdx}) 
+			union 
+			select 
+				d.member_id, 
+				'' as memberNm, 
+				d.buyer_head_tel as memberHp, 
+				d.buyer_head_addr as memberAddr, 
+				d.company_nm as joinTypeCdNm,
+				d.buyer_ceo_email as memberMail,
+				d.buyer_head_tel as memberTel,
+	            d.buyer_ceo as memberCeo,
+	            d.buyer_head_tel as memberHeadTel,
+	            "" as entprResultEmpCnt
+				from tb_buyer d, tb_member a 
+				where a.member_id = d.member_id 
+				AND a.member_id = CONCAT(#{memberIdx}) 
+			) as bb, 
+			tb_member a 
+				where 1=1
+				  AND a.member_id = bb.member_id
+				  ORDER BY reg_dt asc
+	
+	
+	
+	</select>
+
+
+	<!-- 20191212 최선권 원스톱지원 회원정보 불러오기 -->	
+	<select id="selectOnlineApply" 					parameterType="String" 	resultType="jcep.admin.model.MemberVO">
+		/*selectOnlineApply*/
+		<![CDATA[
+			SELECT 	a.member_id 						as memberId,
+				        a.entpr_nm							as	entprNm,
+				        a.entpr_ceo						as entprCeo,
+				        a.entpr_head_addr				as entprHeadAddr,
+				        a.entpr_head_detail_addr		as entprHeadDetailAddr,
+				        a.large_buss_area_cd			as	largeBussAreaCd,
+				        a.medium_buss_area_cd		as	mediumBussAreaCd,
+				        a.entpr_site						as	entprSite,
+				        a.entpr_head_tel					as	entprHeadTel
+			FROM 	tb_enterprise a
+			WHERE 	a.member_id 						= #{memberId}
+		]]>
+	</select>
+	
+	
+	<update id="bussFileUpdate" parameterType="jcep.admin.model.MemberVO">
+		/*bussFileUpdate*/
+		<![CDATA[
+			UPDATE tb_buss_anncemnt_attch_file
+			set	file_course = #{fileCourse},
+				 	org_file_nm = #{orgFileNm},
+				 	reg_dt =sysdate()
+			where attch_file_no = #{attchFileNo}
+		]]>
+	</update> 
+	<!-- 20191115 최선권 파일불러오기  -->
+<!-- 	<select id="fileSearchList" parameterType="String" resultType="jcep.admin.model.MemberVO">
+x	</select>
+ -->	
+ 	<!-- 20191118 최선권 사업공고 신청할때 로그인되어있는 회원의 정보를 조회하여 입력하기 위한 쿼리 -->
+ 	<select id="selectenterpriseDetail"  		parameterType="String" resultType="jcep.admin.model.MemberVO">
+			/*selectenterpriseDetail*/
+		<![CDATA[
+			SELECT 	member_id 						as memberId,
+						entpr_branch_addr 			as entprBranchAddr,
+						entpr_branch_tel 				as entprBranchTel,
+						entpr_com_reg_num 			as entprComRegNum,
+						entpr_ceo 						as entprCeo,
+						entpr_ceo_email 				as entprCeoEmail,
+						entpr_est_dt 					as entprEstDt,
+		 				entpr_respsib_nm 			as entprRespsibNm,
+		 				entpr_respsib_hp_no 		as entprRespsibHpNo,
+		 				entpr_respsib_email 			as entprRespsibEmail,
+		 				entpr_nm 						as entprNm,
+						entpr_head_addr 				as entprHeadAddr,
+						entpr_head_tel 				as entprHeadTel,
+						entpr_site 						as entprSite,
+						large_buss_area_cd 			as largeBussAreaCd,
+						medium_buss_area_cd 		as mediumBussAreaCd,
+						format(entpr_capital_amt,0) 
+															as entprCapitalAmt,
+						entpr_head_detail_addr 	as entprHeadDetailAddr,
+						entpr_branch_detail_addr	as	entprBranchDetailAddr
+		 	FROM tb_enterprise
+		 	where 1=1
+		 	and member_id = #{memberId}
+		]]>
+ 	</select>	
+ 	
+ 	<!-- 온라인상담 현황 관리 List -->
+	<select id="selectAdviceOnlineStatusManagementList" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
+			/*selectAdviceOnlineStatusManagementList*/
+			<![CDATA[
+				 SELECT  @rownum:=@rownum+1 as pageNum, 
+					a.onestop_support_no as onestopSupportNo, 
+					a.member_id as memberId, 
+					date_format(a.applicat_dt, '%Y.%m.%d') as applicatDt, 
+					a.pro_member_id as proMemberId, 
+					a.supp_buss_area_cd as suppBussAreaCd, 
+					a.buss_area_others as bussAreaOthers, 
+					a.comp_empl_cnt as compEmplCnt, 
+					a.comp_appl_nm as compApplNm, 
+					a.comp_posit as compPosit, 
+					a.comp_tel_no as compTelNo, 
+					a.comp_fax_no as compFaxNo, 
+					a.comp_hp_no as compHpNo, 
+					a.comp_mail as compMail, 
+					date_format(a.advice_hope_dt, '%Y.%m.%d') as adviceHopeDt, 
+					(case 
+					when a.advice_place_cd  = '000001' then 'ICT'
+					when a.advice_place_cd  = '000002' then '콘텐츠'
+					when a.advice_place_cd  = '000003' then '1인창조'
+					when a.advice_place_cd  = '000004' then '기타'
+					else ''
+					end
+					) as advicePlaceCd, 
+					(case 
+					when a.advice_area_cd  = '000001' then '법률정보'
+					when a.advice_area_cd  = '000002' then '세무/회계'
+					when a.advice_area_cd  = '000003' then '인사/노무'
+					when a.advice_area_cd  = '000004' then '자금/금융'
+					when a.advice_area_cd  = '000005' then '인력/교육'
+					when a.advice_area_cd  = '000006' then '기술(특허)/인증'
+					when a.advice_area_cd  = '000007' then '투자유지(관로/수출)'
+					else ''
+					end
+					) as adviceAreaCd, 
+					a.advice_applic_cont as adviceApplicCont, 
+					a.file_course as fileCourse, 
+					a.org_file_nm as orgFileNnm, 
+					a.upload_file_nm as uploadFileNm, 
+					a.applic_st_cd as applicStCd, 
+					date_format(a.reg_dt, '%Y.%m.%d') as regDt, 
+					a.reg_id as regId,
+					b.entpr_nm as entprNm
+					FROM tb_onestop_support a, tb_enterprise b
+					WHERE 1=1
+					AND a.member_id = b.member_id 
+					AND (SELECT @ROWNUM:=0)=0
+			]]>
+			<if test='searchText != null and searchText != "" '>
+			    <choose>
+				    <when test='searchType eq ""'>
+				 		AND a.member_id LIKE CONCAT('%',#{searchText},'%') OR b.entpr_nm LIKE CONCAT('%',#{searchText},'%')
+				 	</when>	
+				 	<when test='searchType eq 1'>
+				 		AND a.member_id LIKE CONCAT('%',#{searchText},'%')
+				 	</when>
+				 	<when test='searchType eq 2'>
+				 		AND b.entpr_nm LIKE CONCAT('%',#{searchText},'%')
+				 	</when>
+			 	</choose>
+			 </if>	
+			 	ORDER BY a.onestop_support_no DESC
+			 	LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+	</select>
+
+	<!-- 온라인상담 현황 관리 카운트 -->
+	 <select id="selectAdviceOnlineStatusManagementListTotCnt" parameterType="jcep.admin.model.MemberVO" resultType="int">
+			/*selectAdviceOnlineStatusManagementListTotCnt*/
+			<![CDATA[
+				SELECT COUNT(*) totcnt
+				FROM tb_onestop_support a, tb_enterprise b
+					WHERE 1=1
+					AND a.member_id = b.member_id 
+					AND (SELECT @ROWNUM:=0)=0
+			]]>
+			<if test='searchText != null and searchText != "" '>
+			    <choose>
+				    <when test='searchType eq ""'>
+				 		AND a.member_id LIKE CONCAT('%',#{searchText},'%') OR b.entpr_nm LIKE CONCAT('%',#{searchText},'%')
+				 	</when>	
+				 	<when test='searchType eq 1'>
+				 		AND a.member_id LIKE CONCAT('%',#{searchText},'%')
+				 	</when>
+				 	<when test='searchType eq 2'>
+				 		AND b.entpr_nm LIKE CONCAT('%',#{searchText},'%')
+				 	</when>
+			 	</choose>
+			 </if>	
+			 	ORDER BY a.onestop_support_no DESC
+			 	LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+	</select>
+	
+	<!-- 온라인상담 현황 관리 상세보기 -->
+	<select id="selectAdviceOnlineStatusManagementDetail" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
+			/*selectAdviceOnlineStatusManagementDetail*/
+				select 
+						onestop_support_no as onestopSupportNo,
+						member_id as memberId,
+						applicat_dt as applicatDt,
+						pro_member_id as proMemberId,
+						supp_buss_area_cd as suppBussAreaCd,
+						buss_area_others as bussAreaOthers,
+						comp_empl_cnt as compEmplCnt,
+						comp_appl_nm as compApplNm,
+						comp_posit as compPosit,
+						comp_tel_no as compTelNo,
+						comp_fax_no as compFaxNo,
+						comp_hp_no as compHpNo,
+						comp_mail as compMail,
+						advice_hope_dt as adviceHopeDt,
+						advice_place_cd as advicePlaceCd,
+						advice_area_cd as adviceAreaCd,
+						advice_applic_cont as adviceApplicCont,
+						file_course as fileCourse,
+						org_file_nm as orgFileNm,
+						upload_file_nm as uploadFileNm,
+						applic_st_cd as applicStCd,
+						reg_dt as regDt,
+						reg_id as regId
+				from tb_onestop_support
+				WHERE member_id LIKE CONCAT('%',#{memberId},'%')
+				   AND onestop_support_no LIKE CONCAT('%',#{onestopSupportNo},'%')				
+	</select>
+	
+	<!--  온라인상담 현황 관리 > 다음글-->
+	<select id="selectAdviceOnlineStatusManagementDetailPlus" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
+			/*selectAdviceOnlineStatusManagementDetailPlus*/
+			<![CDATA[
+				select a.*
+				from(SELECT  @rownum:=@rownum+1 as pageNum,
+									onestop_support_no as onestopSupportNo,
+									member_id as memberId,
+									applicat_dt as applicatDt,
+									pro_member_id as proMemberId,
+									supp_buss_area_cd as suppBussAreaCd,
+									buss_area_others as bussAreaOthers,
+									comp_empl_cnt as compEmplCnt,
+									comp_appl_nm as compApplNm,
+									comp_posit as compPosit,
+									comp_tel_no as compTelNo,
+									comp_fax_no as compFaxNo,
+									comp_hp_no as compHpNo,
+									comp_mail as compMail,
+									advice_hope_dt as adviceHopeDt,
+									advice_place_cd as advicePlaceCd,
+									advice_area_cd as adviceAreaCd,
+									advice_applic_cont as adviceApplicCont,
+									file_course as fileCourse,
+									org_file_nm as orgFileNm,
+									upload_file_nm as uploadFileNm,
+									applic_st_cd as applicStCd,
+									reg_dt as regDt,
+									reg_id as regId
+						FROM tb_onestop_support a
+						WHERE 1=1 and (SELECT @ROWNUM:=0)=0
+						ORDER BY onestop_support_no DESC) a
+				where a.pageNum = #{pageNum}+1				
+			]]>
+	</select>	
+	
+	<!--  온라인상담 현황 관리 > 이전글-->
+	<select id="selectAdviceOnlineStatusManagementDetailMinus" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
+			/*selectAdviceOnlineStatusManagementDetailMinus*/
+			<![CDATA[
+				select a.*
+				from(SELECT  @rownum:=@rownum+1 as pageNum,					 
+								    onestop_support_no as onestopSupportNo,
+									member_id as memberId,
+									applicat_dt as applicatDt,
+									pro_member_id as proMemberId,
+									supp_buss_area_cd as suppBussAreaCd,
+									buss_area_others as bussAreaOthers,
+									comp_empl_cnt as compEmplCnt,
+									comp_appl_nm as compApplNm,
+									comp_posit as compPosit,
+									comp_tel_no as compTelNo,
+									comp_fax_no as compFaxNo,
+									comp_hp_no as compHpNo,
+									comp_mail as compMail,
+									advice_hope_dt as adviceHopeDt,
+									advice_place_cd as advicePlaceCd,
+									advice_area_cd as adviceAreaCd,
+									advice_applic_cont as adviceApplicCont,
+									file_course as fileCourse,
+									org_file_nm as orgFileNm,
+									upload_file_nm as uploadFileNm,
+									applic_st_cd as applicStCd,
+									reg_dt as regDt,
+									reg_id as regId
+							FROM tb_onestop_support a
+							WHERE 1=1 and (SELECT @ROWNUM:=0)=0
+							ORDER BY onestop_support_no DESC) a
+				where a.pageNum = #{pageNum}-1
+			]]>
+	</select>	
+	
+	<update id="adviceOnlineStatusManagementUpdate" parameterType="jcep.admin.model.MemberVO">
+			/* adviceOnlineStatusManagementUpdate */
+			UPDATE tb_onestop_support
+			SET
+			<if test="proMemberId != null and proMemberId != ''"> pro_member_id = #{proMemberId}</if>			
+			WHERE member_id = #{memberId} 
+	</update>	
+	
+	
+	<select id="selectCommonsList" resultType="jcep.admin.model.MemberVO" parameterType="jcep.admin.model.MemberVO" >
+		/*selectCommonsList*/ 
+		<![CDATA[
+			SELECT  group_cd 			as groupCd,
+						group_nm 			as groupNm,
+						common_cd 		as commonCd,
+						common_nm 		as commonNm,
+						common_enm 		as commonEnm,
+						order_nbr 			as orderNbr,
+						use_flag 			as useFlag,
+						remark 				as remark ,
+						reg_dt 				as regDt,
+						reg_id 				as regId
+			FROM 	jnam.ta_common
+			where 	1=1
+			AND		use_flag				= 'Y'
+			AND 		group_cd 			= #{groupCd}
+		]]>
+	</select>
+	
+	<select resultType="int" parameterType="jcep.admin.model.MemberVO" id="businessDetailCheck">
+		/*businessDetailCheck*/
+		/*기업진흥원수혜사업진행정보 테이블*/
+		<![CDATA[
+			SELECT count(*)
+			FROM tb_buss_anncemnt_appl
+			WHERE 1=1
+			AND buss_anncemnt_no = #{bussAnncemntNo}
+			and member_id = #{memberId}
+		]]>
+	</select>
+
+	<insert parameterType="jcep.admin.model.MemberVO" id="businessDetailInseert">
+		/*businessDetailInseert*/ 
+		<![CDATA[		
+			insert into tb_buss_anncemnt_appl( buss_anncemnt_no,
+															member_id,
+															applicat_dt,
+															applic_st_cd,
+															approval_dt,
+															remark,
+															reg_dt,
+															reg_id)
+			values(#{bussAnncemntNo},
+					 #{memberId},
+					 DATE_FORMAT(now(),'%Y-%m-%d'),
+					 #{applicStCd},
+					 #{approvalDt},
+					 #{remark},
+					 CURRENT_TIMESTAMP,
+					 #{memberId}
+					 )
+		]]>
+</insert>
+
+
+
+ 	<!-- 20191118 최선권 사업공고 신청할때 로그인되어있는 회원의 정보를 조회하여 입력하기 위한 쿼리 -->
+ 	<select id="selectenterpriseDetailCheck"  parameterType="String" resultType="int">
+			/*selectenterpriseDetailCheck*/
+		<![CDATA[
+			SELECT 	count(*)
+		 	FROM tb_enterprise
+		 	where 1=1
+		 	and member_id = #{memberId}
+		]]>
+ 	</select>	
+ 	
+<!-- 
+ *===============================*
+ ||                    20191203                     ||
+ ||	                             최선권                              ||
+ ||                   마이페이지 정보 조회                 ||
+ *===============================*
+ --> 
+ <!-- 진흥원수혜사업 조회 -->	
+ 	<select id="selectEnterpriseJcepBussDetail"  parameterType="String" resultType="jcep.admin.model.MemberVO">
+			/*selectEnterpriseJcepBussDetail*/
+		<![CDATA[
+			SELECT 	d.*,
+						group_concat(
+							SUBSTRING_INDEX(dd.org_file_nm, '_', -1),'\n')
+						as orgFileNm
+			FROM	(	SELECT 	a.buss_anncemnt_no 			as totcnt,
+							a.buss_anncemnt_no 					as bussAnncemntNo,
+							a.member_id 								as MemberId,
+							a.entpr_creat_job_cnt					as entprCreatJobCnt,
+							a.entpr_buss_yn							as entprBussYn,
+
+			                b.buss_anncemnt_nm					as bussAnncemntNm,
+							b.buss_fr_dt								as bussFrDt,
+							b.buss_to_dt								as bussToDt,
+							b.buss_cost_amt							as	bussCostAmt,
+							b.buss_dept_cd							as bussDeptCd,
+
+							c.approval_dt								as approvalDt
+						FROM tb_enterprise_jcep_buss a
+						JOIN tb_business_announcement b 	ON a.buss_anncemnt_no = b.buss_anncemnt_no
+						JOIN tb_buss_anncemnt_appl c 		ON a.buss_anncemnt_no = c.buss_anncemnt_no
+						where 1 = 1
+						and a.member_id = #{memberId})
+					d,
+					tb_enterprise_attch_file dd
+			        WHERE dd.member_id = d.MemberId
+		]]>
+ 	</select>	
+ 	
+ <!-- 진흥원수혜사업 카운트 -->	
+ 	<select id="selectEnterpriseJcepBussCheck"  parameterType="String" resultType="int">
+			/*selectEnterpriseJcepBussCheck*/
+		<![CDATA[
+			SELECT 	count(*)
+			FROM	(SELECT
+							a.buss_anncemnt_no 										as bussAnncemntNo,
+							a.member_id 													as MemberId,
+							a.entpr_creat_job_cnt										as entprCreatJobCnt,
+							a.entpr_buss_yn												as entprBussYn,
+
+							b.buss_fr_dt													as bussFrDt,
+							b.buss_to_dt													as bussToDt,
+							b.buss_cost_amt												as	bussCostAmt,
+							b.buss_dept_cd												as bussDeptCd,
+
+							c.approval_dt													as approvalDt
+						FROM tb_enterprise_jcep_buss a
+						JOIN 	tb_business_announcement b 	ON a.buss_anncemnt_no = b.buss_anncemnt_no
+						JOIN 	tb_buss_anncemnt_appl c 			ON a.buss_anncemnt_no = c.buss_anncemnt_no
+						WHERE 1 = 1
+						AND 	a.member_id = #{memberId}
+						) d
+		]]>
+ 	</select>
+
+
+ <!-- 지적재산권 카운트 -->	
+ 	<select id="selectEnterpriseInitProptyCheck"  parameterType="String" resultType="int">
+			/*selectEnterpriseInitProptyCheck*/
+		<![CDATA[
+				SELECT 	count(*) totcnt
+				FROM tb_enterprise_intlt_propty 
+				WHERE member_id = #{memberId}
+		]]>
+ 	</select>
+
+
+ <!-- 지적재산권 카운트 -->	
+ 	<select id="selectEnterpriseInitProptyDetail"  parameterType="String" resultType="jcep.admin.model.MemberVO">
+			/*selectEnterpriseInitProptyDetail*/
+		<![CDATA[
+				select 	enterprise_idx 					as totcnt,
+							enterprise_idx					as enterpriseIdx,
+							intlt_propt_buss_nm			as ntltProptBussNm,
+							intlt_propt_perf_nm 			as ntltProptPerfNm,
+							intlt_propt_cd 					as intltProptCd,
+							reg_form_cd					as regFormCd,
+							reg_nation_cd					as regNationCd,
+							intlt_propt_reg_no			as intltProptRegNo,
+							intlt_propty_dt					as intltProptyDt,
+							remark
+				FROM tb_enterprise_intlt_propty 
+				WHERE member_id = #{memberId}
+		]]>
+ 	</select>
+
+	 <!-- 기업 사업 정보 불러오기-->	
+ 	<select id="selectEnterpriseEmployeeDetail"  parameterType="String" resultType="jcep.admin.model.MemberVO">
+		/*selectEnterpriseEmployeeDetail*/
+		<![CDATA[
+			SELECT 	enterprise_idx 					as totcnt,
+						entpr_employee_nm 			as entprEmployeeNm,
+				        entpr_employee_dept 		as entprEmployeeDept,
+				        entpr_employee_position 	as entprEmployeePosition,
+				        entpr_employee_email 		as entprEmployeeEmail,
+				        if(char_length(entpr_employee_phone)=11,
+						concat(left(entpr_employee_phone,3),"-",mid(entpr_employee_phone,4,4),"-",right(entpr_employee_phone,4)),
+           				 concat(left(entpr_employee_phone,3),"-",mid(entpr_employee_phone,4,3),"-",right(entpr_employee_phone,4)))
+           													 as entprEmployeePhone,
+						SUBSTRING_INDEX(org_file_nm, '_', -1)		as orgFileNm 
+			FROM 	tb_enterprise_employee
+			WHERE	member_id = #{memberId}
+		]]>
+ 	</select>
+
+	 <!-- 기업 사업 정보 카운트-->	
+ 	<select id="selectEnterpriseEmployeeCheck"  parameterType="String" resultType="int">
+		/*selectEnterpriseEmployeeCheck*/
+		<![CDATA[
+			SELECT 	count(*)		as totcnt
+			FROM 	tb_enterprise_employee
+			WHERE 	member_id 						= #{memberId}
+		]]>
+ 	</select>
+
+
+	<delete id="deleteEnterpriseEmployeeDetail"  	parameterType="java.util.HashMap">
+		/*deleteEnterpriseEmployeeDetail*/
+		<![CDATA[
+			DELETE 	FROM 	tb_enterprise_employee 
+			WHERE 	member_id 						= #{memberId}
+			AND 		enterprise_idx 					= #{enterpriseIdx}
+		]]>
+	</delete>
+	
+	<select id="deleteEnterpriseEmployeeCheck"	parameterType="java.util.HashMap" resultType="int">
+		/*deleteEnterpriseEmployeeCheck*/
+		<![CDATA[
+			SELECT 	count(*) totcnt
+			FROM		tb_enterprise_employee 
+			WHERE 	member_id 						= #{memberId}
+			AND 		enterprise_idx 					= #{enterpriseIdx}
+		]]>
+	</select>
+
+	<update id="updateEnterpriseEmployee"			parameterType="jcep.admin.model.MemberVO">
+		/*updateEnterpriseEmployee*/
+		<![CDATA[
+            UPDATE 	tb_enterprise_employee 	
+            SET 		entpr_employee_nm 			= #{entprEmployeeNm},
+						entpr_employee_dept 		= #{entprEmployeeDept},
+						entpr_employee_position 	= #{entprEmployeePosition},
+						entpr_employee_email 		= #{entprEmployeeEmail},
+						entpr_employee_phone 		= #{entprEmployeePhone},
+						file_course 						= #{fileCourse},
+						org_file_nm 					= #{orgFileNm},
+						reg_dt 							= sysdate()
+
+			WHERE 	member_id 						= #{memberId}
+			AND 		enterprise_idx 					= #{enterpriseIdx}
+		]]>
+	</update>
+
+	<select id="updateEnterpriseEmployeeCheck"		parameterType="jcep.admin.model.MemberVO"			resultType="int">
+		/*updateEnterpriseEmployeeCheck*/
+		<![CDATA[
+			SELECT 	count(*) totcnt
+			FROM 	tb_enterprise_employee
+			WHERE 	member_id 						= #{memberId}
+			AND 		enterprise_idx 					= #{enterpriseIdx}
+		]]>
+	</select>
+	
+		 <!-- 지적재산권 카운트-->	
+ 	<select id="deleteJecpCheck"  parameterType="String" resultType="int">
+		/*deleteJecpCheck*/
+		<![CDATA[
+			SELECT 	count(enterprise_idx)		as totcnt
+			FROM 	tb_enterprise_intlt_propty
+			WHERE 	member_id 						= #{memberId}
+		]]>
+ 	</select>
+
+
+	<delete id="deleteJecpDetail"  	parameterType="java.util.HashMap">
+		/*deleteJecpDetail*/
+		<![CDATA[
+		DELETE 	FROM 	tb_enterprise_intlt_propty 
+			WHERE 	member_id 						= #{memberId}
+			AND 		enterprise_idx 					= #{enterpriseIdx}
+		]]>
+	</delete>
+	
+	
+	<select id="updateJecpCheck"	parameterType="java.util.HashMap" resultType="int">
+		/*updateJecpCheck*/
+		<![CDATA[
+			SELECT 	count(*) totcnt
+			FROM		tb_enterprise_intlt_propty 
+			WHERE 	member_id 						= #{memberId}
+			AND 		enterprise_idx 					= #{enterpriseIdx}
+		]]>
+	</select>
+
+	<update id="updateJecp"			parameterType="jcep.admin.model.MemberVO">
+		/*updateJecp*/
+		<![CDATA[
+            UPDATE 	tb_enterprise_intlt_propty 	
+            SET 		intlt_propt_buss_nm			= #{ntltProptBussNm},
+            			intlt_propt_perf_nm			= #{ntltProptPerfNm},
+            			intlt_propt_cd					= #{intltProptCd},
+            			reg_form_cd					= #{regFormCd},
+            			reg_nation_cd					= #{regNationCd},
+            			intlt_propt_reg_no			= #{intltProptRegNo},
+            			intlt_propty_dt					= #{intltProptyDt},
+            			remark							= #{remark},
+            			reg_dt							= sysdate()
+
+			WHERE 	member_id 						= #{memberId}
+			AND 		enterprise_idx 					= #{enterpriseIdx}
+		]]>
+	</update>
+	
+	
+	<update id="mypageCompanyUpdate" 		parameterType="jcep.admin.model.MemberVO">
+		/*mypageCompanyUpdate*/
+		<![CDATA[
+			UPDATE tb_enterprise
+			SET
+						entpr_ceo_email					=#{entprCeoEmail},
+						entpr_com_reg_num				=#{entprComRegNum},
+						large_buss_area_cd				=#{largeBussAreaCd},
+						medium_buss_area_cd			=#{mediumBussAreaCd},
+						entpr_site							=#{entprSite},
+						entpr_head_addr					=#{entprHeadAddr},
+						entpr_head_detail_addr			=#{entprHeadDetailAddr},
+						entpr_head_tel					=#{entprHeadTel},
+						entpr_branch_addr				=#{entprBranchAddr},
+						entpr_branch_detail_addr		=#{entprBranchDetailAddr},
+						entpr_branch_tel					=#{entprBranchTel},
+						entpr_est_dt						=#{entprEstDt},
+						entpr_capital_amt				=#{entprCapitalAmt}
+			WHERE 	1=1
+			AND		member_id 							=#{memberId}
+		]]>
+	</update>
+	<!-- 20191210 최선권 마에피이지 기업성과정보 조회 -->
+	<select id="mypageEnterpriseResult" 		parameterType="String" 		resultType="jcep.admin.model.MemberVO">
+		/*mypageEnterpriseResult*/
+		<![CDATA[
+			SELECT 	enterprise_idx 					as enterpriseIdx,
+						entpr_result_year_cd		as entprResultYearCd,
+						entpr_result_qta_cd			as entprResultQtaCd,
+						format(entpr_capital_amt,0)
+															as	entprCapitalAmt,
+						format(entpr_result_take_amt,0)
+															as	entprResultTakeAmt,
+						entpr_result_emp_cnt		as	entprResultEmpCnt,
+						reg_dt							as regDt,
+						reg_id							as regId						
+			FROM		tb_enterprise_result
+			WHERE	1 = 1
+			AND		member_id = 					#{memberId}
+		]]>
+	</select>
+	<!-- 20191210 최선권 마에피이지 기업성과정보 조회체크 -->
+	<select id="mypageEnterpriseResultCheck" 		parameterType="String" 		resultType="int">
+		/*mypageEnterpriseResultCheck*/
+		<![CDATA[
+			SELECT 	count(*) as totcnt
+			FROM		tb_enterprise_result
+			WHERE	1 = 1
+			AND		member_id = 					#{memberId}
+		]]>
+	</select>
+	
+	
+	<!-- 20191210 마이페이지 ->기업성과관리 삭제체크 -->
+	<select id="deletememberEnterpriseResultCheck" parameterType="java.util.HashMap" resultType="int">
+		/*deletememberEnterpriseResultCheck*/
+		<![CDATA[
+			SELECT 	count(*) as totcnt
+			FROM 	tb_enterprise_result
+			WHERE	member_id = 					#{memberId}
+			AND		enterprise_idx = 				#{enterpriseIdx}
+		]]>
+	</select>
+	<!-- 20191210 최선권 마에피이지 기업성과정보 삭제 -->
+	<delete id="deletememberEnterpriseResult" parameterType="java.util.HashMap">
+		/*deletememberEnterpriseResult*/
+		<![CDATA[
+			DELETE 	
+			FROM 	tb_enterprise_result 
+			WHERE 	member_id 						= #{memberId}
+			AND 		enterprise_idx 					= #{enterpriseIdx}
+		]]>
+	</delete>
+	<!-- 20191210 최선권 마에피이지 기업성과정보 추가 -->
+	<insert id="mypageEnterpriseResultInsert" parameterType="jcep.admin.model.MemberVO">
+		/*mypageEnterpriseResultInsert*/
+		<![CDATA[
+			INSERT 
+			INTO		tb_enterprise_result(
+						member_id,
+						enterprise_idx,
+						entpr_result_year_cd,
+						entpr_result_qta_cd,
+						entpr_capital_amt,
+						entpr_result_take_amt,
+						entpr_result_emp_cnt,
+						reg_dt,
+						reg_id)
+			VALUES	(
+						#{memberId},
+						(SELECT ifnull(MAX(a.enterprise_idx), 0)+1 FROM tb_enterprise_result a),
+						#{entprResultYearCd},
+						#{entprResultQtaCd},
+						#{entprCapitalAmt},
+						#{entprResultTakeAmt},
+						#{entprResultEmpCnt},
+						sysdate(),
+						#{memberId}
+						)
+		]]>	
+	</insert>
+	<!-- 20191210 최선권 마에피이지 기업성과정보 수정 -->
+	<update id="memberEnterpriseResultUpdate" 	parameterType="jcep.admin.model.MemberVO">
+		/*memberEnterpriseResultUpdate*/
+		<![CDATA[
+			UPDATE 	tb_enterprise_result
+			SET		entpr_result_year_cd				=#{entprResultYearCd},
+						entpr_result_qta_cd					=#{entprResultQtaCd},
+						entpr_capital_amt					=#{entprCapitalAmt},
+						entpr_result_take_amt				=#{entprResultTakeAmt},
+						entpr_result_emp_cnt				=#{entprResultEmpCnt}
+						
+			WHERE	member_id								=#{memberId}
+			and		enterprise_idx							=#{enterpriseIdx}
+		]]>
+	</update>
+	
+		<!-- 20191210 최선권 마에피이지 기업성과정보 조회(Min) -->
+	<select id="mypageEnterpriseResultMin" 		parameterType="String" 		resultType="jcep.admin.model.MemberVO">
+		/*mypageEnterpriseResult*/
+		<![CDATA[
+			SELECT 	enterprise_idx 					as enterpriseIdx,
+						entpr_result_year_cd		as entprResultYearCd,
+						entpr_result_qta_cd			as entprResultQtaCd,
+						format(entpr_capital_amt,0)
+															as	entprCapitalAmt,
+						format(entpr_result_take_amt,0)
+															as	entprResultTakeAmt,
+						entpr_result_emp_cnt		as	entprResultEmpCnt,
+						reg_dt							as regDt,
+						reg_id							as regId						
+			FROM		tb_enterprise_result
+			WHERE	1 = 1
+			AND		member_id 						=#{memberId}
+			LIMIT		4
+		]]>
+	</select>
+	<!-- 20191210 최선권 마에피이지 기업성과정보 조회체크(Min) -->
+	<select id="mypageEnterpriseResultCheckMin" 		parameterType="String" 		resultType="int">
+		/*mypageEnterpriseResultCheck*/
+		<![CDATA[
+			SELECT 	count(*) as totcnt
+			FROM		tb_enterprise_result
+			WHERE	1 = 1
+			AND		member_id 						=#{memberId}
+			LIMIT		4
+		]]>
+	</select>
+
+	<select id="selectOnchangeCheck" 		parameterType="string" resultType="int">
+		/*selectOnchangeCheck*/
+		<![CDATA[
+			SELECT	count(*) totcnt
+			FROM		ta_common
+			WHERE	group_cd						=	'G00003'
+            AND		use_flag							=	'Y'
+			AND		left(common_cd,2)			=	#{MediumBussAreaCd}			
+		]]>
+	</select>
+
+	<select id="selectOnchange" 				parameterType="string" resultType="jcep.admin.model.MemberVO">
+		/*selectOnchange*/
+		<![CDATA[
+			SELECT	group_cd						as groupCd,
+						group_nm						as groupNm,
+						common_cd						as commonCd,
+						common_nm					as commonNm,
+						common_enm					as commonEnm,
+						order_nbr						as orderNbr
+			FROM		ta_common	
+			WHERE	group_cd						=	'G00003'
+            AND		use_flag							=	'Y'
+			AND		left(common_cd,2)			=#{MediumBussAreaCd}
+		]]>
+	</select>
+	
+	<select id="selectLargeBussAreaCd" parameterType="string" resultType="jcep.admin.model.MemberVO">
+		/*selectLargeBussAreaCd*/
+		<![CDATA[	
+			SELECT 	common_nm					as	commonNmm,
+						common_cd						as	common_cd
+			FROM 	ta_common
+			WHERE 	group_cd 						='g00002'
+            AND		use_flag							='Y'
+			AND 		left(common_cd,2)			=#{largeBussAreaCd}
+		]]>
+	</select>
+
+	<select id="selectLargeBussAreaCd2" parameterType="java.util.HashMap" resultType="string">
+		/*selectLargeBussAreaCd*/
+		<![CDATA[
+			select * from ta_common
+            AND		use_flag							=	'Y'
+			where 	group_cd 						= #{groupCd}
+			and 		common_cd like CONCAT('%'#{largeBussAreaCd})
+		]]>
+	</select>
+	<!-- 20191212	최선권 원스톱지원신청에 필요한 정보 불러오기 -->	
+	<select id="largecode" 							parameterType="int" 			resultType="String">
+		/*lagecode*/
+		<![CDATA[
+			SELECT	common_nm					as	commonNm
+			FROM 	ta_common
+			WHERE	group_cd						=	"g00002"
+            AND		use_flag							=	'Y'
+			AND		common_cd						=	#{largecode}
+		]]>
+	</select>
+	
+	<!-- 20191212	최선권 원스톱지원신청에 필요한 정보 불러오기 -->
+	<select id="mediumcode" 						parameterType="String" 			resultType="String">
+		/*mediumcode*/
+		<![CDATA[
+			SELECT	common_nm					as	commonNm
+			FROM 	ta_common
+			WHERE	group_cd						=	"g00003"
+            AND		use_flag							=	'Y'
+			AND		common_cd						=	#{mediumcode}
+		]]>
+	</select>
+
+	<!-- 원스톱 업무일지 -->
+	<select id="selectAdviceOnlineStatusBusiness" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
+			/*selectAdviceOnlineStatusBusiness*/
+				select 
+						a.onestop_support_no,
+						a.member_id,
+						a.attch_file_no,
+						a.file_course,
+						a.org_file_nm,
+						a.upload_file_nm,						
+						b.onestop_support_no,
+						b.member_id,
+						b.applicat_dt,
+						b.pro_member_id,
+						b.supp_buss_area_cd,
+						b.buss_area_others,
+						b.comp_empl_cnt,
+						b.comp_appl_nm,
+						b.comp_posit,
+						b.comp_tel_no,
+						b.comp_fax_no,
+						b.comp_hp_no,
+						b.comp_mail,
+						b.advice_hope_dt,
+						b.advice_place_cd,
+						b.advice_area_cd,
+						b.advice_applic_cont,
+						b.file_course,
+						b.org_file_nm,
+						b.upload_file_nm,
+						b.applic_st_cd,						
+						c.cntpart_no,
+						c.attch_file_no,
+						c.file_course,
+						c.org_file_nm,
+						c.upload_file_nm						
+				from tb_onestop_buss_log a, tb_onestop_support b, tb_attch_file c
+				WHERE a.onestop_support_no = b.onestop_support_no
+				    AND a.member_id              = b.member_id		
+				    AND a.attch_file_no           = c.attch_file_no	
+				    AND a.member_id LIKE CONCAT('%',#{memberId},'%')
+	</select>
+	
+	<!-- 원스톱 업무일지 -->
+	<update id="adviceOnlineStatusBusinessUpdate" parameterType="jcep.admin.model.MemberVO">
+			/* adviceOnlineStatusBusinessUpdate */
+			<![CDATA[
+				UPDATE tb_onestop_buss_log
+				SET file_course = #{fileCourse},
+						org_file_nm = #{orgFileNm},
+						upload_file_nm = #{uploadFileNm}	
+				WHERE attch_file_no = #{attchFileNo} 
+			]]>
+	</update>	
+	
+	
+		<!-- 20191212 최선권 원스톱지원 회원정보 불러오기 -->	
+	<select id="selectOnlineApply1" 					parameterType="String" 	resultType="jcep.admin.model.MemberVO">
+		/*selectOnlineApply1*/
+		<![CDATA[
+			SELECT
+			 				        b.entpr_result_emp_cnt			as	entprResultEmpCnt
+			FROM(SELECT 		member_id,
+									entpr_result_year_cd,
+									entpr_result_qta_cd,
+									entpr_capital_amt,
+									entpr_result_take_amt,
+									entpr_result_emp_cnt,
+									reg_dt,
+									reg_id
+					FROM 		tb_enterprise_result
+					WHERE 		1=1
+					AND 			member_id 						= #{memberId}
+					ORDER BY 	entpr_result_year_cd 		DESC,
+									entpr_result_qta_cd 			DESC
+					LIMIT 		1)b
+		]]>
+	</select>
+	
+	<select id="selectMyExpertInformation" parameterType="String" resultType="jcep.admin.model.MemberVO">
+		/*selectMyExpertInformation*/
+		<![CDATA[
+			SELECT	expert_nm 							as expertNm
+						,(case expert_gender when 'M' then '남자'
+							when 'W' then '여자'
+	  					 else null end)	 					as expertGender
+						,expert_career_num 				as expertCareerNum
+						,large_special_area_cd 			as largeSpecialAreaCd
+						,detail_special_area_cd 		as detailSpecialAreaCd
+						,expert_interest_area_cd 		as expertInterestAreaCd
+						,expert_detail_intrt_area_cd 	as expertDetailIntrtAreaCd
+						,expert_inds_edu_cd 			as expertIndsEduCd
+						,expert_st_reg_no 				as expertStRegNo
+						,expert_reg_no 					as expertRegNo
+						,expert_final_school_nm 		as expertFinalSchoolNm
+						,expert_major_nm 				as expertMajorNm
+						,expert_fnal_edu_cd 			as expertFnalEduCd
+						,expert_head_addr_nm 			as expertHeadAddrNm
+						,expert_dptm_nm 				as expertDptmNm
+						,expert_offi_duty_nm 			as expertOffiDutyNm
+						,expert_offi_addr 					as expertOffiAddr
+						,expert_offi_detail_addr 		as expertOffiDetailAddr
+						,expert_offi_tel 					as expertOffiTel
+						,expert_offi_fax 					as expertOffiFax
+						,expert_head_tel 					as expertHeadTel
+						,expert_home_addr 				as expertHomeAddr
+						,expert_home_detail_addr 		as expertHomeDetailAddr
+						,benefit_bank_cd 					as benefitBankCd
+						,benefit_accnt_no 				as benefitAccntNo
+						,date_format(benefit_birth_dt, '%Y-%m-%d')
+																as benefitBirthDt
+						,benefit_respsib_hp_no 			as benefitRespsibHpNo
+						,file_course 						as fileCourse
+						,org_file_nm 						as orgFileNm
+						,member_id							as memberId
+			FROM		tb_expert
+			WHERE	member_id							= #{memberId}
+		]]>
+	</select>
+	
+	<select id="selectOnchangeexpertDetailIntrtAreCdCheck" parameterType="string" resultType="int">
+	/*selectOnchangeexpertDetailIntrtAreCdCheck*/
+		<![CDATA[
+			select	count(*) totcnt
+			FROM		ta_common	
+			WHERE	group_cd						='g00016'
+			AND		left(common_cd,2)			=#{expertDetailIntrtAreCd}
+		]]>
+	</select>
+
+	<select id="selectOnchangeExpertDetailIntrtAreCd" parameterType="string" resultType="jcep.admin.model.MemberVO">
+	/*selectOnchangeexpertDetailIntrtAreCd*/
+		<![CDATA[
+			SELECT	group_cd						as groupCd,
+						group_nm						as groupNm,
+						common_cd						as commonCd,
+						common_nm					as commonNm,
+						common_enm					as commonEnm,
+						order_nbr						as orderNbr
+			FROM		ta_common
+			WHERE	group_cd						='g00016'
+			AND		left(common_cd,2)			=#{expertDetailIntrtAreCd}
+		]]>
+	</select>
+	<select id="mypageExpertUpdateCheck" parameterType="jcep.admin.model.MemberVO" resultType="int">
+		<![CDATA[
+			select	count(*) totcnt
+			FROM		tb_expert
+			WHERE	member_id 						=#{memberId}
+		]]>
+					
+	</select>
+	<update id="mypageExpertUpdate" parameterType="jcep.admin.model.MemberVO" >
+		<![CDATA[
+			update 	tb_expert
+			SET 		expert_career_num 				=	#{expertCareerNum}
+						,large_special_area_cd			=	#{largeSpecialAreaCd}
+						,detail_special_area_cd			=	#{detailSpecialAreaCd}
+						,expert_interest_area_cd		=	#{expertInterestAreaCd}
+						,expert_detail_intrt_area_cd	=	#{expertDetailIntrtAreaCd}
+						,expert_inds_edu_cd				=	#{expertIndsEduCd}
+						,expert_st_reg_no				=	#{expertStRegNo}
+						,expert_reg_no				=	#{expertRegNo}
+						,expert_final_school_nm			=	#{expertFinalSchoolNm}
+						,expert_major_nm					=	#{expertMajorNm}
+						,expert_fnal_edu_cd				=	#{expertFnalEduCd}
+						,expert_head_addr_nm			=	#{expertHeadAddrNm}
+						,expert_dptm_nm					=	#{expertDptmNm}
+						,expert_offi_duty_nm			=	#{expertOffiDutyNm}
+						,expert_offi_addr					=	#{expertOffiAddr}
+						,expert_offi_detail_addr			=	#{expertOffiDetailAddr}
+						,expert_offi_tel					=	#{expertOffiTel}
+						,expert_offi_fax					=	#{expertOffiFax}
+						,expert_head_tel					=	#{expertHeadTel}
+						,expert_home_addr				=	#{expertHomeAddr}
+						,expert_home_detail_addr		=	#{expertHomeDetailAddr}
+						,benefit_bank_cd					=	#{benefitBankCd}
+						,benefit_accnt_no				=	#{benefitAccntNo}
+						,benefit_birth_dt					=	#{benefitBirthDt}
+						,benefit_respsib_hp_no			=	#{benefitRespsibHpNo}
+			where	 member_id 							=	#{memberId}
+		]]>
+	</update>
+	<insert id="mypageExpertDeliberateInsert" parameterType="jcep.admin.model.MemberVO" >
+		<![CDATA[
+			INSERT	
+			   INTO tb_expert_deliberate
+			                     (
+									member_id
+									,expert_hist_idx
+									,expert_delibr_dt
+									,expert_delibr_title
+									,remark
+									,reg_dt
+									,reg_id
+								  )
+						VALUES(	#{memberId}
+									,(SELECT ifnull(MAX(a.expert_hist_idx), 0)+1 FROM tb_expert_deliberate a)
+									,#{expertDelibrDt}
+									,#{expertDelibrTitle}
+									,#{remark}
+									,sysdate()
+									,#{memberId}
+								  )
+									
+		]]>
+	</insert>
+	<select id="mypageExpertDeliberateList" parameterType="jcep.admin.model.MemberVO"  resultType="jcep.admin.model.MemberVO">
+		<![CDATA[
+			SELECT		member_id 					as memberId
+							,expert_hist_idx			as	expertHistIdx
+							,expert_delibr_dt			as expertDelibrDt
+							,expert_delibr_title		as expertDelibrTitle
+							,remark
+			FROM			tb_expert_deliberate
+			WHERE		member_id 					= #{memberId}
+			ORDER BY 	expert_delibr_dt			ASC
+		]]>
+	</select>
+	
+	<update id="mypageExpertDeliberateUpdate" 	parameterType="jcep.admin.model.MemberVO">
+		<![CDATA[
+			UPDATE	tb_expert_deliberate
+			SET 		expert_delibr_dt						=	#{expertDelibrDt}
+						,expert_delibr_title					=	#{expertDelibrTitle}
+						,remark									=	#{remark}
+						
+			WHERE	member_id								= #{memberId}
+			AND		expert_hist_idx						= #{expertHistIdx}
+		]]>
+	</update>
+	<delete id="mypageExpertDeliberateDelete" 	parameterType="jcep.admin.model.MemberVO">
+		<![CDATA[
+			DELETE 	FROM		tb_expert_deliberate
+			WHERE 				member_id 					= #{memberId}
+			AND 					expert_hist_idx 			= #{expertHistIdx}
+		]]>			
+	</delete>
+	
+	<select id="selectMyBuyerInformation" 	parameterType="String" resultType="jcep.admin.model.MemberVO">
+		<![CDATA[
+			SELECT 	member_id						as	memberId
+						,company_nm					as	companyNm
+						,buyer_nm						as buyerNm
+				        ,buyer_enm						as buyerEnm
+				        ,buyer_com_reg_num		as buyerComRegNum
+				        ,buyer_ceo_email				as buyerCeoEmail
+				        ,buyer_bus_area_cd			as buyerBusAreaCd
+				        ,buyer_site						as	buyerSite
+				        ,buyer_head_addr				as buyerHeadAddr
+				        ,buyer_head_detail_addr	as	buyerHeadDetailAddr
+				        ,buyer_head_tel				as buyerHeadTel
+				        ,buyer_head_fax				as	buyerHeadFax
+				        ,buyer_branch_addr			as	buyerBranchAddr
+				        ,buyer_branch_detail_addr	as	buyerBranchDetailAddr
+				        ,buyer_branch_tel			as	buyerBranchTel
+				        ,buyer_branch_fax			as	buyerBranchFax
+			  FROM	tb_buyer	
+			WHERE 	member_id 						= #{memberId}
+		]]>
+	</select>
+	
+	<update id="mypageBuyerUpdate"		parameterType="jcep.admin.model.MemberVO">
+		<![CDATA[
+			UPDATE	tb_buyer
+			SET		buyer_ceo_email				=#{buyerCeoEmail}
+						,buyer_head_tel				=#{buyerHeadTel}
+						,buyer_head_fax				=#{buyerHeadFax}
+						,buyer_branch_tel			=#{buyerBranchTel}
+						,buyer_branch_fax			=#{buyerBranchFax}
+						,buyer_bus_area_cd			=#{buyerBusAreaCd}
+						,buyer_site						=#{buyerSite}
+						,buyer_head_addr				=#{buyerHeadAddr}
+						,buyer_head_detail_addr	=#{buyerHeadDetailAddr}
+						,buyer_branch_addr			=#{buyerBranchAddr}
+						,buyer_branch_detail_addr	=#{buyerBranchDetailAddr}
+		]]>
+
+			<if test='memberIdx != null'>
+			<![CDATA[
+						,buyer_nm						=#{buyerNm}
+						,company_nm					=#{companyNm}
+						,buyer_ceo						=#{buyerCeo}
+						,buyer_est_dt					=#{buyerEstDt}
+						,buyer_capital_amt			=#{buyerCapitalAmt}
+			]]>			
+			</if>
+			<![CDATA[
+			WHERE 	member_id 						=#{memberId}
+			]]>
+
+	</update>
+	
+	<insert id="mypageBuyerHistInsert" 	parameterType="jcep.admin.model.MemberVO" >
+		<![CDATA[
+			INSERT 	INTO tb_buyer_hist
+						(
+							member_id
+			            	,buyer_hist_idx
+			            	,buyer_hist_nm
+			            	,buyer_hist_invt
+			            	,buyer_hist_spec_cd
+			            	,buyer_hist_dt
+				            ,buyer_hist_content
+				            ,process_cd
+				            ,reg_dt
+				            ,reg_id
+			            )
+			 VALUES(
+							#{memberId}
+							,(SELECT ifnull(MAX(a.buyer_hist_idx), 0)+1 FROM tb_buyer_hist a where member_id = #{memberId})
+			            	,#{buyerHistNm}
+			            	,#{buyerHistInvt}
+			            	,#{buyerHistSpecCd}
+			            	,#{buyerHistDt}
+				            ,#{buyerHistContent}
+				            ,#{processCd}
+				            ,sysdate()
+				            ,#{memberId}
+			           )
+		]]>	
+	</insert>
+	
+	<select id="mypageBuyerHistList" 			parameterType="String" resultType="jcep.admin.model.MemberVO">
+		<![CDATA[	
+			SELECT 	member_id						as memberId
+						,buyer_hist_idx				as	buyerHistIdx
+						,buyer_hist_nm				as	buyerHistNm
+						,format(buyer_hist_invt,0)
+															as	buyerHistInvt
+						,buyer_hist_spec_cd			as	buyerHistSpecCd
+						,date_format(buyer_hist_dt, '%Y-%m-%d')
+															as buyerHistDt
+						,buyer_hist_content			as	buyerHistContent
+   	            	    ,(	SELECT	common_nm
+   	            	    	FROM		ta_common
+   	            	    	WHERE 	group_Cd 		= 'G00001'
+   	            	    	AND		use_flag			=	'Y'
+   	            	    	AND 		common_cd 	= process_cd
+   	            	    ) 									as processCd
+   	            	    ,(	SELECT	common_nm
+   	            	    	FROM		ta_common 
+   	            	    	WHERE 	group_Cd 		= 'G00012'
+   	            	    	AND		use_flag			=	'Y'
+   	            	    	AND 		common_cd 	= buyer_hist_spec_cd
+   	            	    ) 									as buyerHistSpecNm
+						,reg_dt							as	regDt
+						,reg_id							as	regId
+			  FROM	tb_buyer_hist
+			WHERE	1									=	1
+			    AND	member_id						= #{memberId}
+		]]>
+	</select>
+	
+	<update id="mypageBuyerHistUpdate" 	parameterType="jcep.admin.model.MemberVO" >
+		<![CDATA[
+			UPDATE	tb_buyer_hist
+			     SET	buyer_hist_nm					=	#{buyerHistNm}
+						,buyer_hist_invt				=	#{buyerHistInvt}
+						,buyer_hist_spec_cd			=	#{buyerHistSpecCd}
+						,buyer_hist_dt					=	#{buyerHistDt}
+						,buyer_hist_content			=	#{buyerHistContent}
+						,process_cd					=	(SELECT	common_Cd
+																   FROM	ta_common 
+																 WHERE 	group_Cd 		= 'G00001'
+									 	   	            	    	 AND	use_flag			=	'Y'
+																     AND	common_Nm 	= #{processCd}
+																)
+			WHERE	member_id						= #{memberId}
+			    AND	buyer_hist_idx					= #{buyerHistIdx}
+		]]>
+	</update>
+	
+	<delete id="mypageBuyerHistDelete" 		parameterType="jcep.admin.model.MemberVO">
+		/*mypageBuyerHistDelete*/
+		<![CDATA[
+			DELETE
+			  FROM 	tb_buyer_hist 
+			WHERE 	member_id 					= #{memberId}
+				AND	buyer_hist_idx 			= #{buyerHistIdx}
+		]]>
+	</delete>
+
+	<select id="expertInformationManagementDetail" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
+		/*expertInformationManagementDetail*/
+		<![CDATA[
+			SELECT 	expert_nm 									as expertNm
+						,expert_email 								as expertEmail
+						,(
+							CASE expert_gender 
+							WHEN 'M' THEN '남자'
+							WHEN 'W' THEN '여자'
+							END
+						) 												as expertGender
+						,expert_career_num 						as expertCareerNum
+						,(SELECT common_nm from ta_common WHERE group_cd ='G00012' AND common_cd = large_special_area_cd)
+																		as largeSpecialAreaCd
+						,(SELECT common_nm from ta_common WHERE group_cd ='G00014' AND common_cd = detail_special_area_cd)
+																		as detailSpecialAreaCd
+						,(SELECT common_nm from ta_common WHERE group_cd ='G00015' AND common_cd = expert_interest_area_cd)
+																		as expertInterestAreaCd
+						,(SELECT common_nm from ta_common WHERE group_cd ='G00016' AND common_cd = expert_detail_intrt_area_cd)
+																		as expertDetailIntrtAreaCd
+						,(SELECT common_nm from ta_common WHERE group_cd ='G00017' AND common_cd = expert_inds_edu_cd)
+																		as expertIndsEduCd
+						,expert_st_reg_no 						as expertStRegNo
+						,expert_reg_no 							as expertRegNo
+						,expert_final_school_nm 				as expertFinalSchoolNm
+						,expert_major_nm 						as expertMajorNm
+						,(SELECT common_nm from ta_common WHERE group_cd ='G00044' AND common_cd = expert_fnal_edu_cd)
+																		as expertFnalEduCd
+						,expert_head_addr_nm 					as expertHeadAddrNm
+						,expert_dptm_nm							as expertDptmNm
+						,expert_offi_duty_nm 					as expertOffiDutyNm
+						,expert_offi_addr 							as expertOffiAddr
+						,expert_offi_detail_addr 				as expertOffiDetailAddr
+						,expert_offi_tel 							as expertOffiTel
+						,expert_offi_fax 							as expertOffiFax
+						,expert_head_tel 							as expertHeadTel
+						,expert_home_addr 						as expertHomeAddr
+						,expert_home_detail_addr 				as expertHomeDetailAddr
+						,(SELECT common_nm from ta_common WHERE group_cd ='G00018' AND common_cd = benefit_bank_cd)
+																		as benefitBankCd
+						,benefit_accnt_no 						as benefitAccntNo
+						,benefit_birth_dt 							as benefitBirthDt
+						,benefit_respsib_hp_no 					as benefitRespsibHpNo
+						,file_course 								as fileCourse
+						,org_file_nm 								as orgFileNm
+						,member_id									as memberId
+		      FROM 	tb_expert
+		    WHERE 	1												=	1
+		        AND 	member_id 									= #{memberId}
+		]]>
+	</select>
+	
+	<select id="expertDeliberateInformationManagementDetail" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
+			/*expertDeliberateInformationManagementDetail*/
+		<![CDATA[
+			SELECT	member_id as memberId
+		 	            ,expert_delibr_dt as expertDelibrDt
+			            ,expert_delibr_title as expertDelibrTitle
+			            ,remark
+			  FROM	tb_expert_deliberate
+		    WHERE	1=1
+				AND	member_id = #{memberId}
+		]]>
+	</select>
+	
+	<select id="fileDownload" parameterType="String" resultType="jcep.admin.model.MemberVO">
+		/*fileDownload*/
+			<![CDATA[
+				SELECT org_file_nm AS orgFileNm
+						  ,file_course	AS fileCourse
+				  FROM	ta_notice
+				WHERE 1=1
+					AND	notice_idx = #{fileNum}
+			]]>
+	</select>
+ </mapper>

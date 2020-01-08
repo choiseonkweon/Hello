@@ -1,0 +1,835 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jcep.front.dao.LoginFrontMapper">
+
+<!-- 시설 및 자원 관리 > 자원 등록 관리 -->
+	<select id="selectLoginList" parameterType="jcep.front.model.LoginFrontVO" resultType="jcep.front.model.LoginFrontVO">
+			/* selectLoginList */
+			<!-- SELECT
+				resource_id AS resourceId,
+				resource_nm AS resourceNm,
+				resource_img AS resourceImg,
+				(
+					CASE resource_st 
+						WHEN 'Y' THEN '대여가능'
+						WHEN 'N' THEN '대여불가능'
+					END
+                ) AS resourceSt,
+				date_format(resource_reg_dt, '%Y.%m.%d') AS resourceRegDt
+			FROM tb_resource
+			WHERE 1=1
+			<if test="searchText != null and searchText != ''">
+		        <choose>
+		        	<when test='searchType eq ""'>
+						AND	resource_nm LIKE CONCAT('%',#{searchText},'%') 
+					</when>
+		            <when test='searchType eq 1'>
+						AND	resource_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+				</choose>
+			</if> 
+			ORDER BY resource_reg_dt DESC -->
+			
+	</select>
+	
+	<select id="selectLoginListMemberStCd" parameterType="jcep.admin.model.MemberVO" resultType="String">
+			/* selectLoginListMemberStCd */
+			<![CDATA[
+				SELECT	count(*) totcnt
+				FROM 	tb_member
+				WHERE 	1								=	1
+				AND member_id 						=	#{memberId}
+	  		 ]]>
+	</select>
+	
+	<select id="selectLoginListTotCnt" parameterType="java.util.HashMap" resultType="int">
+		/* selectLoginListTotCnt */
+		<![CDATA[
+			SELECT	count(*) totcnt
+			FROM 	tb_member
+			WHERE 	member_id 						=	#{memberId} 
+	      ]]>
+	</select>
+	
+	
+	
+	
+	<insert id="memberExpertInsert" parameterType="jcep.admin.model.MemberVO">
+			/*memberExpertInsert*/
+			<![CDATA[
+			INSERT INTO tb_member (
+				member_id,
+				member_pw,
+				member_nm,
+				join_type_cd,
+				reg_dt
+			)
+			VALUES(
+				#{memberId},
+				#{memberPw},
+				#{memberNm},
+				'000002',
+				CURRENT_TIMESTAMP					
+			)
+			]]>
+	</insert>
+	
+	
+	<insert id="memberExpertInsertExpert" parameterType="jcep.admin.model.MemberVO">
+		/* memberExpertInsertExpert */
+		<![CDATA[
+		INSERT INTO tb_expert
+			(	
+				member_id,
+				expert_nm,
+				expert_head_tel,
+				expert_email,
+				expert_final_school_nm,
+				expert_major_nm,
+				expert_head_addr_nm,
+				expert_dptm_nm,
+				large_special_area_cd,
+				medium_special_area_cd,
+				detail_special_area_cd,
+				expert_interest_area_cd,
+				expert_detail_intrt_area_cd,
+				expert_offi_addr,
+				expert_offi_detail_addr,
+				expert_offi_tel,
+				expert_offi_fax,
+				expert_home_addr,
+				expert_home_detail_addr,
+				reg_dt
+			 )
+			 values
+			 (	
+				#{memberId},
+				#{memberNm},
+			 	#{expertHeadTel},
+			 	#{expertEmail},
+			 	#{expertFinalSchoolNm},
+			 	#{expertMajorNm},
+			 	#{expertHeadAddrNm},
+			 	#{expertDptmNm},
+			 	#{largeSpecialAreaCd},
+			 	#{mediumSpecialAreaCd},
+			 	#{detailSpecialAreaCd},
+			 	#{expertInterestAreaCd},
+			 	#{expertDetailIntrtAreaCd},
+			 	#{expertOffiAddr},
+			 	#{expertOffiDetailAddr},
+			 	(#{expertOffiTel}#{expertOffiTel1}),
+			 	(#{expertOffiFax}#{expertOffiFax1}),
+			 	#{expertHomeAddr},
+			 	#{expertHomeDetailAddr},
+			 	CURRENT_TIMESTAMP
+			 )
+			 ]]>
+	
+	</insert>
+	
+	
+	
+	<insert id="memberEnterpriseInsert" parameterType="jcep.admin.model.MemberVO">
+			/*memberExpertInsert1*/
+			<![CDATA[
+			INSERT INTO tb_member (
+				member_id,
+				member_pw,
+				member_nm,
+				join_type_cd,
+				reg_dt
+			)
+			VALUES(
+				#{memberId},
+				#{memberPw},
+				#{memberNm},
+				'000001',
+				CURRENT_TIMESTAMP	
+			)
+			]]>	
+	</insert>
+	
+	<insert id="memberExpertInsertEnterprise" parameterType="jcep.admin.model.MemberVO">
+		/* memberExpertInsertEnterprise */
+		<![CDATA[
+		INSERT INTO tb_enterprise
+		(	
+			member_id,
+			entpr_respsib_nm,
+			entpr_respsib_hp_no,
+			entpr_respsib_email,
+			entpr_nm,
+			entpr_ceo,
+			entpr_com_reg_num,
+			entpr_ceo_email,
+			large_buss_area_cd,
+			entpr_site,
+			entpr_head_addr,
+			entpr_head_detail_addr,
+			entpr_head_tel,
+			entpr_head_fax,
+			entpr_branch_addr,
+			entpr_branch_detail_addr,
+			entpr_branch_tel,
+			entpr_branch_fax,
+			reg_dt
+		)
+		values
+		(	
+			#{memberId},
+			#{memberNm},
+			#{entprRespsibHpNo},
+			#{entprRespsibEmail},
+			#{entprNm},
+			#{entprCeo},
+			#{entprComRegNum},
+			#{entprCeoEmail},
+			#{largeBussAreaCd},
+			#{entprSite},
+			#{entprHeadAddr},
+			#{entprHeadDetailAddr},
+			#{entprHeadTel},
+			#{entprHeadFax},
+			#{entprBranchAddr},
+			#{entprBranchDetailAddr},
+			#{entprBranchTel},
+			#{entprBranchFax},
+			CURRENT_TIMESTAMP
+		)
+		]]>	
+	
+	</insert>
+	
+	
+	<insert id="memberBuyerInsert" parameterType="jcep.admin.model.MemberVO">
+			/*memberBuyerInsert*/
+			<![CDATA[
+			INSERT INTO tb_member (
+				member_id,
+				member_pw,
+				member_nm,
+				join_type_cd,
+				reg_dt
+			)
+			VALUES(
+				#{memberId},
+				#{memberPw},
+				#{memberNm},
+				'000003',
+				CURRENT_TIMESTAMP	
+			)
+			]]>	
+	</insert>
+	
+	<insert id="memberBuyerInsertEnterprise" parameterType="jcep.admin.model.MemberVO">
+		/* memberBuyerInsertEnterprise */
+	<![CDATA[
+		INSERT INTO tb_buyer
+		(	
+			member_id,
+			buyer_nm,
+			buyer_head_tel,
+			buyer_ceo_email,
+			company_nm,
+			buyer_ceo,
+			buyer_com_reg_num,
+			buyer_site,
+			buyer_bus_area,
+			buyer_head_addr,
+			buyer_head_detail_addr,
+			buyer_head_fax,
+			buyer_branch_addr,
+			buyer_branch_detail_addr,
+			buyer_branch_tel,
+			buyer_branch_fax,
+			reg_dt
+		)
+		values
+		(	
+			#{memberId},
+			#{memberNm},
+			#{buyerHeadTel},
+			#{buyerCeoEmail},
+			#{companyNm},
+			#{buyerCeo},
+			#{buyerComRegNum},
+			#{buyerSite},
+			#{buyerBusArea},
+			#{buyerHeadAddr},
+			#{buyerHeadDetailAddr},
+			#{buyerHeadFax},
+			#{buyerBranchAddr},
+			#{buyerBranchDetailAddr},
+			#{buyerBranchTel},
+			#{buyerBranchFax},
+			CURRENT_TIMESTAMP
+		)
+	]]>	
+	
+	</insert>
+	
+		
+	
+	
+	<update id="memberExpertUpdate" parameterType="jcep.admin.model.MemberVO">
+			/*memberExpertUpdate*/
+			UPDATE tb_member
+			SET 
+				<if test="memberId != null and memberId != ''"> member_id = #{memberId},</if>
+				<if test="memberPw != null and memberPw != ''"> member_pw = #{memberPw},</if>
+				<if test="memberNm != null and memberNm != ''"> member_nm = #{memberNm}</if>
+			WHERE member_id = #{memberId}
+	</update>
+	
+	<update id="memberExpertUpdateExpert" parameterType="jcep.admin.model.MemberVO">
+			/*memberExpertUpdateExpert*/
+			UPDATE tb_expert
+			SET 
+				<if test="expertHeadTel != null and expertHeadTel != ''"> expert_head_tel = #{expertHeadTel},</if>
+				<if test="expertEmail != null and expertEmail != ''"> expert_email = #{expertEmail},</if>
+				<if test="expertFinalSchoolNm != null and expertFinalSchoolNm != ''"> expert_final_school_nm = #{expertFinalSchoolNm},</if>
+				<if test="expertMajorNm != null and expertMajorNm != ''"> expert_major_nm = #{expertMajorNm},</if>
+				<if test="expertHeadAddrNm != null and expertHeadAddrNm != ''"> expert_head_addr_nm = #{expertHeadAddrNm},</if>
+				<if test="expertDptmNm != null and expertDptmNm != ''"> expert_dptm_nm = #{expertDptmNm},</if>
+				<if test="largeSpecialAreaCd != null and largeSpecialAreaCd != ''"> large_special_area_cd = #{largeSpecialAreaCd},</if>
+				<if test="mediumSpecialAreaCd != null and mediumSpecialAreaCd != ''"> medium_special_area_cd = #{mediumSpecialAreaCd},</if>
+				<if test="detailSpecialAreaCd != null and detailSpecialAreaCd != ''"> detail_special_area_cd = #{detailSpecialAreaCd},</if>
+				<if test="expertInterestAreaCd != null and expertInterestAreaCd != ''"> expert_interest_area_cd = #{expertInterestAreaCd},</if>
+				<if test="expertDetailIntrtAreaCd != null and expertDetailIntrtAreaCd != ''"> expert_detail_intrt_area_cd = #{expertDetailIntrtAreaCd},</if>
+				<if test="expertOffiAddr != null and expertOffiAddr != ''"> expert_offi_addr = #{expertOffiAddr},</if>
+				<if test="expertOffiDetailAddr != null and expertOffiDetailAddr != ''"> expert_offi_detail_addr = #{expertOffiDetailAddr},</if>
+				<if test="expertOffiTel != null and expertOffiTel != ''"> expert_offi_tel = #{expertOffiTel},</if>
+				<if test="expertOffiFax != null and expertOffiFax != ''"> expert_offi_fax = #{expertOffiFax},</if>
+				<if test="expertHomeAddr != null and expertHomeAddr != ''"> expert_home_addr = #{expertHomeAddr},</if>
+				<if test="expertHomeDetailAddr != null and expertHomeDetailAddr != ''"> expert_home_detail_addr = #{expertHomeDetailAddr}</if>
+			WHERE member_id = #{memberId}
+	</update>
+	
+	<update id="memberEnterpriseUpdate" parameterType="jcep.admin.model.MemberVO">
+			/*memberEnterpriseUpdate*/
+			UPDATE tb_member
+			SET 
+				<if test="memberId != null and memberId != ''"> member_id = #{memberId},</if>
+				<if test="memberPw != null and memberPw != ''"> member_pw = #{memberPw},</if>
+				<if test="entprRespsibNm != null and entprRespsibNm != ''"> member_nm = #{entprRespsibNm}</if>
+			WHERE member_id = #{memberId}
+	</update>
+	
+	<update id="memberEnterpriseUpdateInformation" parameterType="jcep.admin.model.MemberVO">
+			/*memberEnterpriseUpdateInformation*/
+			UPDATE tb_enterprise
+			<set> 
+				<if test='entprRespsibNm != null and entprRespsibNm != "" '> entpr_respsib_nm = #{entprRespsibNm},</if>
+				<if test='entprRespsibHpNo != null and entprRespsibHpNo != "" '> entpr_respsib_hp_no = #{entprRespsibHpNo},</if>
+				<if test='entprRespsibEmail != null and entprRespsibEmail != "" '> entpr_respsib_email = #{entprRespsibEmail},</if>
+				<if test='entprNm != null and entprNm != "" '> entpr_nm = #{entprNm},</if>
+				<if test='entprCeo != null and entprCeo != "" '> entpr_ceo = #{entprCeo},</if>
+				<if test='entprComRegNum != null and entprComRegNum != "" '> entpr_com_reg_num = #{entprComRegNum},</if>
+				<if test='entprCeoEmail != null and entprCeoEmail != "" '> entpr_ceo_email = #{entprCeoEmail},</if>
+				<if test='largeBussAreaCd != null and largeBussAreaCd != "" '> large_buss_area_cd = #{largeBussAreaCd},</if>
+				<if test='entprSite != null and entprSite != "" '> entpr_site = #{entprSite},</if>
+				<if test='entprHeadAddr != null and entprHeadAddr != "" '> entpr_head_addr = #{entprHeadAddr},</if>
+				<if test='entprHeadDetailAddr != null and entprHeadDetailAddr != "" '> entpr_head_detail_addr = #{entprHeadDetailAddr},</if>
+				<if test='entprHeadTel != null and entprHeadTel != "" '> entpr_head_tel = #{entprHeadTel},</if>
+				<if test='entprHeadFax != null and entprHeadFax != "" '> entpr_head_fax = #{entprHeadFax},</if>
+				<if test='entprBranchAddr != null and entprBranchAddr != "" '> entpr_branch_addr = #{entprBranchAddr},</if>
+				<if test='entprBranchDetailAddr != null and entprBranchDetailAddr != "" '> entpr_branch_detail_addr = #{entprBranchDetailAddr},</if>
+				<if test='entprBranchTel != null and entprBranchTel != "" '> entpr_branch_tel = #{entprBranchTel},</if>
+				<if test='entprBranchFax != null and entprBranchFax != "" '> entpr_branch_fax = #{entprBranchFax}</if>
+			</set>	
+			WHERE member_id = #{memberId}
+	</update>
+	
+	
+	<update id="memberBuyerUpdate" parameterType="jcep.admin.model.MemberVO">
+			/*memberBuyerUpdate*/
+			UPDATE tb_member
+			<set>
+				<if test="memberId != null and memberId != ''"> member_id = #{memberId},</if>
+				<if test="memberPw != null and memberPw != ''"> member_pw = #{memberPw},</if>
+				<if test="buyerNm != null and buyerNm != ''"> member_nm = #{buyerNm}</if>
+			</set>	
+			WHERE member_id = #{memberId}
+	</update>
+	
+	<update id="memberBuyerUpdateInformation" parameterType="jcep.admin.model.MemberVO">
+			/*memberBuyerUpdateInformation*/
+			UPDATE tb_buyer
+			<set> 
+				<if test="buyerNm != null and buyerNm != ''"> buyer_nm = #{buyerNm},</if>
+				<if test="buyerHeadTel != null and buyerHeadTel != ''"> buyer_head_tel = #{buyerHeadTel},</if>
+				<if test="buyerCeoEmail != null and buyerCeoEmail != ''"> buyer_ceo_email = #{buyerCeoEmail},</if>
+				<if test="companyNm != null and companyNm != ''"> company_nm = #{companyNm},</if>
+				<if test="buyerCeo != null and buyerCeo != ''"> buyer_ceo = #{buyerCeo},</if>
+				<if test="buyerComRegNum != null and buyerComRegNum != ''"> buyer_com_reg_num = #{buyerComRegNum},</if>
+				<if test="largeBussAreaCd != null and largeBussAreaCd != ''"> large_buss_area_cd = #{largeBussAreaCd},</if>
+				<if test="buyerBusArea != null and buyerBusArea != ''"> buyer_bus_area = #{buyerBusArea},</if>
+				<if test="buyerSite != null and buyerSite != ''"> buyer_site = #{buyerSite},</if>
+				<if test="buyerHeadAddr != null and buyerHeadAddr != ''"> buyer_head_addr = #{buyerHeadAddr},</if>
+				<if test="buyerHeadDetailAddr != null and buyerHeadDetailAddr != ''"> buyer_head_detail_addr = #{buyerHeadDetailAddr},</if>
+				<if test="buyerHeadFax != null and buyerHeadFax != ''"> buyer_head_fax = #{buyerHeadFax},</if>
+				<if test="buyerBranchAddr != null and buyerBranchAddr != ''"> buyer_branch_addr = #{buyerBranchAddr},</if>
+				<if test="buyerBranchDetailAddr != null and buyerBranchDetailAddr != ''"> buyer_branch_detail_addr = #{buyerBranchDetailAddr},</if>
+				<if test="buyerBranchTel != null and buyerBranchTel != ''"> buyer_branch_tel = #{buyerBranchTel},</if>
+				<if test="buyerBranchFax != null and buyerBranchFax != ''"> buyer_branch_fax = #{buyerBranchFax}</if>
+			</set>
+			WHERE member_id = #{memberId}
+	</update>
+	
+	
+	
+	<update id="memberExpertUpdateInformation1" parameterType="jcep.admin.model.MemberVO">
+			/*memberExpertUpdateInformation1*/
+			UPDATE tb_member
+			SET 
+				<if test="memberNm != null and memberNm != ''"> member_nm = #{memberNm},</if>
+				<if test="memberHomepage != null and memberHomepage != ''"> member_homepage = #{memberHomepage},</if>
+				<if test="memberBelong != null and memberBelong != ''"> member_belong = #{memberBelong},</if>
+				<if test="memberMail != null and memberMail != ''"> member_mail = #{memberMail},</if>
+				<if test="memberAddr != null and memberAddr != ''"> member_addr = #{memberAddr},</if>
+				<if test="memberMyaddr != null and memberMyaddr != ''"> member_myaddr = #{memberMyaddr},</if>
+				<if test="memberMytel != null and memberMytel != ''"> member_mytel = #{memberMytel}</if>
+			WHERE member_id = #{memberId}
+	</update>
+	
+	<update id="memberExpertUpdateInformation" parameterType="jcep.admin.model.MemberVO">
+			/*memberExpertUpdateInformation*/
+			UPDATE tb_companyInformation
+			SET 
+				<if test="homepage != null and homepage != ''"> homepage = #{homepage},</if>
+				<if test="mainphone != null and mainphone != ''"> mainphone = #{mainphone},</if>
+				<if test="fax != null and fax != ''"> fax = #{fax},</if>
+				<if test="registrationnumber != null and registrationnumber != ''"> registrationnumber = #{registrationnumber},</if>
+				<if test="establishmentdate != null and establishmentdate != ''"> establishmentdate = #{establishmentdate},</if>
+				<if test="mainphone != null and mainphone != ''"> mainphone = #{mainphone},</if>
+ 				<if test="capital != null and capital != ''"> capital = #{capital},</if>
+				<if test="field != null and field != ''"> field = #{field},</if>
+				<if test="performance != null and performance != ''"> performance = #{field},</if>
+				<if test="quarteryear != null and quarteryear != ''"> field = #{quarteryear},</if>
+				<if test="capital != null and capital != ''"> field = #{capital},</if>
+				<if test="touch != null and touch != ''"> field = #{touch},</if>
+				<if test="support != null and support != ''"> field = #{support}</if>
+			WHERE member_id = #{memberId}
+	</update>
+	
+	<update id="memberExpertUpdate1" parameterType="jcep.admin.model.MemberVO">
+			/*memberExpertUpdate1*/
+			UPDATE tb_member
+			SET 
+				<if test="memberPw != null and memberPw != ''"> member_pw = #{memberPw},</if>
+				<if test="memberNm != null and memberNm != ''"> member_nm = #{memberNm},</if>
+				<if test="memberHp != null and memberHp != ''"> member_hp = #{memberHp},</if>
+				<if test="memberMail != null and memberMail != ''"> member_mail = #{memberMail},</if>
+				<if test="memberSchool != null and memberSchool != ''"> member_school = #{memberSchool},</if>
+				<if test="memberMajor != null and memberMajor != ''"> member_major = #{memberMajor},</if>
+				<if test="memberAffiliation != null and memberAffiliation != ''"> member_affiliation = #{memberAffiliation},</if>
+ 				<if test="memberDepartment != null and memberDepartment != ''"> member_department = #{memberDepartment},</if>
+				<if test="memberSpecialty != null and memberSpecialty != ''"> member_specialty = #{memberSpecialty},</if>
+				<if test="memberDetails != null and memberDetails != ''"> member_details = #{memberDetails},</if>
+				<if test="memberInterests != null and memberInterests != ''"> member_interests = #{memberInterests},</if>
+				<if test="memberFieldinterest != null and memberFieldinterest != ''"> member_fieldinterest = #{memberFieldinterest},</if>
+				<if test="memberAddr != null and memberAddr != ''"> member_addr = #{memberAddr},</if>
+				<if test="memberTel != null and memberTel != ''"> member_tel = #{memberTel},</if>
+				<if test="memberAddr1 != null and memberAddr1 != ''"> member_addr1 = #{memberAddr1},</if>
+				<if test="memberFax != null and memberFax != ''"> member_fax = #{memberFax},</if>
+				<if test="memberMyaddr != null and memberMyaddr != ''"> member_myaddr = #{memberMyaddr},</if>
+				<if test="memberMytel != null and memberMytel != ''"> member_mytel = #{memberMytel},</if>
+				<if test="memberMyaddr1 != null and memberMyaddr1 != ''"> member_myaddr1 = #{memberMyaddr1},</if>
+				<if test="memberMyfax != null and memberMyfax != ''"> member_myfax = #{memberMyfax},</if>
+				<if test="memberAffiliation != null and memberAffiliation != ''"> member_belong = #{memberAffiliation}</if>
+			WHERE member_id = #{memberId}
+	</update>
+	
+	<update id="memberExpertUpdate2" parameterType="jcep.admin.model.MemberVO">
+			/*memberExpertUpdate2*/
+			UPDATE tb_member
+			SET 
+				<if test="memberPw != null and memberPw != ''"> member_pw = #{memberPw},</if>
+				<if test="memberNm != null and memberNm != ''"> member_nm = #{memberNm},</if>
+				<if test="memberHp != null and memberHp != ''"> member_hp = #{memberHp},</if>
+				<if test="memberMail != null and memberMail != ''"> member_mail = #{memberMail},</if>
+				<if test="memberSchool != null and memberSchool != ''"> member_school = #{memberSchool},</if>
+				<if test="memberMajor != null and memberMajor != ''"> member_major = #{memberMajor},</if>
+				<if test="memberAffiliation != null and memberAffiliation != ''"> member_affiliation = #{memberAffiliation},</if>
+ 				<if test="memberDepartment != null and memberDepartment != ''"> member_department = #{memberDepartment},</if>
+				<if test="memberSpecialty != null and memberSpecialty != ''"> member_specialty = #{memberSpecialty},</if>
+				<if test="memberDetails != null and memberDetails != ''"> member_details = #{memberDetails},</if>
+				<if test="memberInterests != null and memberInterests != ''"> member_interests = #{memberInterests},</if>
+				<if test="memberFieldinterest != null and memberFieldinterest != ''"> member_fieldinterest = #{memberFieldinterest},</if>
+				<if test="memberAddr != null and memberAddr != ''"> member_addr = #{memberAddr},</if>
+				<if test="memberTel != null and memberTel != ''"> member_tel = #{memberTel},</if>
+				<if test="memberAddr1 != null and memberAddr1 != ''"> member_addr1 = #{memberAddr1},</if>
+				<if test="memberFax != null and memberFax != ''"> member_fax = #{memberFax},</if>
+				<if test="memberMyaddr != null and memberMyaddr != ''"> member_myaddr = #{memberMyaddr},</if>
+				<if test="memberMytel != null and memberMytel != ''"> member_mytel = #{memberMytel},</if>
+				<if test="memberMyaddr1 != null and memberMyaddr1 != ''"> member_myaddr1 = #{memberMyaddr1},</if>
+				<if test="memberMyfax != null and memberMyfax != ''"> member_myfax = #{memberMyfax},</if>
+				<if test="memberAffiliation != null and memberAffiliation != ''"> member_belong = #{memberAffiliation}</if>
+			WHERE member_id = #{memberId}
+	</update>
+	
+	<update id="myCompanyInformationUpdate" parameterType="jcep.admin.model.MemberVO">
+			/*myCompanyInformationUpdate*/
+			UPDATE tb_member
+			SET 
+				<if test="memberPw != null and memberPw != ''"> member_pw = #{memberPw},</if>
+				<if test="memberNm != null and memberNm != ''"> member_nm = #{memberNm},</if>
+				<if test="memberHp != null and memberHp != ''"> member_hp = #{memberHp},</if>
+				<if test="memberMail != null and memberMail != ''"> member_mail = #{memberMail},</if>
+				<if test="memberSchool != null and memberSchool != ''"> member_school = #{memberSchool},</if>
+				<if test="memberMajor != null and memberMajor != ''"> member_major = #{memberMajor},</if>
+				<if test="memberAffiliation != null and memberAffiliation != ''"> member_affiliation = #{memberAffiliation},</if>
+ 				<if test="memberDepartment != null and memberDepartment != ''"> member_department = #{memberDepartment},</if>
+				<if test="memberSpecialty != null and memberSpecialty != ''"> member_specialty = #{memberSpecialty},</if>
+				<if test="memberDetails != null and memberDetails != ''"> member_details = #{memberDetails},</if>
+				<if test="memberInterests != null and memberInterests != ''"> member_interests = #{memberInterests},</if>
+				<if test="memberFieldinterest != null and memberFieldinterest != ''"> member_fieldinterest = #{memberFieldinterest},</if>
+				<if test="memberAddr != null and memberAddr != ''"> member_addr = #{memberAddr},</if>
+				<if test="memberTel != null and memberTel != ''"> member_tel = #{memberTel},</if>
+				<if test="memberAddr1 != null and memberAddr1 != ''"> member_addr1 = #{memberAddr1},</if>
+				<if test="memberFax != null and memberFax != ''"> member_fax = #{memberFax},</if>
+				<if test="memberMyaddr != null and memberMyaddr != ''"> member_myaddr = #{memberMyaddr},</if>
+				<if test="memberMytel != null and memberMytel != ''"> member_mytel = #{memberMytel},</if>
+				<if test="memberMyaddr1 != null and memberMyaddr1 != ''"> member_myaddr1 = #{memberMyaddr1},</if>
+				<if test="memberMyfax != null and memberMyfax != ''"> member_myfax = #{memberMyfax},</if>
+				<if test="memberAffiliation != null and memberAffiliation != ''"> member_belong = #{memberAffiliation}</if>
+			WHERE member_id = #{memberId}
+	</update>
+	
+	
+	
+	
+	<select id="selectJoinStep03U" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
+			/* selectJoinStep03U */
+			<!-- SELECT 
+					a.member_idx as memberIdx, 
+					a.member_id as memberId, 
+					a.member_pw as memberPw, 
+					a.member_nm as memberNm,
+					b.homepage as homepage,
+					b.mainphone as mainphone,
+					b.fax as fax,
+					b.registrationnumber as registrationnumber,
+					left(b.establishmentdate,10) as establishmentdate,
+					b.mainphone as mainphone,
+					a.member_addr as memberAddr, 
+					b.capital as capital,
+					b.field as field,
+					a.member_tel as memberTel, 
+					a.member_hp as memberHp, 
+					a.member_mail as memberMail, 
+					a.member_belong as memberBelong, 
+					a.member_join_dt as memberJoinDt, 
+					a.member_join_type as memberJoinType, 
+					a.member_st as memberSt, 
+					a.member_school as memberSchool,
+					a.member_major as memberMajor, 
+					a.member_affiliation as memberAffiliation, 
+					a.member_department as memberDepartment, 
+					a.member_specialty as memberSpecialty, 
+					a.member_details as memberDetails, 
+					a.member_interests as memberInterests, 
+					a.member_fieldinterest as memberFieldinterest, 
+					a.member_fax as memberFax, 
+					a.member_myaddr as memberMyaddr, 
+					a.member_myfax as memberMyfax, 
+					a.member_addr1 as memberAddr1, 
+					a.member_mytel as memberMytel, 
+					a.member_myaddr1 as memberMyaddr1, 
+					a.member_homepage as memberHomepage, 
+					a.member_registration_number as memberRegistrationNumber
+			FROM tb_member a, tb_companyInformation b
+				WHERE 1=1 
+					AND a.member_id = b.member_id
+					AND a.member_id in (#{memberId1},#{memberId},#{memberIdx}) -->
+					
+
+				select 
+					a.member_id as memberId, 
+					a.member_pw as memberPw, 
+					a.member_nm as memberNm,
+					bb.expertHeadTel as expertHeadTel,
+					bb.expertEmail as expertEmail,
+					bb.expertFinalSchoolNm as expertFinalSchoolNm,
+					bb.expertMajorNm as expertMajorNm,
+					bb.expertHeadAddrNm as expertHeadAddrNm,
+					bb.expertDptmNm as expertDptmNm,
+					bb.largeSpecialAreaCd as largeSpecialAreaCd,
+					bb.mediumSpecialAreaCd as mediumSpecialAreaCd,
+					bb.detailSpecialAreaCd as detailSpecialAreaCd,
+					bb.expertInterestAreaCd as expertInterestAreaCd,
+					bb.expertDetailIntrtAreaCd as expertDetailIntrtAreaCd,
+					bb.expertOffiAddr as expertOffiAddr,
+					bb.expertOffiDetailAddr as expertOffiDetailAddr,
+					bb.expertOffiTel as expertOffiTel,
+					bb.expertOffiFax as expertOffiFax,
+					bb.expertHomeAddr as expertHomeAddr,
+					bb.expertHomeDetailAddr as expertHomeDetailAddr
+				from (
+				select 
+					a.member_id,
+					a.member_pw as memberPw,
+					a.member_nm as memberNm,
+					b.expert_head_tel as expertHeadTel,
+					b.expert_email as expertEmail,
+					b.expert_final_school_nm as expertFinalSchoolNm,
+				    b.expert_major_nm as expertMajorNm,
+				    b.expert_head_addr_nm as expertHeadAddrNm,
+				    b.expert_dptm_nm as expertDptmNm,
+				    b.large_special_area_cd as largeSpecialAreaCd,
+				    b.medium_special_area_cd as mediumSpecialAreaCd,
+				    b.detail_special_area_cd as detailSpecialAreaCd,
+				    b.expert_interest_area_cd as expertInterestAreaCd,
+				    b.expert_detail_intrt_area_cd as expertDetailIntrtAreaCd,
+				    b.expert_offi_addr as expertOffiAddr,
+				    b.expert_offi_detail_addr as expertOffiDetailAddr,
+				    b.expert_offi_tel as expertOffiTel,
+				    b.expert_offi_fax as expertOffiFax,
+				    b.expert_home_addr as expertHomeAddr,
+				    b.expert_home_detail_addr as expertHomeDetailAddr
+				from tb_member a, tb_expert b
+				where a.member_id = b.member_id
+				and a.member_id like CONCAT(#{memberIdx})
+				) as bb, 
+					tb_member a 
+				where 1=1
+				AND a.member_id = bb.member_id 
+			
+					
+	</select>
+	
+	<select id="selectJoinStep03U11" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
+			/* selectJoinStep03U11 */
+		select 
+					a.member_id as memberId, 
+					a.member_pw as memberPw, 
+					bb.memberNm as memberNm,
+					bb.entprRespsibHpNo as entprRespsibHpNo,
+					bb.entprRespsibEmail as entprRespsibEmail,
+					bb.entprNm as entprNm,
+					bb.entprCeo as entprCeo,
+					bb.entprComRegNum as entprComRegNum,
+					bb.entprCeoEmail as entprCeoEmail,
+					bb.largeBussAreaCd as largeBussAreaCd,
+					bb.entprSite as entprSite,
+					bb.entprHeadAddr as entprHeadAddr,
+					bb.entprHeadTel as entprHeadTel,
+					bb.entprHeadDetailAddr as entprHeadDetailAddr,
+					bb.entprHeadFax as entprHeadFax,
+					bb.entprBranchAddr as entprBranchAddr,
+					bb.entprBranchTel as entprBranchTel,
+					bb.entprBranchDetailAddr as entprBranchDetailAddr,
+					bb.entprBranchFax as entprBranchFax
+				from (
+				select 
+					a.member_id,
+					a.member_pw as memberPw,
+					b.entpr_respsib_nm as memberNm,
+					b.entpr_respsib_hp_no as entprRespsibHpNo,
+					b.entpr_respsib_email as entprRespsibEmail,
+					b.entpr_nm as entprNm,
+				    b.entpr_ceo as entprCeo,
+				    b.entpr_com_reg_num as entprComRegNum,
+				    b.entpr_ceo_email as entprCeoEmail,
+				    b.large_buss_area_cd as largeBussAreaCd,
+				    b.entpr_site as entprSite,
+				    b.entpr_head_addr as entprHeadAddr,
+				    b.entpr_head_tel as entprHeadTel,
+				    b.entpr_head_detail_addr as entprHeadDetailAddr,
+				    b.entpr_head_fax as entprHeadFax,
+				    b.entpr_branch_addr as entprBranchAddr,
+				    b.entpr_branch_tel as entprBranchTel,
+				    b.entpr_branch_detail_addr as entprBranchDetailAddr,
+				    b.entpr_branch_fax as entprBranchFax
+				from tb_member a, tb_enterprise b
+				where a.member_id = b.member_id
+				and a.member_id like CONCAT(#{memberIdx})
+				) as bb, 
+					tb_member a 
+				where 1=1
+				AND a.member_id = bb.member_id 
+		
+			</select>
+	
+
+	<select id="selectJoinStep03U111" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
+			/* selectJoinStep03U111 */
+			select 
+					a.member_id as memberId,
+					a.member_pw as memberPw,
+					bb.memberNm as memberNm,
+					bb.buyerHeadTel as buyerHeadTel,
+					bb.buyerCeoEmail as buyerCeoEmail,
+					bb.companyNm as companyNm,
+				    bb.buyerCeo as buyerCeo,
+				    bb.buyerComRegNum as buyerComRegNum,
+				    bb.buyerCeoEmail1 as buyerCeoEmail,
+				    bb.buyerSite as buyerSite,
+				    bb.buyerBusArea as buyerBusArea,
+                    bb.buyerHeadAddr as buyerHeadAddr,
+                    bb.buyerHeadDetailAddr as buyerHeadDetailAddr,
+                    bb.buyerHeadTel as buyerHeadTel1,
+                    bb.buyerHeadFax as buyerHeadFax,
+                    bb.buyerBranchAddr as buyerBranchAddr,
+                    bb.buyerBranchDetailAddr as buyerBranchDetailAddr,
+                    bb.buyerBranchTel as buyerBranchTel,
+                    bb.buyerBranchFax as buyerBranchFax
+				from (
+				select 
+					a.member_id,
+					a.member_pw as memberPw,
+					b.buyer_nm as memberNm,
+					b.buyer_head_tel as buyerHeadTel,
+					b.buyer_ceo_email as buyerCeoEmail,
+					b.company_nm as companyNm,
+				    b.buyer_ceo as buyerCeo,
+				    b.buyer_com_reg_num as buyerComRegNum,
+				    b.buyer_ceo_email as buyerCeoEmail1,
+				    b.buyer_site as buyerSite,
+				    b.buyer_bus_area as buyerBusArea,
+                    b.buyer_head_addr as buyerHeadAddr,
+                    b.buyer_head_detail_addr as buyerHeadDetailAddr,
+                    b.buyer_head_tel as buyerHeadTel1,
+                    b.buyer_head_fax as buyerHeadFax,
+                    b.buyer_branch_addr as buyerBranchAddr,
+                    b.buyer_branch_detail_addr as buyerBranchDetailAddr,
+                    b.buyer_branch_tel as buyerBranchTel,
+                    b.buyer_branch_fax as buyerBranchFax
+				from tb_member a, tb_buyer b
+				where a.member_id = b.member_id
+				and a.member_id like CONCAT(#{memberIdx})
+				) as bb, 
+					tb_member a 
+				where 1=1
+				AND a.member_id = bb.member_id 
+		
+			</select>
+	
+
+	
+	<select id="selectJoinStep03Test" parameterType="jcep.admin.model.MemberVO" resultType="int">
+		/* selectJoinStep03Test */
+		select count(*) as idCnt
+			from tb_expert
+		where member_id = #{memberIdx}
+				
+	</select>
+	
+	<select id="selectJoinStep03Test2" parameterType="jcep.admin.model.MemberVO" resultType="int">
+		/* selectJoinStep03Test2 */
+		select count(*) as idCnt
+			from tb_enterprise
+		where member_id = #{memberIdx}
+				
+	</select>
+	
+	<select id="selectJoinStep03Test3" parameterType="jcep.admin.model.MemberVO" resultType="int">
+		/* selectJoinStep03Test3 */
+		select count(*) as idCnt
+			from tb_buyer
+		where member_id = #{memberIdx}
+				
+	</select>
+	
+	<select id="selectJoinStep03U1" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
+			/* selectJoinStep03U1 */
+			SELECT 
+					a.performance as performance,
+					a.quarteryear as quarteryear,
+					a.capital as capital,
+					a.touch as touch,
+					a.support as support
+			FROM tb_companyInformation a
+					WHERE 1=1 
+	</select>
+	
+	<insert  id="myCompanyInformationEmployeeInsert" parameterType="jcep.admin.model.MemberVO">
+		/*myCompanyInformationEmployeeInsert*/
+		<![CDATA[
+			INSERT 	INTO 	tb_enterprise_employee(
+								member_id,
+								enterprise_idx,
+								entpr_employee_nm,
+								entpr_employee_dept,
+								entpr_employee_position,
+								entpr_employee_email,
+								entpr_employee_phone,
+								file_course,
+								org_file_nm,
+								upload_file_nm,
+								reg_dt,
+								reg_id
+								)
+						VALUES(
+								#{memberId},
+								(SELECT ifnull(MAX(a.enterprise_idx), 0)+1 FROM tb_enterprise_employee a),
+								#{entprEmployeeNm},
+								#{entprEmployeeDept},
+								#{entprEmployeePosition},
+								#{entprEmployeeEmail},
+								#{entprEmployeePhone},
+								#{fileCourse},
+								#{orgFileNm},
+								#{uploadFileNm},
+								sysdate(),
+								#{memberId}
+								)
+		]]>
+	</insert>
+
+	<insert  id="myCompanyInformationJecpInsert" parameterType="jcep.admin.model.MemberVO">
+		/*myCompanyInformationJecpInsert*/
+		<![CDATA[
+			INSERT 	INTO 	tb_enterprise_intlt_propty(
+								member_id,
+				                enterprise_idx,
+				                intlt_propt_buss_nm,
+				                intlt_propt_perf_nm,
+				                intlt_propt_cd,
+				                reg_form_cd,
+				                reg_nation_cd,
+				                intlt_propt_reg_no,
+				                intlt_propty_dt,
+				                remark,
+				                reg_dt,
+				                reg_id
+								)
+						VALUES(
+								#{memberId},
+								(	SELECT ifnull(MAX(a.enterprise_idx), 0)+1 
+									FROM tb_enterprise_intlt_propty a
+								),
+								#{ntltProptBussNm},
+								#{ntltProptPerfNm},
+								#{intltProptCd},
+								#{regFormCd},
+								#{regNationCd},
+								#{intltProptRegNo},
+								#{intltProptyDt},
+								#{remark},
+								sysdate(),
+								#{memberId}
+								)
+		]]>
+	</insert>
+	<!-- 20191213	최선권 로그인시 회원 구분을 위한 데이터 정보 가져오기 -->
+	<select id="loginData" parameterType="java.util.HashMap" resultType="jcep.admin.model.MemberVO">
+		<![CDATA[
+			SELECT 	member_id								as	memberId,
+						member_pw								as	memberPw,
+						member_nm								as memberNm,
+						join_dt									as	joinDt,
+						join_type_cd							as	joinTypeCd,
+						member_st_cd							as memberStCd,
+						reg_dt									as	regDt,
+						reg_id									as regId
+			FROM		tb_member
+			WHERE	1											=1
+			AND		member_id								=#{memberId}
+			AND		member_pw								=#{memberPw}
+		]]>
+	
+	</select>
+	
+</mapper>

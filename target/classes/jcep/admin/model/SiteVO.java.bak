@@ -1,0 +1,103 @@
+package jcep.admin.model;
+
+import org.springframework.web.multipart.MultipartFile;
+
+/**
+ * @Class Name : SiteVO.java
+ * @Description : SiteVO Class
+ * @Modification Information
+ * @
+ * @  수정일      수정자              수정내용
+ * @ ---------   ---------   -------------------------------
+ * @ 2019.07.19           최초생성
+ *
+ * @since 2019.07.19
+ * @version 1.0
+ * @see
+ *
+ */
+public class SiteVO extends PagingVO {
+
+	private static final long serialVersionUID = 1L;
+
+	private String searchType;
+	private String searchText;
+	
+	private String noticeIdx;
+	private String noticeTitle;
+	private String noticeContent;
+	private String noticeOpenYn;
+	private String noticeImptYn;
+	private String noticeFile;
+	private String noticeRegDt;
+	private String noticeRegId;
+	private MultipartFile noticeFiles;
+	
+	public String getSearchType() {
+		return searchType;
+	}
+	public void setSearchType(String searchType) {
+		this.searchType = searchType;
+	}
+	public String getSearchText() {
+		return searchText;
+	}
+	public void setSearchText(String searchText) {
+		this.searchText = searchText;
+	}
+	public String getNoticeIdx() {
+		return noticeIdx;
+	}
+	public void setNoticeIdx(String noticeIdx) {
+		this.noticeIdx = noticeIdx;
+	}
+	public String getNoticeTitle() {
+		return noticeTitle;
+	}
+	public void setNoticeTitle(String noticeTitle) {
+		this.noticeTitle = noticeTitle;
+	}
+	public String getNoticeContent() {
+		return noticeContent;
+	}
+	public void setNoticeContent(String noticeContent) {
+		this.noticeContent = noticeContent;
+	}
+	public String getNoticeOpenYn() {
+		return noticeOpenYn;
+	}
+	public void setNoticeOpenYn(String noticeOpenYn) {
+		this.noticeOpenYn = noticeOpenYn;
+	}
+	public String getNoticeImptYn() {
+		return noticeImptYn;
+	}
+	public void setNoticeImptYn(String noticeImptYn) {
+		this.noticeImptYn = noticeImptYn;
+	}
+	public String getNoticeFile() {
+		return noticeFile;
+	}
+	public void setNoticeFile(String noticeFile) {
+		this.noticeFile = noticeFile;
+	}
+	public String getNoticeRegDt() {
+		return noticeRegDt;
+	}
+	public void setNoticeRegDt(String noticeRegDt) {
+		this.noticeRegDt = noticeRegDt;
+	}
+	public String getNoticeRegId() {
+		return noticeRegId;
+	}
+	public void setNoticeRegId(String noticeRegId) {
+		this.noticeRegId = noticeRegId;
+	}
+	public MultipartFile getNoticeFiles() {
+		return noticeFiles;
+	}
+	public void setNoticeFiles(MultipartFile noticeFiles) {
+		this.noticeFiles = noticeFiles;
+	}
+
+}

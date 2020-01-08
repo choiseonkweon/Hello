@@ -1,0 +1,118 @@
+package jcep.admin.dao;
+
+import java.util.ArrayList;
+
+import egovframework.rte.psl.dataaccess.mapper.Mapper;
+import jcep.admin.model.SiteVO;
+
+
+/**
+ * @Class Name : SiteMapper.java
+ * @Description : 사이트관리에 대한 데이터처리 매퍼 클래스
+ * @Modification Information
+ * @
+ * @  수정일      수정자              수정내용
+ * @ ---------   ---------   -------------------------------
+ * @ 2019.07.19          최초생성
+ *
+ * @since 2019.07.19
+ * @version 1.0
+ */
+
+@Mapper
+public interface SiteMapper {
+	
+	/**
+	 * 공지사항 목록을 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 공지사항 목록
+	 * @exception Exception
+	 */
+	public ArrayList<SiteVO> selectNoticeList(SiteVO params) throws Exception;
+	
+	/**
+	 * 공지사항 목록 총 갯수를 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 공지사항 목록 총 갯수
+	 * @exception
+	 */
+	public int selectNoticeListTotCnt(SiteVO params) throws Exception;
+	
+	/**
+	 * 공지사항 상세 정보를 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 공지사항 상세
+	 * @exception Exception
+	 */
+	public SiteVO selectNoticeDetail(SiteVO params) throws Exception;
+	
+	/**
+	 * 공지사항을 등록한다.
+	 * @param params - 등록할 정보가 담긴 SiteVO
+	 * @return Integer형
+	 * @exception Exception
+	 */
+	public Integer noticeInsert(SiteVO params) throws Exception;
+
+	/**
+	 * 공지사항을 등록한다.
+	 * @param params - 등록할 정보가 담긴 SiteVO
+	 * @return Integer형
+	 * @exception Exception
+	 */
+	public Integer noticeUpdate(SiteVO params) throws Exception;
+	
+	
+	
+	/**
+	 * 공지사항 파일 업로드
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return Integer형
+	 * @exception Exception
+	 */
+	public Integer noticeFileUpload(SiteVO params) throws Exception;
+	
+/*	
+	
+	
+	*//**
+	 * 자원 목록을 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 자원 목록
+	 * @exception Exception
+	 *//*
+	public ArrayList<FacilityResourceVO> selectResourceList(FacilityResourceVO params) throws Exception;
+	
+	*//**
+	 * 자원 목록 총 갯수를 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 자원 목록 총 갯수
+	 * @exception
+	 *//*
+	public int selectResourceListTotCnt(FacilityResourceVO params) throws Exception;
+	
+	*//**
+	 * 자원정보를 등록한다.
+	 * @param params - 등록할 정보가 담긴 FacilityResourceVO
+	 * @return Integer형
+	 * @exception Exception
+	 *//*
+	public Integer resourceInsert(FacilityResourceVO params) throws Exception;
+	
+	*//**
+	 * 자원정보를 삭젠한다.
+	 * @param params - 삭제할 정보가 담긴 FacilityResourceVO
+	 * @return Integer형
+	 * @exception Exception
+	 *//*
+	public Integer resourceDelete(FacilityResourceVO params) throws Exception;
+	
+	*//**
+	 * 자원 이미지 업로드
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 회원정보 상세
+	 * @exception Exception
+	 *//*
+	public Integer resourceImageUpload(FacilityResourceVO params) throws Exception;*/
+	
+}

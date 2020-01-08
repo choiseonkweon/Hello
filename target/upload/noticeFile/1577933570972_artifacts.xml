@@ -1,0 +1,1184 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?artifactRepository class='org.eclipse.equinox.internal.p2.artifact.repository.simple.SimpleArtifactRepository' version='1.0.0'?>
+<repository name='Bundle pool' type='org.eclipse.equinox.p2.artifact.repository.simpleRepository' version='1.0.0'>
+  <properties size='2'>
+    <property name='p2.system' value='true'/>
+    <property name='p2.timestamp' value='1573620844035'/>
+  </properties>
+  <mappings size='3'>
+    <rule filter='(&amp; (classifier=osgi.bundle))' output='${repoUrl}/plugins/${id}_${version}.jar'/>
+    <rule filter='(&amp; (classifier=binary))' output='${repoUrl}/binary/${id}_${version}'/>
+    <rule filter='(&amp; (classifier=org.eclipse.update.feature))' output='${repoUrl}/features/${id}_${version}.jar'/>
+  </mappings>
+  <artifacts size='176'>
+    <artifact classifier='osgi.bundle' id='org.eclipse.core.contenttype' version='3.3.0.v20080604-1400'>
+      <properties size='2'>
+        <property name='artifact.size' value='86977'/>
+        <property name='download.size' value='86977'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.swt.win32.win32.x86' version='3.4.1.v3452b'>
+      <properties size='2'>
+        <property name='artifact.size' value='2123582'/>
+        <property name='download.size' value='2123582'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.equinox.p2.updatesite' version='1.0.1.R34x_v20080808-1156'>
+      <properties size='2'>
+        <property name='artifact.size' value='37919'/>
+        <property name='download.size' value='37919'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.equinox.security.win32.x86' version='1.0.0.v20080529-1600'>
+      <properties size='2'>
+        <property name='artifact.size' value='21778'/>
+        <property name='download.size' value='21778'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.core.runtime.compatibility.registry' version='3.2.200.v20080610'>
+      <properties size='2'>
+        <property name='artifact.size' value='4096'/>
+        <property name='download.size' value='14014'/>
+      </properties>
+      <repositoryProperties size='1'>
+        <property name='artifact.folder' value='true'/>
+      </repositoryProperties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='com.tomato.exerd.library.ui' version='2.5.7.20190719-1507'>
+      <properties size='4'>
+        <property name='artifact.size' value='5328574'/>
+        <property name='download.size' value='5328574'/>
+        <property name='download.checksum.md5' value='8e52df8869e19bb1de9c4b836661fe62'/>
+        <property name='download.checksum.sha-256' value='d2f7b74ff4f84ba915ed06d44b38c6dc8da904f379a98c7a16d88ff7c6c9eb3b'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.core.runtime.compatibility.auth' version='3.2.100.v20070502'>
+      <properties size='2'>
+        <property name='artifact.size' value='21219'/>
+        <property name='download.size' value='21219'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.update.scheduler' version='3.2.100.v20080404'>
+      <properties size='2'>
+        <property name='artifact.size' value='30729'/>
+        <property name='download.size' value='30729'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.ui.workbench.texteditor' version='3.4.1.r341_v20080827-1100'>
+      <properties size='2'>
+        <property name='artifact.size' value='573923'/>
+        <property name='download.size' value='573923'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.equinox.p2.metadata' version='1.0.0.v20080514-1900'>
+      <properties size='2'>
+        <property name='artifact.size' value='44148'/>
+        <property name='download.size' value='44148'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.equinox.registry' version='3.4.0.v20080516-0950'>
+      <properties size='2'>
+        <property name='artifact.size' value='172943'/>
+        <property name='download.size' value='172943'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='com.tomato.exerd.product.db2.model' version='2.5.7.20190719-1507'>
+      <properties size='4'>
+        <property name='artifact.size' value='80039'/>
+        <property name='download.size' value='80039'/>
+        <property name='download.checksum.md5' value='25d74259f659b303a2dde5574122fdc9'/>
+        <property name='download.checksum.sha-256' value='46a85f79a297c70292fbb8108e3836a8ff0b21ad1dec757cc06d81cb023e9ff2'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.core.net' version='1.1.0.I20080604'>
+      <properties size='2'>
+        <property name='artifact.size' value='55334'/>
+        <property name='download.size' value='55334'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='com.tomato.exerd.product.sqlserver.core' version='2.5.7.20190719-1507'>
+      <properties size='4'>
+        <property name='artifact.size' value='1067698'/>
+        <property name='download.size' value='1067698'/>
+        <property name='download.checksum.md5' value='7f649a2ed9228cfcbf40987f0590fd45'/>
+        <property name='download.checksum.sha-256' value='6c05d35ee2e403064a2db7524da9d6151b70f628a19e958d68358177886ced52'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.core.databinding' version='1.1.1.M20080827-0800b'>
+      <properties size='2'>
+        <property name='artifact.size' value='347778'/>
+        <property name='download.size' value='347778'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.ant.core' version='3.2.0.v20080529'>
+      <properties size='2'>
+        <property name='artifact.size' value='95503'/>
+        <property name='download.size' value='95503'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.ecf.provider.filetransfer.ssl' version='1.0.0.v20080611-1715'>
+      <properties size='2'>
+        <property name='artifact.size' value='7268'/>
+        <property name='download.size' value='7268'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.apache.ant' version='1.7.0.v200803061910'>
+      <properties size='2'>
+        <property name='artifact.size' value='4096'/>
+        <property name='download.size' value='1978313'/>
+      </properties>
+      <repositoryProperties size='1'>
+        <property name='artifact.folder' value='true'/>
+      </repositoryProperties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.update.core' version='3.2.202.R34x_v20081128'>
+      <properties size='2'>
+        <property name='artifact.size' value='605282'/>
+        <property name='download.size' value='605282'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='javax.servlet' version='2.4.0.v200806031604'>
+      <properties size='2'>
+        <property name='artifact.size' value='107639'/>
+        <property name='download.size' value='107639'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.update.core.win32' version='3.2.100.v20080107'>
+      <properties size='2'>
+        <property name='artifact.size' value='85078'/>
+        <property name='download.size' value='85078'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='com.tomato.exerd.model' version='2.5.7.20190719-1507'>
+      <properties size='4'>
+        <property name='artifact.size' value='3116657'/>
+        <property name='download.size' value='3116657'/>
+        <property name='download.checksum.md5' value='3ac138821958fed25298486fd9263c04'/>
+        <property name='download.checksum.sha-256' value='5dec0fd92904708853fdcf86340cb5e542b6edcdf6f0715a9b596ecfa69d41c8'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='com.tomato.exerd.core' version='2.5.7.20190719-1507'>
+      <properties size='4'>
+        <property name='artifact.size' value='8995894'/>
+        <property name='download.size' value='8995894'/>
+        <property name='download.checksum.md5' value='48be9cd0354ac96be19920cda2a4557e'/>
+        <property name='download.checksum.sha-256' value='e071e6da01a47cb2737fefcc8026a0f785bb1c542aa13cecb844d2e523e43dba'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.ui.ide' version='3.4.2.M20090127-1700'>
+      <properties size='2'>
+        <property name='artifact.size' value='2035254'/>
+        <property name='download.size' value='2035254'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.platform' version='3.3.101.v200902111700'>
+      <properties size='2'>
+        <property name='artifact.size' value='4096'/>
+        <property name='download.size' value='351142'/>
+      </properties>
+      <repositoryProperties size='1'>
+        <property name='artifact.folder' value='true'/>
+      </repositoryProperties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.team.core' version='3.4.2.r34x_20080115'>
+      <properties size='2'>
+        <property name='artifact.size' value='384120'/>
+        <property name='download.size' value='384120'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.equinox.common' version='3.4.0.v20080421-2006'>
+      <properties size='2'>
+        <property name='artifact.size' value='94652'/>
+        <property name='download.size' value='94652'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.core.net.win32.x86' version='1.0.0.I20080521'>
+      <properties size='2'>
+        <property name='artifact.size' value='28449'/>
+        <property name='download.size' value='28449'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.debug.ui' version='3.4.2.v20090110_r342'>
+      <properties size='2'>
+        <property name='artifact.size' value='2268072'/>
+        <property name='download.size' value='2268072'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.core.boot' version='3.1.100.v20080218'>
+      <properties size='2'>
+        <property name='artifact.size' value='5009'/>
+        <property name='download.size' value='5009'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.ui.net' version='1.0.0.I20080605'>
+      <properties size='2'>
+        <property name='artifact.size' value='39984'/>
+        <property name='download.size' value='39984'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='com.tomato.exerd.product.sqlserver.model' version='2.5.7.20190719-1507'>
+      <properties size='4'>
+        <property name='artifact.size' value='446734'/>
+        <property name='download.size' value='446734'/>
+        <property name='download.checksum.md5' value='7515e9826202ec016495ba49933f2dce'/>
+        <property name='download.checksum.sha-256' value='2d03c2078f10228dfef6cacbeec226ab11237e764b15f8dfa18eea174958e61a'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.equinox.p2.core' version='1.0.4.v20081112-1019'>
+      <properties size='2'>
+        <property name='artifact.size' value='77939'/>
+        <property name='download.size' value='77939'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.apache.commons.el' version='1.0.0.v200806031608'>
+      <properties size='2'>
+        <property name='artifact.size' value='127500'/>
+        <property name='download.size' value='127500'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='javax.servlet.jsp' version='2.0.0.v200806031607'>
+      <properties size='2'>
+        <property name='artifact.size' value='62712'/>
+        <property name='download.size' value='62712'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.ui.workbench' version='3.4.2.M20090127-1700'>
+      <properties size='2'>
+        <property name='artifact.size' value='3928086'/>
+        <property name='download.size' value='3928086'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.osgi.util' version='3.1.300.v20080303'>
+      <properties size='2'>
+        <property name='artifact.size' value='22759'/>
+        <property name='download.size' value='22759'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.ecf.ssl' version='1.0.0.v20080611-1715'>
+      <properties size='2'>
+        <property name='artifact.size' value='10003'/>
+        <property name='download.size' value='10003'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.ui.browser' version='3.2.201.v20080708_34x'>
+      <properties size='2'>
+        <property name='artifact.size' value='185746'/>
+        <property name='download.size' value='185746'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.text' version='3.4.0.v20080605-1800'>
+      <properties size='2'>
+        <property name='artifact.size' value='244642'/>
+        <property name='download.size' value='244642'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.ui.ide.application' version='1.0.1.M20090204-0800'>
+      <properties size='2'>
+        <property name='artifact.size' value='48084'/>
+        <property name='download.size' value='48084'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.ui' version='3.4.2.M20090204-0800'>
+      <properties size='2'>
+        <property name='artifact.size' value='145333'/>
+        <property name='download.size' value='145333'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.help.ui' version='3.3.102.v20081014_34x'>
+      <properties size='2'>
+        <property name='artifact.size' value='470176'/>
+        <property name='download.size' value='470176'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.apache.lucene' version='1.9.1.v20080530-1600'>
+      <properties size='2'>
+        <property name='artifact.size' value='444159'/>
+        <property name='download.size' value='444159'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.compare' version='3.4.1.r34x_20090121'>
+      <properties size='2'>
+        <property name='artifact.size' value='697234'/>
+        <property name='download.size' value='697234'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='com.tomato.exerd.annotations' version='2.5.7.20190719-1507'>
+      <properties size='4'>
+        <property name='artifact.size' value='122492'/>
+        <property name='download.size' value='122492'/>
+        <property name='download.checksum.md5' value='b4f6701fd868f672657147283d93f896'/>
+        <property name='download.checksum.sha-256' value='81734522bd75f02fd95166b518c15e2e7b731d6e474514d5efc6bab90e339f14'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='com.tomato.exerd.forward' version='2.5.7.20190719-1507'>
+      <properties size='4'>
+        <property name='artifact.size' value='62846'/>
+        <property name='download.size' value='62846'/>
+        <property name='download.checksum.md5' value='926c4a81e32ba5c6ae0377e11e43b031'/>
+        <property name='download.checksum.sha-256' value='ea8dbbc003e66d2dde5f800984feb467d0ae6c3224a72df5b98de783bffa9e84'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.ui.presentations.r21' version='3.2.100.I20080512-2000'>
+      <properties size='2'>
+        <property name='artifact.size' value='98152'/>
+        <property name='download.size' value='98152'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='com.tomato.exerd.reverse' version='2.5.7.20190719-1507'>
+      <properties size='4'>
+        <property name='artifact.size' value='129281'/>
+        <property name='download.size' value='129281'/>
+        <property name='download.checksum.md5' value='8d61a6f4fb8206d7df88b6283260fc66'/>
+        <property name='download.checksum.sha-256' value='b3ad3adafeca2e790c1afec2d67a10303d64f19d6c015cee3c97da96e068dee0'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.equinox.p2.directorywatcher' version='1.0.2.v20080806-1619'>
+      <properties size='2'>
+        <property name='artifact.size' value='22584'/>
+        <property name='download.size' value='22584'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.ui.navigator.resources' version='3.3.101.M20080910-0800'>
+      <properties size='2'>
+        <property name='artifact.size' value='115743'/>
+        <property name='download.size' value='115743'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.ui.editors' version='3.4.0.v20080603-2000'>
+      <properties size='2'>
+        <property name='artifact.size' value='549425'/>
+        <property name='download.size' value='549425'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='com.tomato.exerd.term.ui' version='2.5.7.20190719-1507'>
+      <properties size='4'>
+        <property name='artifact.size' value='793451'/>
+        <property name='download.size' value='793451'/>
+        <property name='download.checksum.md5' value='91cf98f79a963a609391d4693c25d370'/>
+        <property name='download.checksum.sha-256' value='d4dda8b8e43359bd9f3d851ffd0cc8be3cec315135457dd45410be5f937ed46f'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.ui.forms' version='3.3.103.v20081027_34x'>
+      <properties size='2'>
+        <property name='artifact.size' value='298080'/>
+        <property name='download.size' value='298080'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.equinox.p2.metadata.repository' version='1.0.0.v20080604'>
+      <properties size='2'>
+        <property name='artifact.size' value='114947'/>
+        <property name='download.size' value='114947'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.equinox.p2.touchpoint.eclipse' version='1.0.2.v20081119-1055'>
+      <properties size='2'>
+        <property name='artifact.size' value='97878'/>
+        <property name='download.size' value='97878'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.ltk.core.refactoring' version='3.4.2.r342_v20081028-0800'>
+      <properties size='2'>
+        <property name='artifact.size' value='319014'/>
+        <property name='download.size' value='319014'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.core.databinding.beans' version='1.1.1.M20080827-0800a'>
+      <properties size='2'>
+        <property name='artifact.size' value='60283'/>
+        <property name='download.size' value='60283'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.jface.databinding' version='1.2.1.M20080827-0800a'>
+      <properties size='2'>
+        <property name='artifact.size' value='196514'/>
+        <property name='download.size' value='196514'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.help.base' version='3.3.103.v20090128_34x'>
+      <properties size='2'>
+        <property name='artifact.size' value='338647'/>
+        <property name='download.size' value='338647'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.equinox.p2.ui.sdk' version='1.0.1.R34x_v20081029'>
+      <properties size='2'>
+        <property name='artifact.size' value='128927'/>
+        <property name='download.size' value='128927'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.core.variables' version='3.2.100.v20080529-1300'>
+      <properties size='2'>
+        <property name='artifact.size' value='31174'/>
+        <property name='download.size' value='31174'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.equinox.frameworkadmin.equinox' version='1.0.4.v20080930'>
+      <properties size='2'>
+        <property name='artifact.size' value='56054'/>
+        <property name='download.size' value='56054'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.core.filesystem.win32.x86' version='1.1.0.v20080604-1400'>
+      <properties size='2'>
+        <property name='artifact.size' value='16971'/>
+        <property name='download.size' value='16971'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='com.ibm.icu' version='3.8.1.v20080530'>
+      <properties size='2'>
+        <property name='artifact.size' value='4467363'/>
+        <property name='download.size' value='4467363'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='com.tomato.exerd.export.model' version='2.5.7.20190719-1507'>
+      <properties size='4'>
+        <property name='artifact.size' value='3400196'/>
+        <property name='download.size' value='3400196'/>
+        <property name='download.checksum.md5' value='bce71696a00082e298149e06bfbb02ba'/>
+        <property name='download.checksum.sha-256' value='7ef1892c0df6f78fe32b6279a7d46b753159d4af404cee8908b508c0002f1491'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.core.commands' version='3.4.0.I20080509-2000'>
+      <properties size='2'>
+        <property name='artifact.size' value='105798'/>
+        <property name='download.size' value='105798'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.equinox.p2.touchpoint.natives' version='1.0.0.v20080505-1850'>
+      <properties size='2'>
+        <property name='artifact.size' value='30322'/>
+        <property name='download.size' value='30322'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.equinox.simpleconfigurator.manipulator' version='1.0.4.v20080930'>
+      <properties size='2'>
+        <property name='artifact.size' value='20149'/>
+        <property name='download.size' value='20149'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.ui.intro.universal' version='3.2.200.v20080508'>
+      <properties size='2'>
+        <property name='artifact.size' value='4096'/>
+        <property name='download.size' value='1193371'/>
+      </properties>
+      <repositoryProperties size='1'>
+        <property name='artifact.folder' value='true'/>
+      </repositoryProperties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.equinox.http.servlet' version='1.0.100.v20080427-0830'>
+      <properties size='2'>
+        <property name='artifact.size' value='34774'/>
+        <property name='download.size' value='34774'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.help.webapp' version='3.3.101.M20080805_34x'>
+      <properties size='2'>
+        <property name='artifact.size' value='441768'/>
+        <property name='download.size' value='441768'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.equinox.p2.console' version='1.0.0.v20080514-1900'>
+      <properties size='2'>
+        <property name='artifact.size' value='18744'/>
+        <property name='download.size' value='18744'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.core.runtime.compatibility' version='3.2.0.v20071008'>
+      <properties size='2'>
+        <property name='artifact.size' value='91211'/>
+        <property name='download.size' value='91211'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.sat4j.pb' version='2.0.3.v20081021'>
+      <properties size='2'>
+        <property name='artifact.size' value='90024'/>
+        <property name='download.size' value='90024'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.ui.intro' version='3.2.201.v20080702_34x'>
+      <properties size='2'>
+        <property name='artifact.size' value='278045'/>
+        <property name='download.size' value='278045'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='com.jcraft.jsch' version='0.1.37.v200803061811'>
+      <properties size='2'>
+        <property name='artifact.size' value='214540'/>
+        <property name='download.size' value='214540'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.equinox.p2.updatechecker' version='1.0.0.v20080427-2136'>
+      <properties size='2'>
+        <property name='artifact.size' value='14672'/>
+        <property name='download.size' value='14672'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='com.tomato.exerd.help' version='2.5.7.20190719-1507'>
+      <properties size='4'>
+        <property name='artifact.size' value='57630143'/>
+        <property name='download.size' value='57630143'/>
+        <property name='download.checksum.md5' value='9e419d68ea247c8a0a73344f84cc7df7'/>
+        <property name='download.checksum.sha-256' value='41df8d9790432fa4697e90fe155d97d1aeb4d2fe669cc11e3cab9ff83722b545'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.equinox.simpleconfigurator' version='1.0.0.v20080604'>
+      <properties size='2'>
+        <property name='artifact.size' value='34117'/>
+        <property name='download.size' value='34117'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.ui.views' version='3.3.1.M20081112-0800'>
+      <properties size='2'>
+        <property name='artifact.size' value='79527'/>
+        <property name='download.size' value='79527'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.equinox.p2.jarprocessor' version='1.0.0.v20080514-1900'>
+      <properties size='2'>
+        <property name='artifact.size' value='47400'/>
+        <property name='download.size' value='47400'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.ecf.filetransfer' version='2.0.0.v20080611-1715'>
+      <properties size='2'>
+        <property name='artifact.size' value='42469'/>
+        <property name='download.size' value='42469'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.ui.cheatsheets' version='3.3.101.v20080702_34x'>
+      <properties size='2'>
+        <property name='artifact.size' value='327890'/>
+        <property name='download.size' value='327890'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.core.expressions' version='3.4.1.r342_v20081203-0800'>
+      <properties size='2'>
+        <property name='artifact.size' value='86182'/>
+        <property name='download.size' value='86182'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.equinox.http.jetty' version='1.1.0.v20080425'>
+      <properties size='2'>
+        <property name='artifact.size' value='21447'/>
+        <property name='download.size' value='21447'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='com.tomato.exerd.product.oracle10g' version='2.5.7.20190719-1507'>
+      <properties size='4'>
+        <property name='artifact.size' value='1486615'/>
+        <property name='download.size' value='1486615'/>
+        <property name='download.checksum.md5' value='abcbd15d7a6b32ba14ecc9f9ab21fdf1'/>
+        <property name='download.checksum.sha-256' value='2ae73bc454a2aee0c9734bf9aa48ae69438cd80ffb8263769b3a8878e9084d75'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.equinox.http.registry' version='1.0.100.v20080427-0830'>
+      <properties size='2'>
+        <property name='artifact.size' value='36088'/>
+        <property name='download.size' value='36088'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.help' version='3.3.102.v20081014_34x'>
+      <properties size='2'>
+        <property name='artifact.size' value='216711'/>
+        <property name='download.size' value='216711'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='com.tomato.exerd.product.db2.forward' version='2.5.7.20190719-1507'>
+      <properties size='4'>
+        <property name='artifact.size' value='444267'/>
+        <property name='download.size' value='444267'/>
+        <property name='download.checksum.md5' value='dd5eeb0edaac2311b56aec6e26b9e723'/>
+        <property name='download.checksum.sha-256' value='67ea2d220b657e164b0dff4a9e63b9063be05a50a6b68b45991cd4d6f5ec84ca'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='com.tomato.exerd.term.model' version='2.5.7.20190719-1507'>
+      <properties size='4'>
+        <property name='artifact.size' value='111310'/>
+        <property name='download.size' value='111310'/>
+        <property name='download.checksum.md5' value='5b915fb280ab9ab868ec8837e0b0a255'/>
+        <property name='download.checksum.sha-256' value='8fd9d3391bfc491b591f26d7e7a20fa9442bebf3262d44d7b1225470d3ae6473'/>
+      </properties>
+    </artifact>
+    <artifact classifier='org.eclipse.update.feature' id='org.eclipse.help' version='1.0.2.R342_v20090122-7r7xEKaEJBZu5oGhP3u6nOmbM9VK'>
+      <properties size='2'>
+        <property name='artifact.size' value='4096'/>
+        <property name='download.size' value='28199'/>
+      </properties>
+      <repositoryProperties size='1'>
+        <property name='artifact.folder' value='true'/>
+      </repositoryProperties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='com.tomato.exerd.erwin' version='2.5.7.20190719-1507'>
+      <properties size='4'>
+        <property name='artifact.size' value='2936437'/>
+        <property name='download.size' value='2936437'/>
+        <property name='download.checksum.md5' value='420b0e03e0f1e9894a5c4c14ce95176c'/>
+        <property name='download.checksum.sha-256' value='8b46b8a83bcf34c45ecf26d1c5507fcf3f79a258aede4a85dab29aa59a6d8437'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.ui.navigator' version='3.3.102.M20090127-1700'>
+      <properties size='2'>
+        <property name='artifact.size' value='319920'/>
+        <property name='download.size' value='319920'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.update.configurator' version='3.2.201.R34x_v20080819'>
+      <properties size='2'>
+        <property name='artifact.size' value='98001'/>
+        <property name='download.size' value='98001'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.ui.views.properties.tabbed' version='3.4.2.M20090127-1700'>
+      <properties size='2'>
+        <property name='artifact.size' value='102473'/>
+        <property name='download.size' value='102473'/>
+      </properties>
+    </artifact>
+    <artifact classifier='org.eclipse.update.feature' id='com.tomato.exerd.feature' version='2.5.7.20190719-1507'>
+      <properties size='4'>
+        <property name='artifact.size' value='9467'/>
+        <property name='download.size' value='9467'/>
+        <property name='download.checksum.md5' value='35541018b2c2f13c391c98dee620e3eb'/>
+        <property name='download.checksum.sha-256' value='a863b4eefc61614b76935e3069cde589c6eafba6403a2e06cf0c0dfb4192f83d'/>
+      </properties>
+      <repositoryProperties size='1'>
+        <property name='artifact.folder' value='true'/>
+      </repositoryProperties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.ui.externaltools' version='3.2.0.v20080514-1542'>
+      <properties size='2'>
+        <property name='artifact.size' value='152903'/>
+        <property name='download.size' value='152903'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.search' version='3.4.1.r341_v20080813-0800'>
+      <properties size='2'>
+        <property name='artifact.size' value='463909'/>
+        <property name='download.size' value='463909'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.core.resources.win32.x86' version='3.4.0.v20071204'>
+      <properties size='2'>
+        <property name='artifact.size' value='15751'/>
+        <property name='download.size' value='15751'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.ui.win32' version='3.2.100.v20080408-0800'>
+      <properties size='2'>
+        <property name='artifact.size' value='23398'/>
+        <property name='download.size' value='23398'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.equinox.p2.engine' version='1.0.4.v20080930'>
+      <properties size='2'>
+        <property name='artifact.size' value='124805'/>
+        <property name='download.size' value='124805'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='com.tomato.exerd.product.sqlserver.propertypage' version='2.5.7.20190719-1507'>
+      <properties size='4'>
+        <property name='artifact.size' value='800915'/>
+        <property name='download.size' value='800915'/>
+        <property name='download.checksum.md5' value='14b5865b1035e4169dd7443ba49fd372'/>
+        <property name='download.checksum.sha-256' value='f3fcfc60b2b275154ab23968e5c1455338bf6f079a768bddf54d29eb2d917f15'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='com.tomato.exerd.gefviewers' version='2.5.7.20190719-1507'>
+      <properties size='4'>
+        <property name='artifact.size' value='77744'/>
+        <property name='download.size' value='77744'/>
+        <property name='download.checksum.md5' value='437e7c95a40532193e646ce830d26f67'/>
+        <property name='download.checksum.sha-256' value='a9d366297b5a363bf520f3b57ca4f9b2299d712e08cb31a9347a8988107a12f3'/>
+      </properties>
+    </artifact>
+    <artifact classifier='org.eclipse.update.feature' id='org.eclipse.equinox.p2.user.ui' version='1.0.2.r34x_v20090120-7d-7tEQcCaaYSBeNOClOn02267'>
+      <properties size='2'>
+        <property name='artifact.size' value='4096'/>
+        <property name='download.size' value='28106'/>
+      </properties>
+      <repositoryProperties size='1'>
+        <property name='artifact.folder' value='true'/>
+      </repositoryProperties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.ltk.ui.refactoring' version='3.4.1.r341_v20080716-0800'>
+      <properties size='2'>
+        <property name='artifact.size' value='454534'/>
+        <property name='download.size' value='454534'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.equinox.security.ui' version='1.0.0.v20080603-1810'>
+      <properties size='2'>
+        <property name='artifact.size' value='212879'/>
+        <property name='download.size' value='212879'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='com.tomato.exerd.product.sqlserver.forward' version='2.5.7.20190719-1507'>
+      <properties size='4'>
+        <property name='artifact.size' value='254178'/>
+        <property name='download.size' value='254178'/>
+        <property name='download.checksum.md5' value='181304fed778a471d24084b80d1423de'/>
+        <property name='download.checksum.sha-256' value='0f1c7565cc996061246e0f3560042359405d78ea84aa6a4bd12b8e299dfa66ff'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.core.resources.compatibility' version='3.4.0.v20080604-1400'>
+      <properties size='2'>
+        <property name='artifact.size' value='120987'/>
+        <property name='download.size' value='120987'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.equinox.p2.ui' version='1.0.4.R34x_v20090123'>
+      <properties size='2'>
+        <property name='artifact.size' value='375575'/>
+        <property name='download.size' value='375575'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='com.tomato.exerd.intro' version='2.5.7.20190719-1507'>
+      <properties size='4'>
+        <property name='artifact.size' value='2445433'/>
+        <property name='download.size' value='2445433'/>
+        <property name='download.checksum.md5' value='2dde55054f0ecd31cacd08cfd9ef4d2c'/>
+        <property name='download.checksum.sha-256' value='eccff1a13157308d9a00bd0085120d72405e99430a1a00d7848b37205699e11a'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='com.tomato.exerd.product.sqlserver.validator' version='2.5.7.20190719-1507'>
+      <properties size='4'>
+        <property name='artifact.size' value='20487'/>
+        <property name='download.size' value='20487'/>
+        <property name='download.checksum.md5' value='93fa444b9049049e2aac07dc163cc7e9'/>
+        <property name='download.checksum.sha-256' value='d2486a35f464083c7650632d736fd46c8743350a1b49d8077ad2d6afff11ef79'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.jface.text' version='3.4.2.r342_v20081119-0800'>
+      <properties size='2'>
+        <property name='artifact.size' value='945619'/>
+        <property name='download.size' value='945619'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.equinox.launcher.win32.win32.x86' version='1.0.101.R34x_v20080731'>
+      <properties size='2'>
+        <property name='artifact.size' value='4096'/>
+        <property name='download.size' value='32112'/>
+      </properties>
+      <repositoryProperties size='1'>
+        <property name='artifact.folder' value='true'/>
+      </repositoryProperties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.mortbay.jetty' version='5.1.14.v200806031611'>
+      <properties size='2'>
+        <property name='artifact.size' value='703181'/>
+        <property name='download.size' value='703181'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.equinox.jsp.jasper.registry' version='1.0.0.v20080427-0830'>
+      <properties size='2'>
+        <property name='artifact.size' value='9867'/>
+        <property name='download.size' value='9867'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.equinox.security' version='1.0.1.R34x_v20080721'>
+      <properties size='2'>
+        <property name='artifact.size' value='104717'/>
+        <property name='download.size' value='104717'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='com.tomato.exerd.product.db2.propertypage' version='2.5.7.20190719-1507'>
+      <properties size='4'>
+        <property name='artifact.size' value='237754'/>
+        <property name='download.size' value='237754'/>
+        <property name='download.checksum.md5' value='0a496b394f9b94feb2808287f363f8f2'/>
+        <property name='download.checksum.sha-256' value='e38eb52bac4868f30a65c0761b10ff01880a1812f4897ede5c8e9db882f79c44'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='com.tomato.exerd.product.tibero' version='2.5.7.20190719-1507'>
+      <properties size='4'>
+        <property name='artifact.size' value='3116'/>
+        <property name='download.size' value='3116'/>
+        <property name='download.checksum.md5' value='2fe6e8fde02700572833534e625c2c48'/>
+        <property name='download.checksum.sha-256' value='366ad8dd672328c0f398c5d6a564d267c041b1cc796d8e1a7ca438796cc6c3fb'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.jsch.ui' version='1.1.100.I20080415'>
+      <properties size='2'>
+        <property name='artifact.size' value='82634'/>
+        <property name='download.size' value='82634'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='com.tomato.exerd.diff' version='2.5.7.20190719-1507'>
+      <properties size='4'>
+        <property name='artifact.size' value='676331'/>
+        <property name='download.size' value='676331'/>
+        <property name='download.checksum.md5' value='706c1699c2a5b94478dbf8c968468839'/>
+        <property name='download.checksum.sha-256' value='b70c91daf1797782af5d7cee89ad48a7abef1053b9d8b97fe5b894e2e5e22e1e'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.platform.doc.user' version='3.4.2.r342_v20081031-0800'>
+      <properties size='2'>
+        <property name='artifact.size' value='7177280'/>
+        <property name='download.size' value='7177280'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.equinox.p2.extensionlocation' version='1.0.4.v20081027-2115'>
+      <properties size='2'>
+        <property name='artifact.size' value='27675'/>
+        <property name='download.size' value='27675'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.core.resources' version='3.4.2.R34x_v20090126'>
+      <properties size='2'>
+        <property name='artifact.size' value='700059'/>
+        <property name='download.size' value='700059'/>
+      </properties>
+    </artifact>
+    <artifact classifier='org.eclipse.update.feature' id='org.eclipse.platform' version='3.4.2.R342_v20090122-9I96EiWElHi8lheoJKJIvhM3JfVsYbRrgVIWL'>
+      <properties size='2'>
+        <property name='artifact.size' value='4096'/>
+        <property name='download.size' value='29036'/>
+      </properties>
+      <repositoryProperties size='1'>
+        <property name='artifact.folder' value='true'/>
+      </repositoryProperties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='com.tomato.exerd.product.postgresql.model' version='2.5.7.20190719-1507'>
+      <properties size='4'>
+        <property name='artifact.size' value='247791'/>
+        <property name='download.size' value='247791'/>
+        <property name='download.checksum.md5' value='2d83d03165cebcd1e3d543274cc95e2e'/>
+        <property name='download.checksum.sha-256' value='ec34bb197fa941a2de467c46aefacd7dbdb09036cca793155d2ddbc6b59cd477'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.core.filesystem' version='1.2.0.v20080604-1400'>
+      <properties size='2'>
+        <property name='artifact.size' value='44116'/>
+        <property name='download.size' value='44116'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='com.tomato.exerd.connection' version='2.5.7.20190719-1507'>
+      <properties size='4'>
+        <property name='artifact.size' value='308700'/>
+        <property name='download.size' value='308700'/>
+        <property name='download.checksum.md5' value='6864eecfc385ed72b4dd042c7a95ead4'/>
+        <property name='download.checksum.sha-256' value='482bb29cb31aa5f2cab2a65255fe734a45efe498539eed2d6c9e380cd2b14e10'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.swt' version='3.4.2.v3452b'>
+      <properties size='2'>
+        <property name='artifact.size' value='15811'/>
+        <property name='download.size' value='15811'/>
+      </properties>
+    </artifact>
+    <artifact classifier='org.eclipse.update.feature' id='org.eclipse.rcp' version='3.4.200.R342_v20090122-989JESTEbig-SVaL8UJHcYBr4A63'>
+      <properties size='2'>
+        <property name='artifact.size' value='4096'/>
+        <property name='download.size' value='28671'/>
+      </properties>
+      <repositoryProperties size='1'>
+        <property name='artifact.folder' value='true'/>
+      </repositoryProperties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='com.tomato.exerd.product.db2.core' version='2.5.7.20190719-1507'>
+      <properties size='4'>
+        <property name='artifact.size' value='102528'/>
+        <property name='download.size' value='102528'/>
+        <property name='download.checksum.md5' value='1d90ae775b5212ed75996f7e3f9fc36d'/>
+        <property name='download.checksum.sha-256' value='fb22d6a5e031751f6aa3a04cf2f0109ae6d885f6fef1edfddcf845890ea000c8'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.ecf.identity' version='2.0.0.v20080611-1715'>
+      <properties size='2'>
+        <property name='artifact.size' value='50132'/>
+        <property name='download.size' value='50132'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='com.tomato.exerd.product.oracle.model' version='2.5.7.20190719-1507'>
+      <properties size='4'>
+        <property name='artifact.size' value='1020294'/>
+        <property name='download.size' value='1020294'/>
+        <property name='download.checksum.md5' value='8e3cd691422b54916d4fd6231d964652'/>
+        <property name='download.checksum.sha-256' value='75c7cb3f862c52cf645419eb840e71b2aa622a4d62f4eb79f5e120009b11b8ea'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.apache.commons.logging' version='1.0.4.v20080605-1930'>
+      <properties size='2'>
+        <property name='artifact.size' value='43920'/>
+        <property name='download.size' value='43920'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.ui.console' version='3.3.1.v20090128_r342'>
+      <properties size='2'>
+        <property name='artifact.size' value='155598'/>
+        <property name='download.size' value='155598'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.equinox.preferences' version='3.2.201.R34x_v20080709'>
+      <properties size='2'>
+        <property name='artifact.size' value='104285'/>
+        <property name='download.size' value='104285'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='com.tomato.exerd.product.sqlserver.library' version='2.5.7.20190719-1507'>
+      <properties size='4'>
+        <property name='artifact.size' value='19783'/>
+        <property name='download.size' value='19783'/>
+        <property name='download.checksum.md5' value='d65eedcf86a5c22a7b1bdf46c815e95e'/>
+        <property name='download.checksum.sha-256' value='ad2183bf3afde01a668d9fdaee2d0ff2fb327a9d9f36f6e0ed4f9e79f550d6bd'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.equinox.jsp.jasper' version='1.0.100.v20080427-0830'>
+      <properties size='2'>
+        <property name='artifact.size' value='22148'/>
+        <property name='download.size' value='22148'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.core.filebuffers' version='3.4.0.v20080603-2000'>
+      <properties size='2'>
+        <property name='artifact.size' value='112015'/>
+        <property name='download.size' value='112015'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.jface' version='3.4.2.M20090107-0800'>
+      <properties size='2'>
+        <property name='artifact.size' value='1041252'/>
+        <property name='download.size' value='1041252'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.team.ui' version='3.4.1.r34x_20080827'>
+      <properties size='2'>
+        <property name='artifact.size' value='1288532'/>
+        <property name='download.size' value='1288532'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.sat4j.core' version='2.0.3.v20081021'>
+      <properties size='2'>
+        <property name='artifact.size' value='172520'/>
+        <property name='download.size' value='172520'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.rcp' version='3.4.1.R342_v20090205'>
+      <properties size='2'>
+        <property name='artifact.size' value='12877'/>
+        <property name='download.size' value='12877'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.ecf.provider.filetransfer' version='2.0.0.v20080611-1715'>
+      <properties size='2'>
+        <property name='artifact.size' value='95198'/>
+        <property name='download.size' value='95198'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.equinox.p2.reconciler.dropins' version='1.0.4.v20081027-2115'>
+      <properties size='2'>
+        <property name='artifact.size' value='38326'/>
+        <property name='download.size' value='38326'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.update.ui' version='3.2.101.R34x_v20081128'>
+      <properties size='2'>
+        <property name='artifact.size' value='510047'/>
+        <property name='download.size' value='510047'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.core.jobs' version='3.4.1.R34x_v20081128'>
+      <properties size='2'>
+        <property name='artifact.size' value='82559'/>
+        <property name='download.size' value='82559'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.ecf' version='2.0.0.v20080611-1715'>
+      <properties size='2'>
+        <property name='artifact.size' value='80248'/>
+        <property name='download.size' value='80248'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='com.tomato.exerd.model.ui' version='2.5.7.20190719-1507'>
+      <properties size='4'>
+        <property name='artifact.size' value='3778150'/>
+        <property name='download.size' value='3778150'/>
+        <property name='download.checksum.md5' value='4692f31d64b1e5beb51bdf80c5f9bd99'/>
+        <property name='download.checksum.sha-256' value='30261a04bd756d4973465cfe8d8f41d9e6c0e051335333d3ad8c1a5528f8c071'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='com.tomato.exerd.product.postgresql' version='2.5.7.20190719-1507'>
+      <properties size='4'>
+        <property name='artifact.size' value='1006320'/>
+        <property name='download.size' value='1006320'/>
+        <property name='download.checksum.md5' value='09d4ec13f0866bc72868f4c641ca5a30'/>
+        <property name='download.checksum.sha-256' value='4cc5095543f357b06eb2cc57505b95d1550bad877916a2373c81d83cf68222f8'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='com.tomato.devkit.ui' version='2.5.7.20190719-1507'>
+      <properties size='4'>
+        <property name='artifact.size' value='7830'/>
+        <property name='download.size' value='7830'/>
+        <property name='download.checksum.md5' value='71107f4b0dff6e6d2d7018cf511728a5'/>
+        <property name='download.checksum.sha-256' value='64d9ee21cd75ddf4a6d348725114b9087f015bd1ff55f56a31a55255c6e26772'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.equinox.frameworkadmin' version='1.0.2.R34x_v20081007'>
+      <properties size='2'>
+        <property name='artifact.size' value='34498'/>
+        <property name='download.size' value='34498'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.equinox.launcher' version='1.0.101.R34x_v20081125'>
+      <properties size='2'>
+        <property name='artifact.size' value='43687'/>
+        <property name='download.size' value='43687'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.jsch.core' version='1.1.100.I20080604'>
+      <properties size='2'>
+        <property name='artifact.size' value='33478'/>
+        <property name='download.size' value='33478'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.osgi.services' version='3.1.200.v20071203'>
+      <properties size='2'>
+        <property name='artifact.size' value='63666'/>
+        <property name='download.size' value='63666'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.equinox.p2.director' version='1.0.4.v20081112-1019'>
+      <properties size='2'>
+        <property name='artifact.size' value='99378'/>
+        <property name='download.size' value='99378'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='com.tomato.exerd.product.mysql' version='2.5.7.20190719-1507'>
+      <properties size='4'>
+        <property name='artifact.size' value='1160632'/>
+        <property name='download.size' value='1160632'/>
+        <property name='download.checksum.md5' value='4897d1362029776e9a6f94022032e5ee'/>
+        <property name='download.checksum.sha-256' value='94fcfc19be45f716776870650c56af78370ebfc82f9a5cb0d10fc78e4c4c37d1'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.equinox.app' version='1.1.0.v20080421-2006'>
+      <properties size='2'>
+        <property name='artifact.size' value='79869'/>
+        <property name='download.size' value='79869'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.apache.jasper' version='5.5.17.v200806031609'>
+      <properties size='2'>
+        <property name='artifact.size' value='1721095'/>
+        <property name='download.size' value='1721095'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.help.appserver' version='3.1.300.v20080507'>
+      <properties size='2'>
+        <property name='artifact.size' value='17062'/>
+        <property name='download.size' value='17062'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.equinox.p2.exemplarysetup' version='1.0.0.v20080427-2136'>
+      <properties size='2'>
+        <property name='artifact.size' value='7973'/>
+        <property name='download.size' value='7973'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.equinox.p2.director.app' version='1.0.1.R34x_v20080729'>
+      <properties size='2'>
+        <property name='artifact.size' value='24768'/>
+        <property name='download.size' value='24768'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='com.tomato.exerd.validator' version='2.5.7.20190719-1507'>
+      <properties size='4'>
+        <property name='artifact.size' value='74255'/>
+        <property name='download.size' value='74255'/>
+        <property name='download.checksum.md5' value='4912d962b1efad5b61cc47618fd18091'/>
+        <property name='download.checksum.sha-256' value='335c32c13c40b0880505f4f9d03c2a64ca46f60b28fadbd071d8371016f07132'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.osgi' version='3.4.3.R34x_v20081215-1030'>
+      <properties size='2'>
+        <property name='artifact.size' value='997240'/>
+        <property name='download.size' value='997240'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.equinox.p2.metadata.generator' version='1.0.4.v20081217'>
+      <properties size='2'>
+        <property name='artifact.size' value='167998'/>
+        <property name='download.size' value='167998'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='com.tomato.exerd.product.mysql.model' version='2.5.7.20190719-1507'>
+      <properties size='4'>
+        <property name='artifact.size' value='232601'/>
+        <property name='download.size' value='232601'/>
+        <property name='download.checksum.md5' value='421d942c0cd53a5eb25bc7ddafccfa89'/>
+        <property name='download.checksum.sha-256' value='65285679221932e65f938108a386e8e195da38d11ec194d7ded67c8763d705cc'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='com.tomato.devkit' version='2.5.7.20190719-1507'>
+      <properties size='4'>
+        <property name='artifact.size' value='8677'/>
+        <property name='download.size' value='8677'/>
+        <property name='download.checksum.md5' value='83ef0874fa055c4058227a2c110b999c'/>
+        <property name='download.checksum.sha-256' value='563a11b530c1db970d86af93778e1d836c290470978eeb07a8e7ffff79d747d6'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.core.runtime' version='3.4.0.v20080512'>
+      <properties size='2'>
+        <property name='artifact.size' value='69026'/>
+        <property name='download.size' value='69026'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.ui.workbench.compatibility' version='3.2.0.I20080509-2000'>
+      <properties size='2'>
+        <property name='artifact.size' value='4096'/>
+        <property name='download.size' value='11415'/>
+      </properties>
+      <repositoryProperties size='1'>
+        <property name='artifact.folder' value='true'/>
+      </repositoryProperties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='com.tomato.exerd.library' version='2.5.7.20190719-1507'>
+      <properties size='4'>
+        <property name='artifact.size' value='21082974'/>
+        <property name='download.size' value='21082974'/>
+        <property name='download.checksum.md5' value='dd6f91beb760f16309fc256d56fbda10'/>
+        <property name='download.checksum.sha-256' value='c5ff6033f59829b0efc9f6b9fc6b30158abe544753de0ff428312f4ebb08f097'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='com.tomato.exerd.xscript' version='2.5.7.20190719-1507'>
+      <properties size='4'>
+        <property name='artifact.size' value='5013739'/>
+        <property name='download.size' value='5013739'/>
+        <property name='download.checksum.md5' value='021c4b3288ba9f93298abb48aad40a0e'/>
+        <property name='download.checksum.sha-256' value='ef6c5ec463714fbacf910af73c528eda5ee73a9a002835ec828a7423c6ee2424'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='com.tomato.exerd.modelview' version='2.5.7.20190719-1507'>
+      <properties size='4'>
+        <property name='artifact.size' value='113884'/>
+        <property name='download.size' value='113884'/>
+        <property name='download.checksum.md5' value='30bd1d9f1a5b86c154403fa226a8ba22'/>
+        <property name='download.checksum.sha-256' value='ce16ce64b4d5c60a6fd7b44fe74df9dd7cbd9ace9146167a446d1590aa9ebcda'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.debug.core' version='3.4.1.v20090106_r342'>
+      <properties size='2'>
+        <property name='artifact.size' value='309779'/>
+        <property name='download.size' value='309779'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.equinox.p2.artifact.repository' version='1.0.4.v20080930'>
+      <properties size='2'>
+        <property name='artifact.size' value='124421'/>
+        <property name='download.size' value='124421'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.equinox.p2.garbagecollector' version='1.0.1.R34x_v20080818'>
+      <properties size='2'>
+        <property name='artifact.size' value='19005'/>
+        <property name='download.size' value='19005'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.apache.lucene.analysis' version='1.9.1.v20080530-1600'>
+      <properties size='2'>
+        <property name='artifact.size' value='70363'/>
+        <property name='download.size' value='70363'/>
+      </properties>
+    </artifact>
+  </artifacts>
+</repository>

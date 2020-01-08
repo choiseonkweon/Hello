@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jcep.admin.dao.FacilityResourceMapper">
+
+<!-- 시설 및 자원 관리 > 시설 등록 관리 -->
+	<select id="selectFacilityList" parameterType="jcep.admin.model.FacilityResourceVO" resultType="jcep.admin.model.FacilityResourceVO">
+			SELECT
+				facility_id AS facilityId,
+				facility_nm AS facilityNm,
+				facility_loc AS facilityLoc,
+				facility_scale AS facilityScale,
+				facility_cost AS facilityCost,
+				facility_equip AS facilityEquip,
+				facility_img AS facilityImg,
+				facility_st AS facilitySt
+			FROM tb_facility
+			WHERE 1=1
+			<if test="searchText != null and searchText != ''">
+		        <choose>
+		        	<when test='searchType eq ""'>
+						AND	facility_nm LIKE CONCAT('%',#{searchText},'%') OR facility_loc LIKE CONCAT('%',#{searchText},'%') OR facility_scale LIKE CONCAT('%',#{searchText},'%') OR facility_equip LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 1'>
+						AND	facility_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 2'>
+						AND	facility_loc LIKE CONCAT('%',#{searchText},'%')
+					</when>
+				</choose>
+			</if> 
+			ORDER BY facility_reg_dt DESC
+			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+	</select>
+	
+	<select id="selectFacilityListTotCnt" parameterType="jcep.admin.model.FacilityResourceVO" resultType="int">
+			SELECT COUNT(*) totcnt
+			FROM tb_facility
+			WHERE 1=1
+			<if test="searchText != null and searchText != ''">
+		        <choose>
+		        	<when test='searchType eq ""'>
+						AND	facility_nm LIKE CONCAT('%',#{searchText},'%') OR facility_loc LIKE CONCAT('%',#{searchText},'%') OR facility_scale LIKE CONCAT('%',#{searchText},'%') OR facility_equip LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 1'>
+						AND	facility_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 2'>
+						AND	facility_loc LIKE CONCAT('%',#{searchText},'%')
+					</when>
+				</choose>
+			</if> 
+	</select>
+	
+	<insert id="facilityInsert" parameterType="jcep.admin.model.FacilityResourceVO">
+			INSERT INTO tb_facility (
+				 facility_id
+				,facility_nm
+				,facility_loc
+				,facility_scale
+				,facility_cost
+				,facility_equip
+				,facility_img
+				,facility_st
+				,facility_reg_dt
+				,facility_reg_id
+			)
+			VALUES(
+				 (select concat('F',IFNULL(LPAD(MAX(SUBSTRING(facility_id,2,LENGTH(facility_id))) + 1,4,'0'),'0000')) from tb_facility a)
+				,#{facilityNm}
+				,#{facilityLoc}
+				,#{facilityScale}
+				,#{facilityCost}
+				,#{facilityEquip}
+				,#{facilityImg}
+				,#{facilitySt}
+				,CURRENT_TIMESTAMP
+				,'admin'<!-- 나중에 로그인한 아이디로 수정예정  -->
+			)
+	</insert>
+	
+	<update id="facilityImageUpload" parameterType="jcep.admin.model.FacilityResourceVO">
+			UPDATE tb_facility
+			SET 
+				facility_img = #{facilityImg}
+			ORDER BY facility_id DESC LIMIT 1	
+	</update>
+
+<!-- 시설 및 자원 관리 > 자원 등록 관리 -->
+	<select id="selectResourceList" parameterType="jcep.admin.model.FacilityResourceVO" resultType="jcep.admin.model.FacilityResourceVO">
+			SELECT
+				resource_id AS resourceId,
+				resource_nm AS resourceNm,
+				resource_img AS resourceImg,
+				(
+					CASE resource_st 
+						WHEN 'Y' THEN '대여가능'
+						WHEN 'N' THEN '대여불가능'
+					END
+                ) AS resourceSt,
+				date_format(resource_reg_dt, '%Y.%m.%d') AS resourceRegDt
+			FROM tb_resource
+			WHERE 1=1
+			<if test="searchText != null and searchText != ''">
+		        <choose>
+		        	<when test='searchType eq ""'>
+						AND	resource_nm LIKE CONCAT('%',#{searchText},'%') 
+					</when>
+		            <when test='searchType eq 1'>
+						AND	resource_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+				</choose>
+			</if> 
+			ORDER BY resource_reg_dt DESC
+			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+	</select>
+	
+	<select id="selectResourceListTotCnt" parameterType="jcep.admin.model.FacilityResourceVO" resultType="int">
+			SELECT COUNT(*) totcnt
+			FROM tb_resource
+			WHERE 1=1
+			<if test="searchText != null and searchText != ''">
+		        <choose>
+		        	<when test='searchType eq ""'>
+						AND	resource_nm LIKE CONCAT('%',#{searchText},'%') 
+					</when>
+		            <when test='searchType eq 1'>
+						AND	resource_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+				</choose>
+			</if>  
+	</select>
+		
+	<insert id="resourceInsert" parameterType="jcep.admin.model.FacilityResourceVO">
+			INSERT INTO tb_resource (
+				 resource_id
+				,resource_nm
+				,resource_img
+				,resource_st
+				,resource_reg_dt
+				,resource_reg_id
+			)
+			VALUES(
+				 (select concat('R',IFNULL(LPAD(MAX(SUBSTRING(resource_id,2,LENGTH(resource_id))) + 1,4,'0'),'0000')) from tb_resource a)
+				,#{resourceNm}
+				,#{resourceImg}
+				,#{resourceSt}
+				,CURRENT_TIMESTAMP
+				,'admin'<!-- 나중에 로그인한 아이디로 수정예정  -->
+			)
+	</insert>
+	
+	<update id="resourceImageUpload" parameterType="jcep.admin.model.FacilityResourceVO">
+			UPDATE tb_resource
+			SET 
+				resource_img = #{resourceImg}
+			ORDER BY resource_id DESC LIMIT 1	
+	</update>
+	
+	<delete id="resourceDelete" parameterType="jcep.admin.model.FacilityResourceVO">
+			DELETE FROM tb_resource
+			WHERE resource_id = #{resourceId}
+	</delete>
+	
+</mapper>

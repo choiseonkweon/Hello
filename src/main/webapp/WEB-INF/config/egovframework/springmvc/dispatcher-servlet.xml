@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:p="http://www.springframework.org/schema/p"
+        xmlns:context="http://www.springframework.org/schema/context"
+        xmlns:mvc="http://www.springframework.org/schema/mvc"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+                http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+                http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
+
+    <context:component-scan base-package="jcep">
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service"/>
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Repository"/>
+    </context:component-scan>
+
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+        <property name="webBindingInitializer">
+            <bean class="egovframework.example.cmmn.web.EgovBindingInitializer"/>
+        </property>
+    </bean>
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
+        <property name="interceptors">
+            <list>
+                <ref bean="localeChangeInterceptor" />
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver" />
+    <!-- 쿠키를 이용한 Locale 이용시 <bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver"/> -->
+    <bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
+        <property name="paramName" value="language" />
+    </bean>
+    
+    <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+        <property name="defaultErrorView" value="cmmn/egovError"/>
+        <property name="exceptionMappings">
+            <props>
+                <prop key="org.springframework.dao.DataAccessException">cmmn/dataAccessFailure</prop>
+                <prop key="org.springframework.transaction.TransactionException">cmmn/transactionFailure</prop>
+                <prop key="egovframework.rte.fdl.cmmn.exception.EgovBizException">cmmn/egovError</prop>
+                <prop key="org.springframework.security.AccessDeniedException">cmmn/egovError</prop>
+            </props>
+        </property>
+    </bean>
+    
+    <!-- Tiles -->
+    <bean id="tilesViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+  		<property name="viewClass" value="org.springframework.web.servlet.view.tiles3.TilesView" />
+  		<property name="order" value="1" />
+	</bean>
+
+ 	<!-- Tiles 2 Configurer -->
+	<bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles3.TilesConfigurer">
+  		<property name="definitions">
+   			<list>
+    			<value>/WEB-INF/tiles/tiles-def.xml</value>
+   			</list>
+  		</property>
+	</bean>
+
+	<!-- json 관련 설정 -->
+	<bean id="beanNameResolver" class="org.springframework.web.servlet.view.BeanNameViewResolver" p:order="0" />
+	 <bean id="jsonView" class="org.springframework.web.servlet.view.json.MappingJackson2JsonView">
+	    <property name="contentType" value="application/json;charset=UTF-8"></property>
+	 </bean>
+	
+    <bean class="org.springframework.web.servlet.view.UrlBasedViewResolver" p:order="2"
+	    p:viewClass="org.springframework.web.servlet.view.JstlView"
+	    p:prefix="/WEB-INF/jsp/" p:suffix=".jsp"/>
+
+    <!-- For Pagination Tag -->
+    <bean id="imageRenderer" class="egovframework.example.cmmn.web.EgovImgPaginationRenderer"/>
+
+    <bean id="paginationManager" class="egovframework.rte.ptl.mvc.tags.ui.pagination.DefaultPaginationManager">
+        <property name="rendererType">
+            <map>
+                <entry key="image" value-ref="imageRenderer"/>
+            </map>
+        </property>
+    </bean>
+	<!-- /For Pagination Tag -->
+
+	<!-- 브라우저가 multipart/form-data 데이터로 보내는 파일을 처리하기 위한 MultipartResolver 클래스를 bean으로 등록 -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<!-- 최대업로드 가능한 바이트크기 -->
+         <property name="maxUploadSize" value="52428800" />
+         
+         <!-- 디스크에 임시 파일을 생성하기 전에 메모리에 보관할수있는 최대 바이트 크기 -->
+         <!-- property name="maxInMemorySize" value="52428800" / -->
+         
+         <!-- defaultEncoding -->
+         <property name="defaultEncoding" value="utf-8" />
+	</bean>
+	
+	<!-- 로컬 파일업로드 디렉토리   -->
+	<bean id="facilityImgPath" class="java.lang.String">
+	    <constructor-arg value="C:\JCEP_SYSTEM\JCEP_SYSTEM\target\upload\facilityImg"/>
+	</bean>
+	<bean id="resourceImgPath" class="java.lang.String">
+	    <constructor-arg value="C:\JCEP_SYSTEM\JCEP_SYSTEM\target\upload\resourceImg"/>
+	</bean>
+	<bean id="noticeFilePath" class="java.lang.String">
+	    <constructor-arg value="C:\JCEP_SYSTEM\JCEP_SYSTEM\target\upload\noticeFile"/>
+	</bean>
+	
+	<!-- fileViewResolver(download) -->
+ <bean id="fileDownloadView" class="jcep.admin.common.FileDownloadView" />
+ <bean id="fileViewResolver"	class="org.springframework.web.servlet.view.BeanNameViewResolver">
+  <property name="order" value="0" />
+ </bean> 
+	
+	<!-- 서버 파일업로드 디렉토리 
+	<bean id="facilityImgPath" class="java.lang.String">
+	    <constructor-arg value="/root/apache-tomcat-9.0.10/webapps/JCEP_SYSTEM/upload/facilityImg"/>
+	</bean> 
+	<bean id="resourceImgPath" class="java.lang.String">
+	    <constructor-arg value="/root/apache-tomcat-9.0.10/webapps/JCEP_SYSTEM/upload/resourceImg"/>
+	</bean>
+	<bean id="noticeFilePath" class="java.lang.String">
+	    <constructor-arg value="/root/apache-tomcat-9.0.10/webapps/JCEP_SYSTEM/upload/noticeFile"/>
+	</bean>-->
+	
+	<!-- 
+	20191129 로그인 인터셉터 
+	비회원일시 페이지 비활성
+	 -->
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/buyerInformationList.do"/>
+			<mvc:mapping path="/expertInformationList.do"/>
+			<mvc:mapping path="/companyInformationList.do"/>			
+			<mvc:mapping path="/facilityUseList.do"/>			
+			<mvc:mapping path="/resourceUseList.do"/>			
+			<mvc:mapping path="/onlineApply.do"/>
+			<mvc:mapping path="/myCompanyInformation.do"/>
+			<bean class="jcep.admin.common.SessionInterceptor"/>
+		</mvc:interceptor>	
+	</mvc:interceptors>
+	
+
+    <mvc:view-controller path="/cmmn/validator.do" view-name="cmmn/validator"/>
+</beans>

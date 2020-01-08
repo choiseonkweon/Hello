@@ -1,0 +1,263 @@
+package jcep.admin.web;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+import egovframework.rte.fdl.property.EgovPropertyService;
+import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
+import jcep.admin.model.MemberVO;
+import jcep.admin.service.MemberService;
+
+/**
+ * @Class Name : OnestopSupportController.java
+ * @Description : OnestopSupport Controller  Class
+ * @Modification Information
+ * @
+ * @  수정일      수정자              수정내용
+ * @ ---------   ---------   -------------------------------
+ * @ 2019.06.14           최초생성
+ * @version 1.0
+ * @see
+ *  Copyright (C) by MOPAS All right reserved.
+ */
+
+@Controller
+public class OnestopSupportController {
+
+	@Resource(name = "memberService")
+	protected MemberService memberService;
+	
+	/** EgovPropertyService */
+	@Resource(name = "propertiesService")
+	protected EgovPropertyService propertiesService;
+	
+	/**
+	 * 자문컨설팅 현황 목록을 조회한다. (pageing)
+	 * @param searchVO - 조회할 정보가 담긴 MemberVO
+	 * @param model
+	 * @return "adviceConsultingStatusManagementList"
+	 * @exception Exception
+	 */
+	@RequestMapping(value = "/oneStop/adviceConsultingStatusManagementList.do")
+	public ModelAndView adviceConsultingStatusManagementList(@ModelAttribute("searchVO") MemberVO searchVO, ModelAndView mv, Model model) throws Exception {
+		System.out.println("searchVO_1***********************"+searchVO);
+		searchVO.setPageUnit(propertiesService.getInt("pageUnit"));
+		searchVO.setPageSize(propertiesService.getInt("pageSize"));
+
+		PaginationInfo paginationInfo = new PaginationInfo();
+		paginationInfo.setCurrentPageNo(searchVO.getPageIndex());
+		paginationInfo.setRecordCountPerPage(searchVO.getPageUnit());
+		paginationInfo.setPageSize(searchVO.getPageSize());
+
+		searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
+		searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
+		searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
+
+		/*ArrayList<MemberVO> authList = memberService.selectAuthList(searchVO);
+		model.addAttribute("resultList", authList);*/
+		
+		//int totCnt = memberService.selectAuthListTotCnt(searchVO);
+		//paginationInfo.setTotalRecordCount(totCnt);
+		model.addAttribute("paginationInfo", paginationInfo);
+		System.out.println("searchVO_2***********************"+searchVO);
+		mv.setViewName("/view/adviceConsultingStatusManagementList");
+		
+		return mv;
+	}
+	
+	/**
+	 * 자문컨설팅 현황 등록화면을 조회한다.
+	 * @param MemberVO - 등록할 정보가 담긴 VO
+	 * @param searchVO -  조회조건 정보가 담긴 VO
+	 * @param status
+	 * @return "facilityRegistrationManagementReg"
+	 * @exception Exception
+	 */
+	@RequestMapping("/oneStop/adviceConsultingStatusManagementReg.do")
+	public ModelAndView adviceConsultingStatusManagementReg(@ModelAttribute("searchVO") MemberVO searchVO, Model model, ModelAndView mv, HttpServletRequest request) throws Exception {
+		
+		mv.setViewName("/view/adviceConsultingStatusManagementReg");
+		
+		return mv;
+	}
+	
+			
+		/**
+		 * 온라인 현황 목록을 조회한다. (pageing)
+		 * @param searchVO - 조회할 정보가 담긴 MemberVO
+		 * @param model
+		 * @return "adviceConsultingStatusManagementList"
+		 * @exception Exception
+		 */
+		@RequestMapping(value = "/oneStop/adviceOnlineStatusManagementList.do")
+		public ModelAndView adviceOnlineStatusManagementList(@ModelAttribute("searchVO") MemberVO searchVO, ModelAndView mv, Model model) throws Exception {
+			
+			searchVO.setPageUnit(propertiesService.getInt("pageUnit"));
+			searchVO.setPageSize(propertiesService.getInt("pageSize"));
+
+			PaginationInfo paginationInfo = new PaginationInfo();
+			paginationInfo.setCurrentPageNo(searchVO.getPageIndex());
+			paginationInfo.setRecordCountPerPage(searchVO.getPageUnit());
+			paginationInfo.setPageSize(searchVO.getPageSize());
+
+			searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
+			searchVO.setLastIndex(paginationInfo.getLastRecordIndex());			
+			
+			ArrayList<MemberVO> memberList = memberService.selectAdviceOnlineStatusManagementList(searchVO);
+			model.addAttribute("resultList", memberList);
+			
+			int totCnt = memberService.selectAdviceOnlineStatusManagementListTotCnt(searchVO);
+			paginationInfo.setTotalRecordCount(totCnt);		
+			model.addAttribute("paginationInfo", paginationInfo);
+			mv.setViewName("/view/adviceOnlineStatusManagementList");
+			
+			return mv;
+		}	
+		
+		
+		/**
+		 * 온라인상담 현황 관리을 조회한다.
+		 * @param searchVO - 조회할 정보가 담긴 MemberVO
+		 * @param model
+		 * @return "noticeList"
+		 * @exception Exception
+		 */
+		@RequestMapping(value = "/oneStop/adviceOnlineStatusManagementDetail.do")
+		public ModelAndView adviceOnlineStatusManagementDetail(@ModelAttribute("searchVO") MemberVO searchVO, Model model, ModelAndView mv, HttpServletRequest request) throws Exception {
+		
+			String memberId = request.getParameter("memberId");
+			String onestopSupportNo = request.getParameter("onestopSupportNo");
+			searchVO.setMemberId(memberId);
+			searchVO.setOnestopSupportNo(onestopSupportNo);
+			System.out.println("memberId :: " + memberId);
+			System.out.println("onestopSupportNo :: " + onestopSupportNo);
+			
+			                           
+			MemberVO detail = memberService.selectAdviceOnlineStatusManagementDetail(searchVO);
+			model.addAttribute("detail", detail);
+			mv.setViewName("/view/adviceOnlineStatusManagementDetail");
+			
+			return mv;
+		}
+		
+		/**
+		 * 원스톱 업무일지을 조회한다.
+		 * @param searchVO - 조회할 정보가 담긴 MemberVO
+		 * @param model
+		 * @return "noticeList"
+		 * @exception Exception
+		 */
+		@RequestMapping(value = "/oneStop/adviceOnlineStatusBusiness.do")
+		public ModelAndView adviceOnlineStatusBusiness(@ModelAttribute("searchVO") MemberVO searchVO, Model model, ModelAndView mv, HttpServletRequest request) throws Exception {
+			System.out.println("searchVO_1***********************"+searchVO);
+			String memberId = request.getParameter("memberId");
+			searchVO.setMemberId(memberId);
+			System.out.println("memberId :: " + memberId);
+			                           
+			MemberVO detail = memberService.selectAdviceOnlineStatusBusiness(searchVO);
+			model.addAttribute("detail", detail);
+			
+			System.out.println("detail?? :: " + detail);
+			mv.setViewName("/view/adviceOnlineStatusBusiness");
+			
+			return mv;
+		}
+		
+		/**
+		 * 원스톱 업무일지 수정한다.
+		 * @param memberidx - 수정할 회원 idx
+		 * @param searchVO - 목록 조회조건 정보가 담긴 VO
+		 * @param model
+		 * @return "memberRegister"
+		 * @exception Exception
+		 */
+	    @RequestMapping("/oneStop/adviceOnlineStatusBusinessUpdate.do")
+	    public String adviceOnlineStatusBusinessUpdate(HttpServletRequest request, Model model, @ModelAttribute("searchVO") MemberVO searchVO) throws Exception {
+	    	
+	    	String memberId = request.getParameter("memberId");	    	
+	    	searchVO.setMemberId(memberId);	    
+	    	System.out.println("memberId :: " + memberId);
+	    
+	    	Integer returnCode = memberService.adviceOnlineStatusBusinessUpdate(searchVO);	    
+	    	
+			return "jsonView";
+	    }
+		
+		/**
+		 * 온라인상담 신청내용 수정한다.
+		 * @param memberidx - 수정할 회원 idx
+		 * @param searchVO - 목록 조회조건 정보가 담긴 VO
+		 * @param model
+		 * @return "memberRegister"
+		 * @exception Exception
+		 */
+	    @RequestMapping("/oneStop/adviceOnlineStatusManagementUpdate.do")
+	    public String adviceOnlineStatusManagementUpdate(HttpServletRequest request, Model model, @ModelAttribute("searchVO") MemberVO searchVO) throws Exception {
+	    	
+	    	String memberId = request.getParameter("memberId");	    	
+	    	searchVO.setMemberId(memberId);	    
+	    	System.out.println("memberId :: " + memberId);
+	    
+	    	Integer returnCode = memberService.adviceOnlineStatusManagementUpdate(searchVO);	    
+	    	
+			return "jsonView";
+	    }
+
+	   /*온라인상담 현황 관리 이전글 다음글 수정*/
+	  @RequestMapping(value = "/adviceOnlineStatusManagementDetailpaging.do")
+	  public ModelAndView adviceOnlineStatusManagementDetailpaging(@ModelAttribute("searchVO") MemberVO searchVO, ModelAndView mv,  HttpServletRequest request) throws Exception {
+	     System.out.println("adviceOnlineStatusManagementDetailpaging***********************"+searchVO);
+	     searchVO.setPageUnit(propertiesService.getInt("pageUnit"));
+	     searchVO.setPageSize(propertiesService.getInt("pageSize"));
+	     
+	     PaginationInfo paginationInfo = new PaginationInfo();
+	     paginationInfo.setCurrentPageNo(searchVO.getPageIndex());
+	     paginationInfo.setRecordCountPerPage(searchVO.getPageUnit());
+	     paginationInfo.setPageSize(searchVO.getPageSize());
+	     
+	     searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
+	     searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
+	     searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
+	      System.out.println("memberId::" + request.getParameter("memberId"));
+
+	     String memberId = request.getParameter("memberId");  
+	     String noticeIdx = request.getParameter("noticeIdx");
+	     int pageNum = Integer.parseInt(request.getParameter("pageNum"));         //넘어온 번호값 저장
+	     searchVO.setMemberId(memberId);
+	     searchVO.setNoticeIdx(noticeIdx);
+	     searchVO.setPageNum(pageNum);
+	     
+	     System.out.println("memberId :  " + memberId);
+	     System.out.println("noticeIdx :  " + noticeIdx);
+	     System.out.println("pageNum :  " + pageNum);
+	     
+	     MemberVO detail = memberService.selectNoticeDetail(searchVO);         //해당페이지의 정보
+	     MemberVO detail1 = memberService.selectNoticeDetailPlus(searchVO);      //다음글에 대한 정보
+	     MemberVO detail2 = memberService.selectNoticeDetailMinus(searchVO);   //이전글에 대한 정보
+	  
+	     mv.addObject("paginationInfo", paginationInfo);
+	     mv.addObject("viewType", "modify");
+	     mv.addObject("detail", detail);
+	     mv.addObject("detail1", detail1);
+	     mv.addObject("detail2", detail2);
+	     mv.addObject("pageNum", pageNum);
+
+	     System.out.println("detail :: " + detail);
+	     
+	     mv.setViewName("/view/adviceOnlineStatusManagementDetailpaging");      
+	     System.out.println("adviceOnlineStatusManagementDetailpaging***********************"+searchVO);
+	     
+	     return mv;
+	  }
+	
+}

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>
+
+	<!-- (1) 레이아웃을 적용하지않는화면-->    
+    <definition name=".login" template="/WEB-INF/jsp/tilesLayout/loginLayout.jsp">
+        <put-attribute name="title" value="" />
+        <put-attribute name="header" value="/WEB-INF/jsp/tilesView/header.jsp" />
+        <put-attribute name="menu" value="" />        
+        <put-attribute name="footer" value="" />
+    </definition>
+ 
+    <!-- (2) 레이아웃을 적용하는화면-->
+    <definition name="layouts-tiles" template="/WEB-INF/jsp/tilesLayout/baseLayout.jsp">
+        <put-attribute name="title" value="" />
+        <put-attribute name="header" value="/WEB-INF/jsp/tilesView/header.jsp" />
+        <put-attribute name="menu" value="/WEB-INF/jsp/tilesView/menu.jsp" />        
+        <put-attribute name="footer" value="/WEB-INF/jsp/tilesView/footer.jsp" />
+        <put-attribute name="content" value="" />
+    </definition>
+    
+    <!-- (3) 레이아웃을 적용하는화면-->
+    <definition name="front-tiles" template="/WEB-INF/jsp/tilesLayout/frontLayout.jsp">
+        <put-attribute name="title" value="" />
+        <put-attribute name="header" value="/WEB-INF/jsp/tilesView/frontHeader.jsp" />
+        <put-attribute name="footer" value="/WEB-INF/jsp/tilesView/frontFooter.jsp" />
+        <put-attribute name="content" value="" />
+    </definition>
+    
+    <!-- (4) 레이아웃을 적용하지않는화면-->    
+    <definition name=".main" template="/WEB-INF/jsp/tilesLayout/mainLayout.jsp">
+        <put-attribute name="title" value="" />
+        <put-attribute name="header" value="" />
+        <put-attribute name="footer" value="/WEB-INF/jsp/tilesView/frontFooter.jsp" />
+    </definition>
+    
+    <!-- (1) -->    
+    <definition name="/login/*" extends=".login">
+      <put-attribute name="body" value="/WEB-INF/jsp/login/{1}.jsp" />
+    </definition>
+
+    <!-- (2) -->
+    <definition name="/view/*" extends="layouts-tiles">      
+      <put-attribute name="content" value="/WEB-INF/jsp/view/{1}.jsp" />
+    </definition>
+    
+    <!-- (3) -->
+    <definition name="/view/frontView/*" extends="front-tiles">      
+      <put-attribute name="content" value="/WEB-INF/jsp/view/frontView/{1}.jsp" />
+    </definition>
+    
+    <!-- (4) -->    
+    <definition name="/view/main/*" extends=".main">
+      <put-attribute name="body" value="/WEB-INF/jsp/main/{1}.jsp" />
+    </definition> 
+</tiles-definitions>

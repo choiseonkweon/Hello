@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jcep.front.dao.FacilityResourceFrontMapper">
+
+<!-- 시설 및 자원 관리 > 시설 정보 -->
+	<select id="selectFacilityUseList" parameterType="jcep.front.model.FacilityResourceFrontVO" resultType="jcep.front.model.FacilityResourceFrontVO">
+			SELECT
+				facility_id AS facilityId,
+				facility_nm AS facilityNm,
+				facility_loc AS facilityLoc,
+				facility_scale AS facilityScale,
+				facility_cost AS facilityCost,
+				facility_equip AS facilityEquip,
+				facility_img AS facilityImg,
+				facility_st AS facilitySt
+			FROM tb_facility
+			WHERE 1=1
+			<if test="searchText != null and searchText != ''">
+		        AND	facility_nm LIKE CONCAT('%',#{searchText},'%') OR facility_loc LIKE CONCAT('%',#{searchText},'%') OR facility_scale LIKE CONCAT('%',#{searchText},'%') OR facility_equip LIKE CONCAT('%',#{searchText},'%')
+			</if> 
+			ORDER BY facility_reg_dt DESC
+	</select>
+	
+	<select id="selectFacilityUseListTotCnt" parameterType="jcep.front.model.FacilityResourceFrontVO" resultType="int">
+			SELECT COUNT(*) totcnt
+			FROM tb_facility
+			WHERE 1=1
+			<if test="searchText != null and searchText != ''">
+		        AND	facility_nm LIKE CONCAT('%',#{searchText},'%') OR facility_loc LIKE CONCAT('%',#{searchText},'%') OR facility_scale LIKE CONCAT('%',#{searchText},'%') OR facility_equip LIKE CONCAT('%',#{searchText},'%')
+			</if>  
+	</select>
+	
+<!-- 시설 및 자원 관리 > 자원 등록 관리 -->
+	<select id="selectResourceUseList" parameterType="jcep.front.model.FacilityResourceFrontVO" resultType="jcep.front.model.FacilityResourceFrontVO">
+			SELECT
+				resource_id AS resourceId,
+				resource_nm AS resourceNm,
+				resource_img AS resourceImg,
+				(
+					CASE resource_st 
+						WHEN 'Y' THEN '대여가능'
+						WHEN 'N' THEN '대여불가능'
+					END
+                ) AS resourceSt,
+				date_format(resource_reg_dt, '%Y.%m.%d') AS resourceRegDt
+			FROM tb_resource
+			WHERE 1=1
+			<if test="searchText != null and searchText != ''">
+		        <choose>
+		        	<when test='searchType eq ""'>
+						AND	resource_nm LIKE CONCAT('%',#{searchText},'%') 
+					</when>
+		            <when test='searchType eq 1'>
+						AND	resource_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+				</choose>
+			</if> 
+			ORDER BY resource_reg_dt DESC
+	</select>
+	
+	<select id="selectResourceUseListTotCnt" parameterType="jcep.front.model.FacilityResourceFrontVO" resultType="int">
+			SELECT COUNT(*) totcnt
+			FROM tb_resource
+			WHERE 1=1
+			<if test="searchText != null and searchText != ''">
+		        <choose>
+		        	<when test='searchType eq ""'>
+						AND	resource_nm LIKE CONCAT('%',#{searchText},'%') 
+					</when>
+		            <when test='searchType eq 1'>
+						AND	resource_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+				</choose>
+			</if>  
+	</select>
+</mapper>
