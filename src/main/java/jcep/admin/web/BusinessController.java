@@ -1,4 +1,4 @@
-package jcep.admin.web;
+ package jcep.admin.web;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -74,6 +74,7 @@ public class BusinessController {
 		paginationInfo.setPageSize(searchVO.getPageSize());
 
 		searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
+		//searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
 		searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
 		searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
 
