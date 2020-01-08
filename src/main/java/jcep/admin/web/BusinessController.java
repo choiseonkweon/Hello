@@ -59,7 +59,7 @@ public class BusinessController {
 	 * 사업 목록을 조회한다. (pageing)
 	 * @param searchVO - 조회할 정보가 담긴 EnterpriseBuyerExpertVO
 	 * @param model
-	 * @return "businessManagementList" test
+	 * @return "businessManagementList"
 	 * @exception Exception
 	 */
 	@RequestMapping(value = "/business/businessManagementList.do")
