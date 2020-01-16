@@ -15,7 +15,7 @@
 	$(document).ready(function () {
 		
 		// 숫자만 입력 받도록 설정<br />
-		$('input[ttest=input ]').keyup(function(){
+		$('input[test=input]').keyup(function(){
 			$(this).val($(this).val().replace(/[^0-9]/g, '') );
 		});
 		
@@ -137,10 +137,10 @@
 		}
 		
 
-		function moveDetailView(bussAnncemntNo, pageNum) {
+		function moveDetailView(bussAnncemntNo) {
 			
 			$('#bussAnncemntNo').val(bussAnncemntNo);
-			$('#pageNum').val(pageNum);
+			alert(bussAnncemntNo);
  			 /* alert("pageNum: " + pageNum + "\n" +"memberId : " + memberId ); */
 			
 			$('#memberDetailFrm').attr('action', "/db/business/businessManagementRegisterUpdate.do").submit();
@@ -190,8 +190,8 @@
 											<td>
 												<select name="searchType" id="searchType" class="select" style="width:150px; height: 31.5px;">
 													<option value="">전체</option>
-													<option value="1" ${searchVO.bussAnncemntNm eq 1 ? 'selected="selected" ' : '' }>사업명</option>
-													<%-- <option value="2" ${searchVO.bussAnncemntNo eq 2 ? 'selected="selected" ' : '' }>공고번호</option> --%>
+													<option value="1" ${searchVO.searchType eq 1 ? 'selected="selected" ' : '' }>사업명</option>
+													<option value="2" ${searchVO.searchType eq 2 ? 'selected="selected" ' : '' }>사업공고</option>
 												</select>
 												<input type="text" name="searchText" id="searchText" class="input-sm not-kor" style="width:250px;" value="${searchVO.searchText}" onkeydown="javascript:enterKey();">
 											</td>
@@ -199,17 +199,33 @@
 											<th style="text-align:center;background:#eee;vertical-align:middle;">기간</th>
 											<td colspan="3">
 												<label class="input"> 
-														<input type="text" id="datepicker1" name="datepicker1" value="${searchVO.bussFrDt}"   />
+														<input type="text" id="startDate" name="startDate" value="${searchVO.startDate}"   />
 														&nbsp;~&nbsp;
-														<input type="text" id="datepicker2" name="datepicker2" value="${searchVO.bussFrDt}"  />
+														<input type="text" id="endDate" name="endDate" value="${searchVO.endDate}"  onkeydown="javascript:enterKey();"/>
 												</label>
 											</td>
 										</tr>
+										<tr>
+											<th style="text-align:center;background:#eee;vertical-align:middle;">등록상태</th>
+											<td>
+												<select name="searchSelect" id="searchSelect" class="select" style="width:150px; height: 31.5px;">
+													<option value="">전체</option>
+													<option value="1" ${searchVO.searchSelect eq 1 ? 'selected="selected" ' : '' }>진행예정</option>
+													<option value="2" ${searchVO.searchSelect eq 2 ? 'selected="selected" ' : '' }>진행중</option>
+													<option value="3" ${searchVO.searchSelect eq 3 ? 'selected="selected" ' : '' }>완료</option>
+												</select>
+											</td>
+											<th>
+												<div style="padding-top:5px;padding-bottom:5px;text-align:center;width:99%">
+													<a href="javascript:goSearch();" class="btn btn-primary" ><b>검색</b></a>
+												</div>
+											
+											</th>
+											<td>
+											</td>	
+										</tr>
 									</tbody>
 								</table>
-								<div style="padding-top:5px;padding-bottom:5px;text-align:center;width:99%">
-									<a href="javascript:goSearch();" class="btn btn-primary" ><b>검색</b></a>
-								</div>
 							</form>
 						</div>
 					</div>
@@ -229,7 +245,7 @@
 											<th>상태</th>
 											<th>작성자</th>
 											<th>작성일</th>
-											<!-- <th>조회</th> -->
+											<th>승인요청</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -246,20 +262,20 @@
 													<c:out value="${paginationInfo.totalRecordCount+1 - ((searchVO.pageIndex-1) * searchVO.pageSize + status.count)}"/>
 											</td>
 											<td>
-												<a href="javascript:moveDetailView('${result.bussAnncemntNo}','${result.pageNum}');">
+												<a href="javascript:moveDetailView('${result.bussAnncemntNo}');">
 													<c:out value="${result.bussAnncemntNo}"/>
 												</a>
 											</td>
 											<td>
-												<a href="javascript:moveDetailView('${result.bussAnncemntNo}','${result.pageNum}');">
+												<a href="javascript:moveDetailView('${result.bussAnncemntNo}');">
 													<c:out value="${result.bussAnncemntNm}"/>
 												</a>	
 											</td>
-											<td><c:out value="${result.applicStCd}"/></td>
-											<td><c:out value="${result.memberId}"/></td>
+											<td><c:out value="${result.anncemntStCd}"/></td>
+											<td><c:out value="${result.regId}"/></td>
 											<td><c:out value="${result.regDt}"/></td>
-											<%-- <td><c:out value="${result.approvalDt}"/></td> --%>
-										</tr>
+											<td><c:out value="${result.applicStCd}"/></td>
+									</tr>
 									</c:forEach>
 								</c:if>
 							</tbody> 

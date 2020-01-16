@@ -174,11 +174,11 @@
 											<th style="text-align:center;background:#eee;vertical-align:middle;">기간</th>
 											<td colspan="2">								
 												<label class="input"> 
-													<input class="input-sm" type="text" name="startdate" id="startdate" placeholder="" data-dateformat="yy-mm-dd"  />													
+													<input class="input-sm" type="text" name="startDate" id="startdate" placeholder="" data-dateformat="yy-mm-dd"  />													
 													&nbsp;~&nbsp;
 												</label> 
 												<label class="input"> 
-													<input class="input-sm" type="text" name="finishdate" id="finishdate" placeholder="" data-dateformat="yy-mm-dd" />													
+													<input class="input-sm" type="text" name="endDate" id="finishdate" placeholder="" data-dateformat="yy-mm-dd" />													
 												</label>
 											</td>
 										</tr>
@@ -221,7 +221,7 @@
 										<c:if test="${paginationInfo.totalRecordCount > 0 }">
 											<c:forEach var="result" items="${resultList}" varStatus="status">
 												<tr>
-													<td><c:out value="${result.pageNum}"/></td>
+													<td><c:out value="${paginationInfo.totalRecordCount+1 - ((searchVO.pageIndex-1) * searchVO.pageSize + status.count)}"/></td>
 													<td>
 														<a href="javascript:moveDetailView('${result.memberId}','${result.onestopSupportNo}');">
 															<c:out value="${result.memberId}"/>
@@ -229,13 +229,13 @@
 													</td>
 													<td>
 														<a href="javascript:moveDetailView('${result.memberId}','${result.onestopSupportNo}');">
-															<c:out value="${result.memberId}"/>
+															<c:out value="${result.entprNm}"/>
 														</a>
 													</td>
 													<td><c:out value="${result.compApplNm}"/></td>
 													<td><c:out value="${result.advicePlaceCd}"/></td>
 													<td><c:out value="${result.proMemberId}"/></td>
-													<td><c:out value="${result.regDt}"/></td>
+													<td><c:out value="${result.applicatDt}"/></td>
 													<td><c:out value="${result.applicStCd}"/></td>
 												</tr>
 											</c:forEach>

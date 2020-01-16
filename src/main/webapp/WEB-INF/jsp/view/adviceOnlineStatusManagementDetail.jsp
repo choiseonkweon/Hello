@@ -20,11 +20,16 @@
 <script src="../ckeditor/ckeditor.js"></script>  
 <script type="text/javaScript" language="javascript" defer="defer">	
 	$(document).ready(function () {
+		var proMemberId = '${detail.proMemberId}';
+		$('#proMemberId').val(proMemberId);
+
 		
 		$("#saveBtn").click(function(){
-
-			var memberId = $('#memberId');
-			alert(memberId);
+			
+			$('#proMemberId').val()
+			var memberId = $('#memberId').val();
+			var proMemberId = $('#proMemberId').val();
+			var onestopSupportNo = $('#onestopSupportNo').val();
 
 			$.ajax({
 					type : 'post',
@@ -153,12 +158,12 @@
 										<td><c:out value="${detail.regDt}"/></td>
 										<th style="text-align:center;background:#eee;vertical-align:middle;">전문가 *</th>
 										<td>
-											<select name="proMemberId" id="proMemberId" class="select" style="width:150px; height: 31.5px;">
-												<option value="">선택</option>
-												<!-- <option value="">전문가</option>
-												<option value="">바이어</option> -->
-											</select>
-											<a href="#" id="saveBtn" class="btn btn-primary" ><b>저장</b></a>
+										<select id="proMemberId" name="proMemberId">
+											<c:forEach var="proMemberId" items="${proMemberId}" varStatus="status" >
+											 	<option value="${proMemberId.memberId}">${proMemberId.memberNm}</option>
+											 </c:forEach>
+										</select>
+											<a  id="saveBtn" class="btn btn-primary" ><b>저장</b></a>
 										</td>
 									</tr>
 								</tbody>

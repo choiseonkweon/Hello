@@ -99,96 +99,27 @@ public class BusinessController {
 	 */
 	@RequestMapping("/business/businessManagementRegister.do")
 	public ModelAndView businessManagementRegister(@ModelAttribute("searchVO") MemberVO searchVO, Model model, ModelAndView mv, HttpServletRequest request) throws Exception {
-		
+		System.out.println("searchVO_1***********************"+searchVO);
+		searchVO.setPageUnit(propertiesService.getInt("pageUnit"));
+		searchVO.setPageSize(propertiesService.getInt("pageSize"));
 
-    	String memberId = request.getParameter("memberId");
-    	String joinTypeCd = request.getParameter("joinTypeCd");
-    	searchVO.setMemberId(memberId);
-    	searchVO.setJoinTypeCd(joinTypeCd);
-    	System.out.println("memberId :: " + memberId);
-    	System.out.println("joinTypeCd ::: " + joinTypeCd);
-    	
-    	String joinTypeCdNm = request.getParameter("joinTypeCdNm");
-		searchVO.setJoinTypeCdNm(joinTypeCdNm);
-    	System.out.println("joinTypeCdNm :: " + joinTypeCdNm);
-    	
-    	MemberVO detail = null;
-    	
+		PaginationInfo paginationInfo = new PaginationInfo();
+		paginationInfo.setCurrentPageNo(searchVO.getPageIndex());
+		paginationInfo.setRecordCountPerPage(searchVO.getPageUnit());
+		paginationInfo.setPageSize(searchVO.getPageSize());
 
-		/*
-		 *==============================*
-		 ||                                                     ||
-		 ||		코드 불러오기 최선권 20191209 데이터 추가	 ||
-		 ||                                                     ||
-		 *==============================*
-		*/
+		searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
+		searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
+		searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());		
 
 		MemberVO commonsVo = new MemberVO();
-		commonsVo.setGroupCd("g00021");
-		List<MemberVO> nationVo = memberService.selectCommonsList(commonsVo);
-		commonsVo.setGroupCd("g00020");
-		List<MemberVO> regForm = memberService.selectCommonsList(commonsVo);
-		commonsVo.setGroupCd("g00019");
-		List<MemberVO> propt = memberService.selectCommonsList(commonsVo);
-		commonsVo.setGroupCd("g00004");
-		List<MemberVO> YearCd = memberService.selectCommonsList(commonsVo);
-		commonsVo.setGroupCd("g00005");
-		List<MemberVO> qtaCd = memberService.selectCommonsList(commonsVo);
-		commonsVo.setGroupCd("g00002");
-		List<MemberVO> largeBussAreaCd = memberService.selectCommonsList(commonsVo);	//대분류코드표
-		commonsVo.setGroupCd("g00044");
-		List<MemberVO> expertFnalEduCd = memberService.selectCommonsList(commonsVo);	//학력코드표
 		
-		commonsVo.setGroupCd("g00017");
-		List<MemberVO> expertIndsEduCd = memberService.selectCommonsList(commonsVo);	//산학연간코드표
-		commonsVo.setGroupCd("g00012");
-		List<MemberVO> largeSpecialAreaCd = memberService.selectCommonsList(commonsVo);	//전문가 대분류 코드표
-		commonsVo.setGroupCd("g00013");
-		List<MemberVO> mediumSpecialAreaCd = memberService.selectCommonsList(commonsVo);	//전문가 소분류 코드표
-		commonsVo.setGroupCd("g00014");
-		List<MemberVO> detailSpecialAreaCd = memberService.selectCommonsList(commonsVo);	//전문가 세부전문분야분류 코드표
-
-		commonsVo.setGroupCd("g00023");
+		commonsVo.setGroupCd("G00023");
 		List<MemberVO> bussDeptCd = memberService.selectCommonsList(commonsVo);	//시업부서 세부전문분야분류 코드표
 		
-		
-		
-		
-		/*		
-		 * ==============================*
-		 ||					  									 ||
-		 ||	  	 기업성과정보 조회 	최선권	20191209	 ||
-		 ||					       		 						 ||
-		 * ==============================*
-		 
-		System.out.println("기업성과정보 조회");
-		int check2 = memberService.mypageEnterpriseResultCheck(memberId);
-		List<MemberVO> detail4 = null;
-		if(check2 > 0) {
-			detail4 = memberService.mypageEnterpriseResult(memberId);		//수혜사업신청이 승인된 List 가져오기
-			mav.addObject("data4", detail4);
-		}*/
+		mv.addObject("bussDeptCd",bussDeptCd);
 
-		mv.addObject("largeBussAreaCd",largeBussAreaCd);
-		mv.addObject("YearCd",YearCd);
-		mv.addObject("qtaCd",qtaCd);
-		mv.addObject("propt",propt);
-		mv.addObject("regForm",regForm);
-		mv.addObject("nationVo",nationVo);
-		mv.addObject("detail", detail);
-		mv.addObject("expertFnalEduCd", expertFnalEduCd);
-		
-		mv.addObject("expertIndsEduCd", expertIndsEduCd);
-		mv.addObject("largeSpecialAreaCd", largeSpecialAreaCd);
-		mv.addObject("mediumSpecialAreaCd", mediumSpecialAreaCd);
-		mv.addObject("detailSpecialAreaCd", detailSpecialAreaCd);
-		
-		mv.addObject("bussDeptCd", bussDeptCd);
-		
-		
-		model.addAttribute("viewType", "create");
-		
-		mv.setViewName("/view/businessManagementRegister");
+		mv.setViewName("/view/businessManagementInsert");
 		
 		return mv;
 	}

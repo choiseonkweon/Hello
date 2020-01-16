@@ -735,7 +735,7 @@
 											<th style="text-align:center;background:#eee;vertical-align:middle;">상세주소 </th>
 											<td colspan="3">
 												<label class="input" style="width:100%">
-													<input type="text" id="expertHomeDetailAddr" name="expertHomeDetailAddr" class="input-sm" value="" maxlength="13" onkeyup="inputTelNumber(this);" style="width:67%">
+													<input type="text" id="expertHomeDetailAddr" name="expertHomeDetailAddr" class="input-sm" value="" maxlength="13"  style="width:67%">
 												</label>
 											</td> 
 										</tr>
