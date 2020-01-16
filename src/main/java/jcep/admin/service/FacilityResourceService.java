@@ -31,9 +31,7 @@ import jcep.admin.model.FacilityResourceVO;
 
 	@Autowired
     private FacilityResourceMapper facilityResourceMapper;
-	/*파일경로*/
-	@Resource(name="facilityImgPath")
-	String facilityImgPath;	
+
 
 	/**
 	 * 시설 목록을 조회한다.
@@ -72,7 +70,7 @@ import jcep.admin.model.FacilityResourceVO;
 	 * @exception Exception
 	 */
 	public Integer facilityInsert(FacilityResourceVO params,MultipartFile facilityImgFile) throws Exception{
-		HashMap<String,String> fileData = UploadFileUtils.OnefileUpload(facilityImgFile,facilityImgPath);
+	//	HashMap<String,String> fileData = UploadFileUtils.OnefileUpload(facilityImgFile,facilityImgPath);
 		
 		
 		 return facilityResourceMapper.facilityInsert(params);
