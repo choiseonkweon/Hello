@@ -325,10 +325,8 @@ public class OnestopSupportController {
     		hMap.put("attchFileDiviCd",attchFileDiviCd); 
     		hMap.put("attchFileDiviCd",attchFileDiviCd);
     		hMap.put("attchFileNo",attchFileNo);
-	        File path=new File(noticeFilePath);
-	        if(!path.exists()) {
-	           path.mkdir();
-	        }
+	        String  path= noticeFilePath;
+
 	    	if(fileName != null) { //파일이 있으면 
 		    	HashMap<String,String> fileData = UploadFileUtils.OnefileUpload(fileName,path);//파일이 있으면 파일 업로드
 				hMap.put("fileCourse",fileData.get("fileCourse"));

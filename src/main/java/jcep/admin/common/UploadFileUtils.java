@@ -355,9 +355,10 @@ public class UploadFileUtils {
 	}
     
 	//단일 파일 업로드 
-	public static HashMap<String,String> OnefileUpload(MultipartFile fileName,File path) throws Exception{
+	public static HashMap<String,String> OnefileUpload(MultipartFile fileName,String filePath) throws Exception{
+        File path=new File(filePath);
         if(!path.exists()) {
-           path.mkdir();
+        	path.mkdir();
         }
 
     	String fileOriginName = Long.toString(System.currentTimeMillis()) + "_" + fileName.getOriginalFilename();
