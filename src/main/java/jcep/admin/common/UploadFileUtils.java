@@ -7,8 +7,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -22,6 +25,7 @@ import org.imgscalr.Scalr;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import jcep.admin.dao.MemberMapper;
@@ -373,5 +377,33 @@ public class UploadFileUtils {
 		
 		return hMap;
 	}
+	
+	
+
+	public static List<Map<String, Object>> getFileUpload(HttpServletRequest request,String filePath) throws Exception{
+    	MultipartHttpServletRequest mRequest = (MultipartHttpServletRequest) request;
+    	
+    	Iterator<String> iterator = mRequest.getFileNames();
+		
+		File path=new File(filePath);
+        if(!path.exists()) {
+        	path.mkdir();
+        }
+		Map<String, Object> fileMap = new HashMap<String, Object>();
+		List<Map<String, Object>> FileMapList = new ArrayList<Map<String,Object>>();
+        
+    	while(iterator.hasNext()){
+    		MultipartFile fileName = mRequest.getFile(iterator.next());
+    		String fileOriginName = Long.toString(System.currentTimeMillis()) + "_" + fileName.getOriginalFilename();
+    		File file = new File(path,fileOriginName);
+    		fileName.transferTo(file);
+    		fileMap.put("fileCourse",file.getAbsolutePath());               //경로
+    		fileMap.put("orgFileNm",fileOriginName);               			//파일명
+    		FileMapList.add(fileMap);
+    		
+    	}        
+		
+		return FileMapList;
+	}	
    }
 
