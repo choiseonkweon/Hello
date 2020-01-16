@@ -20,28 +20,17 @@ public class FacilityResourceVO extends PagingVO {
 
 	private static final long serialVersionUID = 1L;
 
-	private String searchType;
-	private String searchText;
-	
-	private String facilityId;
-	private String facilityNm;
-	private String facilityLoc;
-	private String facilityScale;
-	private String facilityCost;
-	private String facilityEquip;
-	private String facilityImg;
-	private String facilitySt;
-	private String facilityRegDt;
-	private String facilityRegId;
-	private MultipartFile facilityImgFile;
-	
-	private String resourceId;
-	private String resourceNm;
-	private String resourceImg;
-	private String resourceSt;
-	private String resourceRegDt;
-	private String resourceRegId;
-	private MultipartFile resourceImgFile;
+	private String searchType, searchText, mngDeptType;
+	private String facilityId,facilityNm,facilityLoc,facilityScale,facilityCost,facilityEquip,facilityImg,facilitySt,facilityRegDt,facilityRegId,facilityMngDeptCd,facilityFuncCd
+	                    ,resourceId,resourceNm,resourceImg,resourceSt,resourceRegDt,resourceRegId,resourceMngDeptCd
+	                    ,appliNo,resourFaciId,memberId,resourFaciDiviCd,compNm,useFrDt,useFrTm,useToDt,useToTm,applicStCd
+	                    ,useObj,compMail,compTelNo,compApplNm,compAddr1,compAddr2
+	;
+
+	private int usePersNum;
+	private MultipartFile facilityImgFile,resourceImgFile;
+
+
 	
 	public String getSearchType() {
 		return searchType;
@@ -54,6 +43,12 @@ public class FacilityResourceVO extends PagingVO {
 	}
 	public void setSearchText(String searchText) {
 		this.searchText = searchText;
+	}
+	public String getMngDeptType() {
+		return mngDeptType;
+	}
+	public void setMngDeptType(String mngDeptType) {
+		this.mngDeptType = mngDeptType;
 	}
 	public String getFacilityId() {
 		return facilityId;
@@ -115,6 +110,18 @@ public class FacilityResourceVO extends PagingVO {
 	public void setFacilityRegId(String facilityRegId) {
 		this.facilityRegId = facilityRegId;
 	}
+	public String getFacilityMngDeptCd() {
+		return facilityMngDeptCd;
+	}
+	public void setFacilityMngDeptCd(String facilityMngDeptCd) {
+		this.facilityMngDeptCd = facilityMngDeptCd;
+	}
+	public String getFacilityFuncCd() {
+		return facilityFuncCd;
+	}
+	public void setFacilityFuncCd(String facilityFuncCd) {
+		this.facilityFuncCd = facilityFuncCd;
+	}
 	public MultipartFile getFacilityImgFile() {
 		return facilityImgFile;
 	}
@@ -162,6 +169,114 @@ public class FacilityResourceVO extends PagingVO {
 	}
 	public void setResourceImgFile(MultipartFile resourceImgFile) {
 		this.resourceImgFile = resourceImgFile;
+	}
+	public String getAppliNo() {
+		return appliNo;
+	}
+	public void setAppliNo(String appliNo) {
+		this.appliNo = appliNo;
+	}
+	public String getResourFaciId() {
+		return resourFaciId;
+	}
+	public void setResourFaciId(String resourFaciId) {
+		this.resourFaciId = resourFaciId;
+	}
+	public String getMemberId() {
+		return memberId;
+	}
+	public void setMemberId(String memberId) {
+		this.memberId = memberId;
+	}
+	public String getResourFaciDiviCd() {
+		return resourFaciDiviCd;
+	}
+	public void setResourFaciDiviCd(String resourFaciDiviCd) {
+		this.resourFaciDiviCd = resourFaciDiviCd;
+	}
+	public String getCompNm() {
+		return compNm;
+	}
+	public void setCompNm(String compNm) {
+		this.compNm = compNm;
+	}
+	public String getUseFrDt() {
+		return useFrDt;
+	}
+	public void setUseFrDt(String useFrDt) {
+		this.useFrDt = useFrDt;
+	}
+	public String getUseFrTm() {
+		return useFrTm;
+	}
+	public void setUseFrTm(String useFrTm) {
+		this.useFrTm = useFrTm;
+	}
+	public String getUseToDt() {
+		return useToDt;
+	}
+	public void setUseToDt(String useToDt) {
+		this.useToDt = useToDt;
+	}
+	public String getUseToTm() {
+		return useToTm;
+	}
+	public void setUseToTm(String useToTm) {
+		this.useToTm = useToTm;
+	}
+	public String getApplicStCd() {
+		return applicStCd;
+	}
+	public void setApplicStCd(String applicStCd) {
+		this.applicStCd = applicStCd;
+	}
+	public String getResourceMngDeptCd() {
+		return resourceMngDeptCd;
+	}
+	public void setResourceMngDeptCd(String resourceMngDeptCd) {
+		this.resourceMngDeptCd = resourceMngDeptCd;
+	}
+	public int getUsePersNum() {
+		return usePersNum;
+	}
+	public void setUsePersNum(int usePersNum) {
+		this.usePersNum = usePersNum;
+	}
+	public String getUseObj() {
+		return useObj;
+	}
+	public void setUseObj(String useObj) {
+		this.useObj = useObj;
+	}
+	public String getCompMail() {
+		return compMail;
+	}
+	public void setCompMail(String compMail) {
+		this.compMail = compMail;
+	}
+	public String getCompTelNo() {
+		return compTelNo;
+	}
+	public void setCompTelNo(String compTelNo) {
+		this.compTelNo = compTelNo;
+	}
+	public String getCompApplNm() {
+		return compApplNm;
+	}
+	public void setCompApplNm(String compApplNm) {
+		this.compApplNm = compApplNm;
+	}
+	public String getCompAddr1() {
+		return compAddr1;
+	}
+	public void setCompAddr1(String compAddr1) {
+		this.compAddr1 = compAddr1;
+	}
+	public String getCompAddr2() {
+		return compAddr2;
+	}
+	public void setCompAddr2(String compAddr2) {
+		this.compAddr2 = compAddr2;
 	}
 
 }

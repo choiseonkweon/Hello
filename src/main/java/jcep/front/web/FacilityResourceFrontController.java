@@ -52,9 +52,6 @@ public class FacilityResourceFrontController {
 	@Resource(name = "propertiesService")
 	protected EgovPropertyService propertiesService;
 	
-	// 업로드된 파일이 저장될 위치 
-	private final String PATH = "C:/JCEP_SYSTEM/JCEP_SYSTEM/src/main/webapp/WEB-INF/upload/";
-	
 	@Autowired
 	MappingJackson2JsonView jsonView;
 	@ Autowired
@@ -62,22 +59,9 @@ public class FacilityResourceFrontController {
 	@Resource(name="noticeFilePath")
     String noticeFilePath;
 	
-    // Calendar 인스턴스 생성
-    Calendar cal = Calendar.getInstance();
-   
-    // 요일 표시 헤더
-    private String[] calHeader = {"일","월","화","수","목","금","토"};
-    // 날짜 데이터 배열
-    private String[][] calDate = new String[6][7];
 
-    private int width=calHeader.length; // 배열 가로 넓이
-    private int startDay;   // 월 시작 요일
-    private int lastDay;    // 월 마지막 날짜
-    private int inputDate=1;  // 입력 날짜
-
-	
 	/**
-	 * 시설정보 목록을 조회한다. (pageing)
+	 * 시설신청 목록을 조회한다. (pageing)
 	 * @param searchVO - 조회할 정보가 담긴 FacilityResourceFrontVO
 	 * @param model
 	 * @return "facilityUseList"
@@ -97,47 +81,9 @@ public class FacilityResourceFrontController {
 		searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
 		searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
 		searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
-		
-		Calendar cal = Calendar.getInstance();
-		
-		int year = cal.get(Calendar.YEAR);
-		int mon = cal.get(Calendar.MONTH);
-		int day = cal.get(Calendar.DATE);
-		
-		startDay = cal.get(Calendar.DAY_OF_WEEK); // 월 시작 요일
-        lastDay = cal.getActualMaximum(Calendar.DATE); // 월 마지막 날짜
-       
-        // 2차 배열에 날짜 입력
-        int row = 0;
-        for(int i=1; inputDate<=lastDay; i++){
-           
-            // 시작 요일이 오기전에는 공백 대입
-            if(i<startDay) calDate[row][i-1]="";
-            else{
-                // 날짜 배열에 입력
-                calDate[row][(i-1)%width]=Integer.toString(inputDate);
-                inputDate++;
-               
-                // 가로 마지막 열에 오면 행 바꿈
-                if(i%width==0) row++;
-            }      
-        }
-
-
-		System.out.println("year :: " + year);
-		System.out.println("mon :: " + mon);
-		System.out.println("day :: " + day);
-		System.out.println("startDay :: " + startDay);
-		System.out.println("lastDay :: " + lastDay);
 
 		ArrayList<FacilityResourceFrontVO> facilityUseList = facilityResourceFrontService.selectFacilityUseList(searchVO);
 		model.addAttribute("resultList", facilityUseList);
-		model.addAttribute("year", year);
-		model.addAttribute("mon", mon);
-		model.addAttribute("day", day);
-		model.addAttribute("startDay", startDay);
-		model.addAttribute("lastDay", lastDay);
-		
 		
 		int totCnt = facilityResourceFrontService.selectFacilityUseListTotCnt(searchVO);
 		paginationInfo.setTotalRecordCount(totCnt);
@@ -147,6 +93,41 @@ public class FacilityResourceFrontController {
 		
 		return mv;
 	}
+	
+	/**
+	 * 시설정보 목록을 조회한다. (pageing)
+	 * @param searchVO - 조회할 정보가 담긴 FacilityResourceFrontVO
+	 * @param model
+	 * @return "facilityUseList"
+	 * @exception Exception
+	 */
+	@RequestMapping(value = "/front/facilityUseList2.do")
+	public String facilityList(@ModelAttribute("searchVO") FacilityResourceFrontVO searchVO, ModelAndView mv, Model model) throws Exception {
+		
+		ArrayList<FacilityResourceFrontVO> facilityUseList = facilityResourceFrontService.selectFacilityUseList(searchVO);
+		model.addAttribute("resultList", facilityUseList);
+		
+		return "jsonView";
+	}	
+	
+	
+	/**
+	 * 시설정보 목록을 조회한다. (pageing)
+	 * @param searchVO - 조회할 정보가 담긴 FacilityResourceFrontVO
+	 * @param model
+	 * @return "facilityUseList"
+	 * @exception Exception
+	 */
+	@RequestMapping(value = "/front/resourFacilityApplInsert.do")
+	public String resourFacilityApplInsert(@ModelAttribute("searchVO") FacilityResourceFrontVO searchVO, ModelAndView mv, Model model , HttpSession session) throws Exception {
+		
+		searchVO.setMemberId((String) session.getAttribute("memberId"));
+		
+		Integer  facilityUseList = facilityResourceFrontService.resourFacilityApplInsert(searchVO);
+		model.addAttribute("resultList", facilityUseList);
+		
+		return "jsonView";
+	}	
 	
 	/**
 	 * 자원 사용 목록을 조회한다. (pageing)
@@ -181,6 +162,40 @@ public class FacilityResourceFrontController {
 		
 		return mv;
 	}
+	
+	
+	/**
+	 * 시설정보 목록을 조회한다. (pageing)
+	 * @param searchVO - 조회할 정보가 담긴 FacilityResourceFrontVO
+	 * @param model
+	 * @return "facilityUseList"
+	 * @exception Exception
+	 */
+	@RequestMapping(value = "/front/resourceFacilityCalendarList.do")
+	public String resourceFacilityCalendarList(@ModelAttribute("searchVO") FacilityResourceFrontVO searchVO, ModelAndView mv, Model model) throws Exception {
+		
+		ArrayList<FacilityResourceFrontVO> calendarList = facilityResourceFrontService.selectResourceFacilityCalendarList(searchVO);
+		model.addAttribute("resultList", calendarList);
+		
+		return "jsonView";
+	}	
+
+	/**
+	 * 시설신청 & 자원신청 목록을 조회한다.
+	 * @param searchVO - 조회할 정보가 담긴 FacilityResourceFrontVO
+	 * @param model
+	 * @return "facilityUseList"
+	 * @exception Exception
+	 */
+	@RequestMapping(value = "/front/resourceUseList2.do")
+	public String resourceUseList2(@ModelAttribute("searchVO") FacilityResourceFrontVO searchVO, ModelAndView mv, Model model) throws Exception {
+		
+		ArrayList<FacilityResourceFrontVO> resourceUseList = facilityResourceFrontService.selectResourceUseList(searchVO);
+		model.addAttribute("resultList", resourceUseList);
+		
+		return "jsonView";
+	}		
+	
 	
 	/**
 	 * 시설관리 지침을 다운로드 한다.

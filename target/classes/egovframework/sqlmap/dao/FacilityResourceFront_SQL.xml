@@ -18,7 +18,8 @@
 			WHERE 1=1
 			<if test="searchText != null and searchText != ''">
 		        AND	facility_nm LIKE CONCAT('%',#{searchText},'%') OR facility_loc LIKE CONCAT('%',#{searchText},'%') OR facility_scale LIKE CONCAT('%',#{searchText},'%') OR facility_equip LIKE CONCAT('%',#{searchText},'%')
-			</if> 
+			</if>
+			AND  facility_st_cd = '000001'
 			ORDER BY reg_dt DESC
 	</select>
 	
@@ -32,19 +33,63 @@
 			</if>  
 	</select>
 	
+	<insert id="resourFacilityApplInsert" parameterType="jcep.front.model.FacilityResourceFrontVO">
+		/* resourFacilityInsert */
+		INSERT INTO tb_resour_faci_applicate
+		(
+			appli_no,
+			resour_faci_id,
+			member_id,
+			resour_faci_divi_cd,
+			comp_nm,
+			comp_addr1,
+			comp_addr2,
+			comp_appl_nm,
+			comp_tel_no,
+			comp_mail,
+			use_pers_num,
+			use_obj,
+			use_fr_dt,
+			use_fr_tm,
+			use_to_dt,
+			use_to_tm,
+			applic_st_cd,
+			reg_dt,
+			reg_id
+		)
+		VALUES
+		(
+			(select concat('A',IFNULL(LPAD(MAX(SUBSTRING(appli_no,2,LENGTH(appli_no))) + 1,9,'0'),'000000000')) from tb_resour_faci_applicate a),
+			#{facilityNm},
+			#{memberId},
+			#{resourFaciDiviCd},
+			#{compNm},
+			#{compAddr1},
+			#{compAddr2},
+			#{compApplNm},
+			#{compTelNo},
+			#{compMail1},
+			#{usePersNum},
+			#{useObj},
+			date_format(#{useFrDt}, '%Y%m%d'),
+			#{useFrTm},
+			date_format(#{useToDt}, '%Y%m%d'),
+			#{useToTm},
+			'000001',
+			CURRENT_TIMESTAMP,
+			#{memberId}
+		)
+	</insert>	
+	
+	
 <!-- 시설 및 자원 관리 > 자원 등록 관리 -->
 	<select id="selectResourceUseList" parameterType="jcep.front.model.FacilityResourceFrontVO" resultType="jcep.front.model.FacilityResourceFrontVO">
 			/* selectResourceUseList */
 			SELECT
-				resour_faci_id AS resourFaciId,
+				resour_faci_id AS resoureId,
 				resource_nm AS resourceNm,
 				resource_img AS resourceImg,
-				(
-					CASE resource_st_cd 
-						WHEN 'Y' THEN '대여가능'
-						WHEN 'N' THEN '대여불가능'
-					END
-                ) AS resourceStCd,
+				resource_st_cd AS resourceStCd,
 				date_format(reg_dt, '%Y.%m.%d') AS regDt
 			FROM tb_resource
 			WHERE 1=1
@@ -77,7 +122,112 @@
 			</if>  
 	</select>
 	
+<!-- 시설신청 & 자원신청정보 -->
+	<select id="selectResourceFacilityCalendarList" parameterType="jcep.front.model.FacilityResourceFrontVO" resultType="jcep.front.model.FacilityResourceFrontVO">
+			/* selectResourceFacilityCalendarList */
+			
+			SELECT appliNo, compNm, facilityNm, resourFaciDiviCd, calyn
+			  FROM (
+						SELECT  a.appli_no  AS appliNo
+			                   ,a.comp_nm  AS compNm
+							   ,b.facility_nm AS facilityNm
+							   ,a.resour_faci_divi_cd as resourFaciDiviCd
+			                   ,concat(IF(concat(#{useDate} , '01') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+			                   ,',',IF(concat(#{useDate},'02') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+			                   ,',',IF(concat(#{useDate},'03') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+			                   ,',',IF(concat(#{useDate},'04') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'05') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'06') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'07') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'08') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'09') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'10') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'11') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'12') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'13') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'14') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'15') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'16') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'17') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'18') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'19') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'20') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'21') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'22') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'23') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'24') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'25') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'26') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'27') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'28') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'29') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'30') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'31') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ) as calyn
+						FROM tb_resour_faci_applicate a 
+						   INNER JOIN tb_facility b
+						   ON a.resour_faci_id = b.resour_faci_id
+						WHERE 1=1
+					        AND substring(use_fr_dt,  1,6) <![CDATA[<=]]> #{useDate}
+							AND substring(use_to_dt, 1,6) <![CDATA[>=]]> #{useDate}
+							AND a.applic_st_cd = '000004' 
+						<if test="resourFaciDiviCd != null and resourFaciDiviCd != ''">
+						     AND a.resour_faci_divi_cd = #{resourFaciDiviCd}
+						</if>							
+						UNION ALL
+						
+						SELECT  a.appli_no  AS appliNo
+			                   ,a.comp_nm  AS compNm
+							   ,b.resource_nm AS facilityNm
+							   ,a.resour_faci_divi_cd as resourFaciDiviCd
+			                   ,concat(IF(concat(#{useDate} , '01') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+			                   ,',',IF(concat(#{useDate},'02') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+			                   ,',',IF(concat(#{useDate},'03') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+			                   ,',',IF(concat(#{useDate},'04') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'05') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'06') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'07') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'08') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'09') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'10') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'11') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'12') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'13') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'14') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'15') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'16') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'17') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'18') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'19') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'20') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'21') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'22') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'23') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'24') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'25') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'26') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'27') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'28') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'29') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'30') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ,',',IF(concat(#{useDate},'31') BETWEEN use_fr_dt AND use_to_dt, 'Y', 'N')
+							   ) as calyn
+						FROM tb_resour_faci_applicate a 
+						   INNER JOIN tb_resource b
+						   ON a.resour_faci_id = b.resour_faci_id
+						WHERE 1=1
+					        AND substring(use_fr_dt,  1,6) <![CDATA[<=]]> #{useDate}
+							AND substring(use_to_dt, 1,6) <![CDATA[>=]]> #{useDate}
+							AND a.applic_st_cd = '000004' 
+						<if test="resourFaciDiviCd != null and resourFaciDiviCd != ''">
+						     AND a.resour_faci_divi_cd = #{resourFaciDiviCd}
+						</if>									
+			) A 
+			WHERE 1=1
+
+			
 	
+	</select>	
 	
 	
 	<insert id="onlineInsert" parameterType="jcep.admin.model.MemberVO">

@@ -6,6 +6,7 @@ import java.awt.MediaTracker;
 import java.awt.Toolkit;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -30,6 +31,7 @@ import jcep.admin.common.UploadFileUtils;
 import jcep.admin.model.FacilityResourceVO;
 import jcep.admin.model.MemberVO;
 import jcep.admin.service.FacilityResourceService;
+import jcep.admin.service.MemberService;
 
 /**
  * @Class Name : FacilityResourceController.java
@@ -54,6 +56,9 @@ public class FacilityResourceController {
 	@Resource(name = "propertiesService")
 	protected EgovPropertyService propertiesService;
 	
+	@Resource(name = "memberService")
+	protected MemberService memberService;	
+	
 	/**
 	 * 시설 등록 목록을 조회한다. (pageing)
 	 * @param searchVO - 조회할 정보가 담긴 FacilityResourceVO
@@ -75,14 +80,22 @@ public class FacilityResourceController {
 		searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
 		searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
 		searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
+	
+		// 관리부서 코드 조회
+		MemberVO commonsVo = new MemberVO();
 
+		commonsVo.setGroupCd("G00006");
+		List<MemberVO> mngDeptCd = memberService.selectCommonsList(commonsVo);		
+		model.addAttribute("mngDeptCd", mngDeptCd);
+		
+        //시설관리 리스트 조회
 		ArrayList<FacilityResourceVO> facilityList = facilityResourceService.selectFacilityList(searchVO);
 		model.addAttribute("resultList", facilityList);
 		
 		int totCnt = facilityResourceService.selectFacilityListTotCnt(searchVO);
 		paginationInfo.setTotalRecordCount(totCnt);
 		model.addAttribute("paginationInfo", paginationInfo);
-		
+
 		mv.setViewName("/view/facilityRegistrationManagementList");
 		
 		return mv;
@@ -98,6 +111,28 @@ public class FacilityResourceController {
 	 */
 	@RequestMapping("/facility/facilityRegistrationManagementReg.do")
 	public ModelAndView facilityRegistrationManagementReg(@ModelAttribute("searchVO") FacilityResourceVO searchVO, Model model, ModelAndView mv, HttpServletRequest request) throws Exception {
+
+		MemberVO commonsVo = new MemberVO();
+		
+		//시설 관리부서코드 조회
+		commonsVo.setGroupCd("G00006");
+		List<MemberVO> mngDeptCd = memberService.selectCommonsList(commonsVo);		
+		model.addAttribute("mngDeptCd", mngDeptCd);		
+		
+		// 시설 상태코드 
+		commonsVo.setGroupCd("G00008");
+		List<MemberVO> facilityStCd = memberService.selectCommonsList(commonsVo);		
+		model.addAttribute("facilityStCd", facilityStCd);	
+		
+		//시설 기능코드 
+		commonsVo.setGroupCd("G00007");
+		List<MemberVO> facilityFuncCd = memberService.selectCommonsList(commonsVo);		
+		model.addAttribute("facilityFuncCd", facilityFuncCd);	
+		
+		//수정 
+		if(!("".equals(searchVO.getFacilityId()) || null == searchVO.getFacilityId())) {
+		  	model.addAttribute("facilityDetailResult", facilityResourceService.selectFacilityDetailList(searchVO));	
+		}
 		
 		mv.setViewName("/view/facilityRegistrationManagementReg");
 		
@@ -113,9 +148,9 @@ public class FacilityResourceController {
 	 * @exception Exception
 	 */
     @RequestMapping("/facility/facilityInsert.do")
-    public String facilityInsert(HttpServletRequest request, Model model, @ModelAttribute("searchVO") FacilityResourceVO searchVO) throws Exception {
+    public String facilityInsert(HttpServletRequest request, Model model, @ModelAttribute("searchVO") FacilityResourceVO searchVO,@RequestParam("facilityImgFile") MultipartFile facilityImgFile) throws Exception {
     	
-    	Integer returnCode = facilityResourceService.facilityInsert(searchVO);
+    	Integer returnCode = facilityResourceService.facilityInsert(searchVO,facilityImgFile);
 		
     	return "jsonView";
     }
@@ -148,7 +183,7 @@ public class FacilityResourceController {
 		System.out.println("uploadedFileName : " + uploadedFileName);
 		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 		
-		vo.setFacilityImg("/facilityImg"+uploadedFileName);
+		vo.setFacilityImg(facilityImgPath+uploadedFileName);
 		facilityResourceService.facilityImageUpload(vo);
 		
         return new ResponseEntity<String>(returnCode, HttpStatus.OK);
@@ -175,12 +210,14 @@ public class FacilityResourceController {
 		searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
 		searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
 		searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
-
-		/*ArrayList<MemberVO> authList = memberService.selectAuthList(searchVO);
-		model.addAttribute("resultList", authList);*/
+       
 		
-		//int totCnt = memberService.selectAuthListTotCnt(searchVO);
-		//paginationInfo.setTotalRecordCount(totCnt);
+		
+		ArrayList<FacilityResourceVO> facilityApplicateList = facilityResourceService.selectFacilityApplicateList(searchVO);
+		model.addAttribute("resultList", facilityApplicateList);
+		
+		int totCnt = facilityResourceService.selectFacilityApplicateListTotCnt(searchVO);
+		paginationInfo.setTotalRecordCount(totCnt);
 		model.addAttribute("paginationInfo", paginationInfo);
 		System.out.println("searchVO_2***********************"+searchVO);
 		mv.setViewName("/view/facilityApplicationManagementList");
@@ -209,7 +246,19 @@ public class FacilityResourceController {
 		searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
 		searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
 		searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
+		
+		MemberVO commonsVo = new MemberVO();
 
+		// 관리부서 코드 조회
+		commonsVo.setGroupCd("G00010");
+		List<MemberVO> mngDeptCd = memberService.selectCommonsList(commonsVo);		
+		model.addAttribute("mngDeptCd", mngDeptCd);		
+        // 자원 상태 코드        
+		commonsVo.setGroupCd("G00011");
+		List<MemberVO> resourceStCd = memberService.selectCommonsList(commonsVo);		
+		model.addAttribute("resourceStCd", resourceStCd);				
+		
+		
 		ArrayList<FacilityResourceVO> resourceList = facilityResourceService.selectResourceList(searchVO);
 		model.addAttribute("resultList", resourceList);
 		
@@ -223,16 +272,41 @@ public class FacilityResourceController {
 	}
 	
 	/**
+	 * 자원 등록화면을 조회한다.
+	 * @param FacilityResourceVO - 등록할 정보가 담긴 VO
+	 * @param searchVO -  조회조건 정보가 담긴 VO
+	 * @param status
+	 * @return "resourceRegistrationManagementReg"
+	 * @exception Exception
+	 */
+	@RequestMapping("/resource/resourceRegistrationManagementReg.do")
+	public String resourceRegistrationManagementReg(@ModelAttribute("searchVO") FacilityResourceVO searchVO, Model model, ModelAndView mv, HttpServletRequest request) throws Exception {
+
+		if(!("".equals(searchVO.getResourceId()) || null == searchVO.getResourceId())) {
+		  	model.addAttribute("resourceDetailResult", facilityResourceService.selectResourceDetailList(searchVO));	
+		}
+		
+		
+		return "jsonView";
+	}	
+	
+	/**
 	 * 자원 정보를 등록한다.
 	 * @param FacilityResourceFrontVO - 등록 조건 정보가 담긴 VO
 	 * @param model
 	 * @return "resourceInsert"
 	 * @exception Exception
 	 */
-    @RequestMapping("/resource/resourceInsert.do")
-    public String resourceInsert(HttpServletRequest request, Model model, @ModelAttribute("searchVO") FacilityResourceVO searchVO) throws Exception {
-    	
-    	Integer returnCode = facilityResourceService.resourceInsert(searchVO);
+    @RequestMapping("/resource/resourceSave.do")
+    public String resourceSave(HttpServletRequest request, Model model, @ModelAttribute("searchVO") FacilityResourceVO searchVO) throws Exception {
+    	System.out.println(searchVO.getResourceSt());
+    	if(("".equals(searchVO.getResourceId()) || null == searchVO.getResourceId())) {
+    		Integer returnCode = facilityResourceService.resourceInsert(searchVO);
+    	}else{
+    		Integer returnCode = facilityResourceService.resourceUpdate(searchVO);
+    		
+    		
+    	}
 		
     	return "jsonView";
     }
@@ -283,15 +357,10 @@ public class FacilityResourceController {
 		File file = new File("/root/apache-tomcat-9.0.10/webapps/JCEP_SYSTEM/upload"+path);	
 		
 		if(file.exists()){
-			 if(file.delete()){
-				 Integer returnCode = facilityResourceService.resourceDelete(searchVO);
-			 }else{
-	             System.out.println("파일삭제 실패");
-	         }
-		}else {
-			System.out.println("파일이 존재하지 않습니다.");
+			file.delete();			
 		}
-    	         
+		Integer returnCode = facilityResourceService.resourceDelete(searchVO);
+		
     	return "jsonView";
     }
     
@@ -317,15 +386,68 @@ public class FacilityResourceController {
 		searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
 		searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
 
-		/*ArrayList<MemberVO> authList = memberService.selectAuthList(searchVO);
-		model.addAttribute("resultList", authList);*/
+		ArrayList<FacilityResourceVO> resourceApplicateList = facilityResourceService.selectResourceApplicateList(searchVO);
+		model.addAttribute("resultList", resourceApplicateList);
 		
-		//int totCnt = memberService.selectAuthListTotCnt(searchVO);
-		//paginationInfo.setTotalRecordCount(totCnt);
+		int totCnt = facilityResourceService.selectResourceApplicateListTotCnt(searchVO);
+		paginationInfo.setTotalRecordCount(totCnt);
 		model.addAttribute("paginationInfo", paginationInfo);
 		System.out.println("searchVO_2***********************"+searchVO);
 		mv.setViewName("/view/resourceApplicationManagementList");
 		
 		return mv;
 	}
+	
+	/**
+	 * 자원 정보를 등록한다.
+	 * @param FacilityResourceFrontVO - 등록 조건 정보가 담긴 VO
+	 * @param model
+	 * @return "resourceInsert"
+	 * @exception Exception
+	 */
+    @RequestMapping("/facility/resourcFacilityApplicUpdate.do")
+    public String resourcFacilityApplicUpdate(HttpServletRequest request, Model model, @ModelAttribute("searchVO") FacilityResourceVO searchVO) throws Exception {
+
+    		Integer returnCode = facilityResourceService.resourcFacilityApplicUpdate(searchVO);
+		
+    	return "jsonView";
+    }	
+    
+    @RequestMapping("/facility/resourceFacilityApplicDelete.do")
+    public String resourceFacilityApplicDelete(HttpServletRequest request, Model model, @ModelAttribute("searchVO") FacilityResourceVO searchVO) throws Exception {
+
+    		Integer returnCode = facilityResourceService.resourceFacilityApplicDelete(searchVO);
+		
+    	return "jsonView";
+    }	    
+    
+	/**
+	 * 자원 정보를 등록한다.
+	 * @param FacilityResourceFrontVO - 등록 조건 정보가 담긴 VO
+	 * @param model
+	 * @return "resourceInsert"
+	 * @exception Exception
+	 */
+    @RequestMapping("/facility/facilityApplicDetail.do")
+    public String facilityApplicDetail(HttpServletRequest request, Model model, @ModelAttribute("searchVO") FacilityResourceVO searchVO) throws Exception {
+
+    	model.addAttribute("resultList", facilityResourceService.selectFacilityApplicateDetailList(searchVO));	
+		
+    	return "jsonView";
+    }	    
+    
+	/**
+	 * 자원 정보를 등록한다.
+	 * @param FacilityResourceFrontVO - 등록 조건 정보가 담긴 VO
+	 * @param model
+	 * @return "resourceInsert"
+	 * @exception Exception
+	 */
+    @RequestMapping("/resource/resourceApplicDetail.do")
+    public String resourceApplicDetail(HttpServletRequest request, Model model, @ModelAttribute("searchVO") FacilityResourceVO searchVO) throws Exception {
+
+    	model.addAttribute("resultList", facilityResourceService.selectResourceApplicateDetailList(searchVO));	
+		
+    	return "jsonView";
+    }	        
 }

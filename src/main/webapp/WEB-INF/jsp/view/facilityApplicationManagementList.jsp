@@ -47,6 +47,8 @@
 											<td>
 												<select name="searchType" id="searchType" class="select" style="width:150px; height: 31.5px;">
 													<option value="">전체</option>
+													<option value="1" ${searchVO.searchType eq 1 ? 'selected="selected"' : '' }>시설명</option>
+													<option value="2" ${searchVO.searchType eq 2 ? 'selected="selected"' : '' }>업체명</option>													
 												</select>
 												<input type="text" name=searchText id="searchText" class="input-sm not-kor" style="width:250px;" value="${searchVO.searchText}" onkeydown="javascript:enterKey();">
 											</td>
@@ -88,40 +90,51 @@
 										</tr>
 									</thead>
 									<tbody>
-										<tr onclick="javascript:goPopView();">
-											<td><c:out value="3"/></td>
-											<td>지식나눔터</td>
-											<td>(주)케이비시스</td>
-											<td>2019.07.06&nbsp;~&nbsp;2019.07.31</td>
-											<td>20</td>
-											<td>
-												대기&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-												<a href="#" class="btn" ><b>승인</b></a>
-												&nbsp;<a href="#" class="btn" ><b>반려</b></a>
-											</td>
-										</tr>
-										<tr onclick="javascript:goPopView();">
-											<td><c:out value="2"/></td>
-											<td>지식나눔터</td>
-											<td>(주)케이비시스</td>
-											<td>2019.07.06&nbsp;~&nbsp;2019.07.31</td>
-											<td>50</td>
-											<td>
-												대기&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-												<a href="#" class="btn" ><b>승인</b></a>
-												&nbsp;<a href="#" class="btn" ><b>반려</b></a>
-											</td>
-										</tr>
-										<tr onclick="javascript:goPopView();">
-											<td><c:out value="1"/></td>
-											<td>성장나눔터</td>
-											<td>(주)케이비시스</td>
-											<td>2019.07.06&nbsp;~&nbsp;2019.07.31</td>
-											<td>88</td>
-											<td>
-												승인
-											</td>
-										</tr>
+										<c:if test="${paginationInfo.totalRecordCount eq 0 }">
+											<tr style="text-align:center;">
+												<td colspan="6">조회 결과가 없습니다.</td>
+											</tr>
+										</c:if>
+										<c:if test="${paginationInfo.totalRecordCount ne 0 }">
+											<c:forEach var="result" items="${resultList}" varStatus="status">
+												<tr>
+													<td style="vertical-align: middle;"><c:out value="${paginationInfo.totalRecordCount+1 - ((searchVO.pageIndex-1) * searchVO.pageSize + status.count)}"/></td>
+													<td style="vertical-align: middle;">
+														<a href="javascript:goPopView('${result.appliNo}');">
+															<c:out value="${result.facilityNm}"/>
+													   </a>
+													</td>
+													<td style="vertical-align: middle;">
+														<a href="javascript:goPopView('${result.appliNo}');">
+															<c:out value="${result.compNm}"/>
+													   </a>													
+													</td>
+													<td style="vertical-align: middle;"> 
+																								  <fmt:parseDate value="${result.useFrDt}" var="useFrDt" pattern="yyyyMMdd"/>
+																								  <fmt:parseDate value="${result.useToDt}" var="useToDt" pattern="yyyyMMdd"/>
+													                                              <fmt:formatDate value="${useFrDt}" pattern="yyyy.MM.dd"/>&nbsp;~&nbsp;
+													                                              <fmt:formatDate value="${useToDt}" pattern="yyyy.MM.dd"/>
+													</td>
+													<td style="vertical-align: middle;"><c:out value="${result.usePersNum}"/></td>
+													<td style="vertical-align: middle;">
+													<c:choose>
+														<c:when test="${result.applicStCd eq '000001' }"> 
+															대기&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+															<a href="javascript:updateApprovResrv('${result.appliNo}','000004')" class="btn" ><b>승인</b></a>
+												            &nbsp;<a href="javascript:updateApprovResrv('${result.appliNo}','000003')" class="btn" ><b>반려</b></a>
+														</c:when>
+														<c:when test="${result.applicStCd eq '000004' }">
+															승인&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+														</c:when>
+														<c:when test="${result.applicStCd eq '000003' }">
+															반려&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+														</c:when>														
+													</c:choose>													
+													
+													</td>
+												</tr>
+											</c:forEach>
+										</c:if>										
 									</tbody>
 								</table>
 							</form>
@@ -159,7 +172,9 @@
 						<div class="col-xs-12">
 								<h6 class="page-title txt-color-blueDark"></h6>
 							</div>
-						<table class="table table-hover">
+						<form id="insertFrm" name="insertFrm" action="#" method="POST" >
+						<input type="hidden" id="appliNo" name="appliNo" value="" />	
+						<table class="table table-hover applicDetail">
 								<colgroup>
 						          <col width="10%">
 						          <col width="18%">
@@ -167,65 +182,59 @@
 						        </colgroup>
 							        <tbody>
 								        <tr>
-								          <th class="tc tc01" rowspan="7" style="vertical-align: middle;">신청인</th>
+								          <th class="tc tc01" rowspan="6" style="vertical-align: middle;">신청인</th>
 								          <th class="tc">업체(기관)명</th>
-								          <td><span id="detailPop_compNm">전남정보문화산업진흥원</span></td>
+								          <td><span id="compNm"></span></td>
 								        </tr>
 								        <tr>
 								          <th class="tc">주소</th>
-								          <td><span id="detailPop_addr">(58656) 전남 목포시 석현로 46 (석현동) 벤처지원센터 운영사무실</span></td>
+								          <td><span id="compAddr"></span></td>
 								        </tr>
 								        <tr>
 								          <th class="tc">성명</th>
-								          <td><span id="detailPop_name">탁지영</span></td>
+								          <td><span id="compApplNm">탁지영</span></td>
 								        </tr>
 								        <tr>
-								          <th class="tc" rowspan="2" style="vertical-align: middle;">연락처</th>
-								          <td><span id="detailPop_officeNum">061-280-7499</span></td>
-								        </tr>
-								        <tr>
-								          <td><span id="detailPop_cellNum">010-3626-4520</span></td>
+								          <th class="tc" style="vertical-align: middle;">연락처</th>
+								          <td><span id="compTelNo"></span></td>
 								        </tr>
 								        <tr class="emailWrap">
 								          <th class="tc">이메일</th>
-								          <td><span id="detailPop_email">tjy@jcia.or.kr</span></td>
+								          <td><span id="compMail"></span></td>
 								        </tr>
 								        <tr>
 								          <th class="tc">인원수</th>
-								          <td><span id="detailPop_totNum">30</span></td>
+								          <td><span id="usePersNum"></span></td>
 								        </tr>
 										<tr>
-								          <th class="tc tc01" rowspan="5" style="vertical-align: middle;">사용시설</th>
+								          <th class="tc tc01" rowspan="3" style="vertical-align: middle;">사용시설</th>
 								          <th class="tc">시설명</th>
-								          <td><span id="detailPop_facNm">배움터-2</span></td>
+								          <td><span id="facilityNm"></span></td>
 										</tr>
 								        <tr>
 								          <th class="tc">목적(행사명)</th>
-								          <td><span id="detailPop_purpose">마케팅 심화교육</span></td>
+								          <td><span id="useObj">마케팅 </span></td>
 								        </tr>
 								        <tr>
 								          <th class="tc">사용시간</th>
-								          <td><span id="detailPop_useDate">2019-06-25 09시 ~ 18시</span></td>
-								        </tr>
-								        <tr>
-								          <th class="tc">냉난방기</th>
-								          <td><span id="detailPop_cHUnitYn">사용</span></td>
-								        </tr>
-								        <tr>
-								          <th class="tc">빔프로젝트</th>
-								          <td><span id="detailPop_bimUseTime">8</span></td>
+								          <td><span id="useDate"></span></td>
 								        </tr>
 			      				</tbody>
 							</table>
+					</form>
 					</div>
 				</div>	
 				<footer>
-				<div class="modal-footer" style="align-items: center;">
+				<div class="modal-footer view" style="align-items: center;">
 	            	<button class="btn btn-primary" onclick="printArea();">인쇄</button>
-			        <button class="btn btn-primary">확인</button>
-			        <button type="button" class="btn btn-primary" onclick="updateResv();">수정</button>
-			        <button class="btn"  onclick="deleteResv();">삭제</button>
+			        <button class="btn btn-primary" onclick="closeModal();">확인</button>
+			        <button type="button" class="btn btn-primary" onclick="modifyResrv();">수정</button>
+			        <button class="btn"  onclick="deleteResrv();">삭제</button>
 	            </div>
+				<div class="modal-footer modify" style="align-items: center;">
+			        <button type="button" class="btn btn-primary" onclick="updateResrv();">저장</button>
+			        <button class="btn"  onclick="cancelResv();">취소</button>
+	            </div>	            
 				</footer>
 		</div><!-- /.modal-content -->
 	</div><!-- /.modal-dialog -->
@@ -242,9 +251,132 @@
            	document.listForm.submit();
         }
         
-        function goPopView(){
-        	$('#myModal').modal('show');
+        function goPopView(appliNo){
+        	var param = {};
+        	  param.appliNo = appliNo;
+			 $.ajax({
+					type : 'post',
+					url:'/db/facility/facilityApplicDetail.do',
+					data: param,
+					dataType: 'json',
+					success : function(data) {
+	                		$(".applicDetail span").text("");
+	                		$("#appliNo").val("");
+	                    	$(".view").css("display","");
+	                    	$(".modify").css("display","none");	                		
+	                		
+	                		var rData = data.resultList[0];
+
+	                		$("#appliNo").val(rData.appliNo);
+	                		$("#compNm").text(rData.compNm);
+	                		$("#compAddr").text(rData.compAddr1+" "+rData.compAddr2);
+	                		$("#compApplNm").text(rData.compApplNm);
+	                		$("#compTelNo").text(rData.compTelNo);
+	                		$("#compMail").text(rData.compMail);
+	                		$("#usePersNum").text(rData.usePersNum);
+	                		$("#facilityNm").text(rData.facilityNm);
+	                		$("#useObj").text(rData.useObj);
+	                		$("#useDate").text(rData.compNm);
+	                		
+				        	$('#myModal').modal('show');
+					},  
+				    error:function(request,status,error){ //ajax 오류인경우  
+			            alert("작업중 에러가 발생했습니다.");      
+			            console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+			   		} 
+			 });         	
+        	
         }
+        
+        function enterKey(){
+        	if(window.event.keyCode == 13){
+        		goSearch();
+    		}
+        }  
+        
+        function goSearch(){
+   			$('#searchFrm').attr('action', "/db/facility/facilityApplicationManagementList.do").submit();
+        }        
+        
+        function closeModal(){
+        	$('#myModal').modal('hide');
+        	
+        }
+        
+        function updateApprovResrv(appliNo,applicStCd){//신청번호 , 신청상태코드
+        	var param = {};
+        	param.appliNo = appliNo;
+        	param.applicStCd = applicStCd;
+        
+			 $.ajax({
+					type : 'post',
+					url:'/db/facility/resourcFacilityApplicUpdate.do',
+					data: param,
+					dataType: 'json',
+					success : function(data) {
+	                		alert("완료 되었습니다.");
+	                		location.reload();
+							return false;
+					},  
+				    error:function(request,status,error){ //ajax 오류인경우  
+			            alert("작업중 에러가 발생했습니다.");      
+			            console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+			   		} 
+			 });        	
+        }
+        
+        function updateResrv(){
+			 $.ajax({
+					type : 'post',
+					url:'/db/facility/facilityModifySave.do',
+					data: param,
+					dataType: 'json',
+					success : function(data) {
+	                		alert("완료 되었습니다.");
+	                		location.reload();
+							return false;
+					},  
+				    error:function(request,status,error){ //ajax 오류인경우  
+			            alert("작업중 에러가 발생했습니다.");      
+			            console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+			   		} 
+			 });        	
+        }        
+        
+        function modifyResrv(){
+        	$(".view").css("display","none");
+        	$(".modify").css("display","");
+        	
+        }
+        
+        function cancelResv(){
+        	if(confirm("이 페이지를 닫으시겠습니까?")){
+        		closeModal();
+        	}
+        	
+        }        
+        
+        function deleteResrv(){
+        	if(confirm("시설 신청내역을 삭제하시겠습니까?")){
+   			 $.ajax({
+					type : 'post',
+					url:'/db/facility/resourceFacilityApplicDelete.do',
+					data: $('#insertFrm').serialize(),
+					dataType: 'json',
+					success : function(data) {
+	                		alert("삭제 되었습니다.");
+	                		location.reload();
+							return false;
+					},  
+				    error:function(request,status,error){ //ajax 오류인경우  
+			            alert("작업중 에러가 발생했습니다.");      
+			            console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+			   		} 
+			 });        
+   		   }        	
+        }
+        
+        
         
     </script>
 </body>

@@ -207,6 +207,11 @@ public class FacilityResourceFrontVO extends PagingVO {
 	private int endNum;
 	
 	
+	// 자원시설 신청 정보 
+	private String compNm,compAddr1,compAddr2,compApplNm,compTelNo,compMail1,compMail2,useObj,useFrDt,useFrTm,useToDt,useToTm,resourFaciDiviCd,calYn,useDate,appliNo;
+	private int usePersNum;
+	
+	
 	
 	
 	
@@ -1166,6 +1171,109 @@ public class FacilityResourceFrontVO extends PagingVO {
 	}
 	public void setResourceImgFile(MultipartFile resourceImgFile) {
 		this.resourceImgFile = resourceImgFile;
+	}
+	public String getCompNm() {
+		return compNm;
+	}
+	public void setCompNm(String compNm) {
+		this.compNm = compNm;
+	}
+	public String getCompAddr1() {
+		return compAddr1;
+	}
+	public void setCompAddr1(String compAddr1) {
+		this.compAddr1 = compAddr1;
+	}
+	public String getCompAddr2() {
+		return compAddr2;
+	}
+	public void setCompAddr2(String compAddr2) {
+		this.compAddr2 = compAddr2;
+	}
+	public String getCompApplNm() {
+		return compApplNm;
+	}
+	public void setCompApplNm(String compApplNm) {
+		this.compApplNm = compApplNm;
+	}
+	public String getCompTelNo() {
+		return compTelNo;
+	}
+	public void setCompTelNo(String compTelNo) {
+		this.compTelNo = compTelNo;
+	}
+	public String getCompMail1() {
+		return compMail1;
+	}
+	public void setCompMail1(String compMail1) {
+		this.compMail1 = compMail1;
+	}
+	public String getCompMail2() {
+		return compMail2;
+	}
+	public void setCompMail2(String compMail2) {
+		this.compMail2 = compMail2;
+	}
+
+	public String getUseObj() {
+		return useObj;
+	}
+	public void setUseObj(String useObj) {
+		this.useObj = useObj;
+	}
+	public String getUseFrDt() {
+		return useFrDt;
+	}
+	public void setUseFrDt(String useFrDt) {
+		this.useFrDt = useFrDt;
+	}
+	public String getUseFrTm() {
+		return useFrTm;
+	}
+	public void setUseFrTm(String useFrTm) {
+		this.useFrTm = useFrTm;
+	}
+	public String getUseToDt() {
+		return useToDt;
+	}
+	public void setUseToDt(String useToDt) {
+		this.useToDt = useToDt;
+	}
+	public String getUseToTm() {
+		return useToTm;
+	}
+	public void setUseToTm(String useToTm) {
+		this.useToTm = useToTm;
+	}
+	public int getUsePersNum() {
+		return usePersNum;
+	}
+	public void setUsePersNum(int usePersNum) {
+		this.usePersNum = usePersNum;
+	}
+	public String getResourFaciDiviCd() {
+		return resourFaciDiviCd;
+	}
+	public void setResourFaciDiviCd(String resourFaciDiviCd) {
+		this.resourFaciDiviCd = resourFaciDiviCd;
+	}
+	public String getCalYn() {
+		return calYn;
+	}
+	public void setCalYn(String calYn) {
+		this.calYn = calYn;
+	}
+	public String getUseDate() {
+		return useDate;
+	}
+	public String getAppliNo() {
+		return appliNo;
+	}
+	public void setAppliNo(String appliNo) {
+		this.appliNo = appliNo;
+	}
+	public void setUseDate(String useDate) {
+		this.useDate = useDate;
 	}
 
 }

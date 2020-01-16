@@ -31,12 +31,20 @@ public interface FacilityResourceMapper {
 	public ArrayList<FacilityResourceVO> selectFacilityList(FacilityResourceVO params) throws Exception;
 	
 	/**
+	 * 시설 상세 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 시설 목록
+	 * @exception Exception
+	 */
+	public FacilityResourceVO selectFacilityDetailList(FacilityResourceVO params) throws Exception;	
+	/**
 	 * 시설 목록 총 갯수를 조회한다.
 	 * @param params - 조회할 정보가 담긴 VO
 	 * @return 시설 목록 총 갯수
 	 * @exception
 	 */
 	public int selectFacilityListTotCnt(FacilityResourceVO params) throws Exception;
+	
 	
 	/**
 	 * 시설정보를 등록한다.
@@ -54,13 +62,22 @@ public interface FacilityResourceMapper {
 	 */
 	public Integer facilityImageUpload(FacilityResourceVO params) throws Exception;
 	
+
 	/**
 	 * 자원 목록을 조회한다.
 	 * @param params - 조회할 정보가 담긴 VO
 	 * @return 자원 목록
 	 * @exception Exception
 	 */
-	public ArrayList<FacilityResourceVO> selectResourceList(FacilityResourceVO params) throws Exception;
+	public ArrayList<FacilityResourceVO> selectResourceList(FacilityResourceVO params) throws Exception;		
+	
+	/**
+	 * 자원 상세정보를 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 자원 목록
+	 * @exception Exception
+	 */
+	public FacilityResourceVO selectResourceDetailList(FacilityResourceVO params) throws Exception;
 	
 	/**
 	 * 자원 목록 총 갯수를 조회한다.
@@ -87,6 +104,14 @@ public interface FacilityResourceMapper {
 	public Integer resourceDelete(FacilityResourceVO params) throws Exception;
 	
 	/**
+	 * 자원정보를 수정한다.
+	 * @param params - 삭제할 정보가 담긴 FacilityResourceVO
+	 * @return Integer형
+	 * @exception Exception
+	 */
+	public Integer resourceUpdate(FacilityResourceVO params) throws Exception;	
+	
+	/**
 	 * 자원 이미지 업로드
 	 * @param params - 조회할 정보가 담긴 VO
 	 * @return 회원정보 상세
@@ -94,4 +119,68 @@ public interface FacilityResourceMapper {
 	 */
 	public Integer resourceImageUpload(FacilityResourceVO params) throws Exception;
 	
+	
+	/**
+	 * 시설 신청 목록을 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 시설 목록
+	 * @exception Exception
+	 */
+	public ArrayList<FacilityResourceVO> selectFacilityApplicateList(FacilityResourceVO params) throws Exception;		
+	
+	/**
+	 * 시설 신청 목록을 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 시설 목록
+	 * @exception Exception
+	 */
+	public ArrayList<FacilityResourceVO> selectFacilityApplicateDetailList(FacilityResourceVO params) throws Exception;	
+	
+	/**
+	 * 자원신청 목록 총 갯수를 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 자원 목록 총 갯수
+	 * @exception
+	 */
+	public int selectFacilityApplicateListTotCnt(FacilityResourceVO params) throws Exception;	
+	
+	/**
+	 * 자원 신청 목록을 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 시설 목록
+	 * @exception Exception
+	 */
+	public ArrayList<FacilityResourceVO> selectResourceApplicateList(FacilityResourceVO params) throws Exception;		
+	
+	/**
+	 * 자원 신청 목록을 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 시설 목록
+	 * @exception Exception
+	 */
+	public ArrayList<FacilityResourceVO> selectResourceApplicateDetailList(FacilityResourceVO params) throws Exception;			
+	
+	/**
+	 * 자원신청 목록 총 갯수를 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 자원 목록 총 갯수
+	 * @exception
+	 */
+	public int selectResourceApplicateListTotCnt(FacilityResourceVO params) throws Exception;		
+	
+	/**
+	 * 신청 상태 변경 승인 / 반려
+	 * @param params - 삭제할 정보가 담긴 FacilityResourceVO
+	 * @return Integer형
+	 * @exception Exception
+	 */
+	public Integer resourcFacilityApplicUpdate(FacilityResourceVO params) throws Exception;		
+	
+	/**
+	 * 시설 및 자원 신청 삭제
+	 * @param params - 삭제할 정보가 담긴 FacilityResourceVO
+	 * @return Integer형
+	 * @exception Exception
+	 */
+	public Integer resourceFacilityApplicDelete(FacilityResourceVO params) throws Exception;			
 }

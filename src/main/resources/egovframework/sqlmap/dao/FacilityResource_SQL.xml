@@ -5,14 +5,14 @@
 <!-- 시설 및 자원 관리 > 시설 등록 관리 -->
 	<select id="selectFacilityList" parameterType="jcep.admin.model.FacilityResourceVO" resultType="jcep.admin.model.FacilityResourceVO">
 			SELECT
-				facility_id AS facilityId,
+				resour_faci_id AS facilityId,
 				facility_nm AS facilityNm,
 				facility_loc AS facilityLoc,
 				facility_scale AS facilityScale,
 				facility_cost AS facilityCost,
 				facility_equip AS facilityEquip,
 				facility_img AS facilityImg,
-				facility_st AS facilitySt
+				facility_st_cd AS facilitySt
 			FROM tb_facility
 			WHERE 1=1
 			<if test="searchText != null and searchText != ''">
@@ -28,9 +28,29 @@
 					</when>
 				</choose>
 			</if> 
-			ORDER BY facility_reg_dt DESC
+			
+			<if test="mngDeptType != null and mngDeptType != ''">
+		          AND facility_mng_dept_cd = #{mngDeptType}
+			</if> 			
+			ORDER BY resour_faci_id DESC
 			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
 	</select>
+	
+<!-- 시설 및 자원 관리 > 시설 상세조회-->
+	<select id="selectFacilityDetailList" parameterType="jcep.admin.model.FacilityResourceVO" resultType="jcep.admin.model.FacilityResourceVO">
+			SELECT
+				resour_faci_id AS facilityId,
+				facility_nm AS facilityNm,
+				facility_loc AS facilityLoc,
+				facility_scale AS facilityScale,
+				facility_cost AS facilityCost,
+				facility_equip AS facilityEquip,
+				facility_img AS facilityImg,
+				facility_st_cd AS facilitySt
+			FROM tb_facility
+			WHERE 1=1
+			AND resour_faci_id = #{facilityId}
+	</select>	
 	
 	<select id="selectFacilityListTotCnt" parameterType="jcep.admin.model.FacilityResourceVO" resultType="int">
 			SELECT COUNT(*) totcnt
@@ -53,19 +73,19 @@
 	
 	<insert id="facilityInsert" parameterType="jcep.admin.model.FacilityResourceVO">
 			INSERT INTO tb_facility (
-				 facility_id
+				 resour_faci_id
 				,facility_nm
 				,facility_loc
 				,facility_scale
 				,facility_cost
 				,facility_equip
 				,facility_img
-				,facility_st
-				,facility_reg_dt
-				,facility_reg_id
+				,facility_st_cd
+				,reg_dt
+				,reg_id
 			)
 			VALUES(
-				 (select concat('F',IFNULL(LPAD(MAX(SUBSTRING(facility_id,2,LENGTH(facility_id))) + 1,4,'0'),'0000')) from tb_facility a)
+				 (select concat('F',IFNULL(LPAD(MAX(SUBSTRING(resour_faci_id,2,LENGTH(resour_faci_id))) + 1,4,'0'),'000000000')) from tb_facility a)
 				,#{facilityNm}
 				,#{facilityLoc}
 				,#{facilityScale}
@@ -77,42 +97,43 @@
 				,'admin'<!-- 나중에 로그인한 아이디로 수정예정  -->
 			)
 	</insert>
-	
-	<update id="facilityImageUpload" parameterType="jcep.admin.model.FacilityResourceVO">
-			UPDATE tb_facility
-			SET 
-				facility_img = #{facilityImg}
-			ORDER BY facility_id DESC LIMIT 1	
-	</update>
 
 <!-- 시설 및 자원 관리 > 자원 등록 관리 -->
 	<select id="selectResourceList" parameterType="jcep.admin.model.FacilityResourceVO" resultType="jcep.admin.model.FacilityResourceVO">
 			SELECT
-				resource_id AS resourceId,
+				resour_faci_id AS resourceId,
 				resource_nm AS resourceNm,
 				resource_img AS resourceImg,
-				(
-					CASE resource_st 
-						WHEN 'Y' THEN '대여가능'
-						WHEN 'N' THEN '대여불가능'
-					END
-                ) AS resourceSt,
-				date_format(resource_reg_dt, '%Y.%m.%d') AS resourceRegDt
+				(select common_nm 
+				   from ta_common 
+				 where group_cd = 'G00011' 
+				    and common_cd = tb_resource.resource_st_cd) as resourceSt,
+				date_format(reg_dt, '%Y.%m.%d') AS resourceRegDt
 			FROM tb_resource
 			WHERE 1=1
 			<if test="searchText != null and searchText != ''">
-		        <choose>
-		        	<when test='searchType eq ""'>
-						AND	resource_nm LIKE CONCAT('%',#{searchText},'%') 
-					</when>
-		            <when test='searchType eq 1'>
-						AND	resource_nm LIKE CONCAT('%',#{searchText},'%')
-					</when>
-				</choose>
+				AND	resource_nm LIKE CONCAT('%',#{searchText},'%') 
 			</if> 
-			ORDER BY resource_reg_dt DESC
+			
+			<if test="searchType != null and searchType != ''">
+				AND	resource_st_cd = #{searchType} 
+			</if> 			
+			ORDER BY reg_dt DESC
 			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
 	</select>
+	
+<!-- 시설 및 자원 관리 > 자원 상세 관리 -->
+	<select id="selectResourceDetailList" parameterType="jcep.admin.model.FacilityResourceVO" resultType="jcep.admin.model.FacilityResourceVO">
+			SELECT
+				resour_faci_id AS resourceId,
+				resource_nm AS resourceNm,
+				resource_img AS resourceImg,
+				resource_mng_dept_cd AS resourceMngDeptCd,
+				resource_st_cd As resourceSt
+			FROM tb_resource
+			WHERE 1=1
+			  AND resour_faci_id = #{resourceId} 
+	</select>	
 	
 	<select id="selectResourceListTotCnt" parameterType="jcep.admin.model.FacilityResourceVO" resultType="int">
 			SELECT COUNT(*) totcnt
@@ -132,16 +153,18 @@
 		
 	<insert id="resourceInsert" parameterType="jcep.admin.model.FacilityResourceVO">
 			INSERT INTO tb_resource (
-				 resource_id
+				 resour_faci_id
 				,resource_nm
+				,resource_mng_dept_cd
 				,resource_img
-				,resource_st
-				,resource_reg_dt
-				,resource_reg_id
+				,resource_st_cd
+				,reg_dt
+				,reg_id
 			)
 			VALUES(
-				 (select concat('R',IFNULL(LPAD(MAX(SUBSTRING(resource_id,2,LENGTH(resource_id))) + 1,4,'0'),'0000')) from tb_resource a)
+				 (select concat('R',IFNULL(LPAD(MAX(SUBSTRING(resour_faci_id,2,LENGTH(resour_faci_id))) + 1,9,'0'),'000000000')) from tb_resource a)
 				,#{resourceNm}
+				,#{resourceMngDeptCd}
 				,#{resourceImg}
 				,#{resourceSt}
 				,CURRENT_TIMESTAMP
@@ -149,18 +172,220 @@
 			)
 	</insert>
 	
-	<update id="resourceImageUpload" parameterType="jcep.admin.model.FacilityResourceVO">
-			UPDATE tb_resource
-			SET 
-				resource_img = #{resourceImg}
-			ORDER BY resource_id DESC LIMIT 1	
-	</update>
-	
 	<delete id="resourceDelete" parameterType="jcep.admin.model.FacilityResourceVO">
 			DELETE FROM tb_resource
-			WHERE resource_id = #{resourceId}
+			WHERE resour_faci_id = #{resourceId}
 	</delete>
 	
+	<update id="resourceUpdate" parameterType="jcep.admin.model.FacilityResourceVO">
+			UPDATE tb_resource
+			SET resource_nm = #{resourceNm}
+			     ,resource_mng_dept_cd = #{resourceMngDeptCd}
+				 ,resource_img = #{resourceImg}
+				 ,resource_st_cd = #{resourceSt}
+			WHERE resour_faci_id = #{resourceId}
+	</update>	
+	
+<!-- 시설 및 자원 관리 > 시설신청정보 -->
+	<select id="selectFacilityApplicateList" parameterType="jcep.admin.model.FacilityResourceVO" resultType="jcep.admin.model.FacilityResourceVO">
+			SELECT
+				a.appli_no AS appliNo,
+				a.resour_faci_id AS resourFaciId,
+				a.member_id AS memberId,
+				a.resour_faci_divi_cd AS resourFaciDiviCd,
+                b.facility_nm as facilityNm,
+				a.comp_nm AS compNm,
+                a.use_fr_dt as useFrDt,
+                a.use_fr_tm as useFrTm,
+                a.use_to_dt as useToDt,
+                a.use_to_tm as useToTm,
+                a.applic_st_cd as applicStCd,
+                a.use_pers_num as usePersNum,
+                a.comp_tel_no as compTelNo,
+                a.comp_mail as compMail,
+                a.comp_appl_nm as compApplNm,
+                a.use_obj as useObj,
+                a.comp_addr1 as compAddr1,
+                a.comp_addr2 as compAddr2
+			FROM tb_resour_faci_applicate a 
+			   INNER JOIN tb_facility b
+			   ON a.resour_faci_id = b.resour_faci_id
+			   AND a.resour_faci_divi_cd = 'F'
+			WHERE 1=1
+			<if test="searchText != null and searchText != ''">
+		        <choose>
+		        	<when test='searchType eq ""'>
+						AND	(b.facility_nm LIKE CONCAT('%',#{searchText},'%') OR a.comp_nm LIKE CONCAT('%',#{searchText},'%')) 
+					</when>
+		            <when test='searchType eq 1'>
+						AND	b.facility_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 2'>
+						AND	a.comp_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+				</choose>
+			</if> 
+			ORDER BY a.appli_no DESC
+			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+	</select>	
+
+
+	<select id="selectFacilityApplicateListTotCnt" parameterType="jcep.admin.model.FacilityResourceVO" resultType="int">
+			SELECT COUNT(*) totcnt
+			FROM tb_resour_faci_applicate a 
+			   INNER JOIN tb_facility b
+			   ON a.resour_faci_id = b.resour_faci_id
+			   AND a.resour_faci_divi_cd = 'F'
+			WHERE 1=1
+			<if test="searchText != null and searchText != ''">
+		        <choose>
+		        	<when test='searchType eq ""'>
+						AND	(b.facility_nm LIKE CONCAT('%',#{searchText},'%') OR a.comp_nm LIKE CONCAT('%',#{searchText},'%')) 
+					</when>
+		            <when test='searchType eq 1'>
+						AND	b.facility_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 2'>
+						AND	a.comp_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+				</choose>
+			</if>  
+	</select>
+	
+<!-- 시설 및 자원 관리 > 시설신청정보 -->
+	<select id="selectFacilityApplicateDetailList" parameterType="jcep.admin.model.FacilityResourceVO" resultType="jcep.admin.model.FacilityResourceVO">
+			SELECT
+				a.appli_no AS appliNo,
+				a.resour_faci_id AS resourFaciId,
+				a.member_id AS memberId,
+				a.resour_faci_divi_cd AS resourFaciDiviCd,
+                b.facility_nm as facilityNm,
+				a.comp_nm AS compNm,
+                a.use_fr_dt as useFrDt,
+                a.use_fr_tm as useFrTm,
+                a.use_to_dt as useToDt,
+                a.use_to_tm as useToTm,
+                a.applic_st_cd as applicStCd,
+                a.use_pers_num as usePersNum,
+                a.comp_tel_no as compTelNo,
+                a.comp_mail as compMail,
+                a.comp_appl_nm as compApplNm,
+                a.use_obj as useObj,
+                a.comp_addr1 as compAddr1,
+                a.comp_addr2 as compAddr2
+			FROM tb_resour_faci_applicate a 
+			   INNER JOIN tb_facility b
+			   ON a.resour_faci_id = b.resour_faci_id
+			   AND a.resour_faci_divi_cd = 'F'
+			WHERE 1=1
+		        AND a.appli_no = #{appliNo}
+	</select>	
+	
+<!-- 시설 및 자원 관리 > 시설신청정보 -->
+	<select id="selectResourceApplicateList" parameterType="jcep.admin.model.FacilityResourceVO" resultType="jcep.admin.model.FacilityResourceVO">
+			SELECT
+				a.appli_no AS appliNo,
+				a.resour_faci_id AS resourFaciId,
+				a.member_id AS memberId,
+				a.resour_faci_divi_cd AS resourFaciDiviCd,
+                b.resource_nm as facilityNm,
+				a.comp_nm AS compNm,
+                a.use_fr_dt as useFrDt,
+                a.use_fr_tm as useFrTm,
+                a.use_to_dt as useToDt,
+                a.use_to_tm as useToTm,
+                a.applic_st_cd as applicStCd,
+                a.use_pers_num as usePersNum,
+                a.comp_tel_no as compTelNo,
+                a.comp_mail as compMail,
+                a.comp_appl_nm as compApplNm,
+                a.use_obj as useObj,
+                a.comp_addr1 as compAddr1,
+                a.comp_addr2 as compAddr2
+			FROM tb_resour_faci_applicate a 
+			   INNER JOIN tb_resource b
+			   ON a.resour_faci_id = b.resour_faci_id
+			   AND a.resour_faci_divi_cd = 'R'
+			WHERE 1=1
+			<if test="searchText != null and searchText != ''">
+		        <choose>
+		        	<when test='searchType eq ""'>
+						AND	(b.resource_nm LIKE CONCAT('%',#{searchText},'%') OR a.comp_nm LIKE CONCAT('%',#{searchText},'%')) 
+					</when>
+		            <when test='searchType eq 1'>
+						AND	b.resource_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 2'>
+						AND	a.comp_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+				</choose>
+			</if>
+		 
+			ORDER BY a.appli_no DESC
+			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+	</select>	
+	
+<!-- 시설 및 자원 관리 > 시설신청정보 -->
+	<select id="selectResourceApplicateDetailList" parameterType="jcep.admin.model.FacilityResourceVO" resultType="jcep.admin.model.FacilityResourceVO">
+			SELECT
+				a.appli_no AS appliNo,
+				a.resour_faci_id AS resourFaciId,
+				a.member_id AS memberId,
+				a.resour_faci_divi_cd AS resourFaciDiviCd,
+                b.resource_nm as facilityNm,
+				a.comp_nm AS compNm,
+                a.use_fr_dt as useFrDt,
+                a.use_fr_tm as useFrTm,
+                a.use_to_dt as useToDt,
+                a.use_to_tm as useToTm,
+                a.applic_st_cd as applicStCd,
+                a.use_pers_num as usePersNum,
+                a.comp_tel_no as compTelNo,
+                a.comp_mail as compMail,
+                a.comp_appl_nm as compApplNm,
+                a.use_obj as useObj,
+                a.comp_addr1 as compAddr1,
+                a.comp_addr2 as compAddr2
+			FROM tb_resour_faci_applicate a 
+			   INNER JOIN tb_resource b
+			   ON a.resour_faci_id = b.resour_faci_id
+			   AND a.resour_faci_divi_cd = 'R'
+			WHERE 1=1
+               AND a.appli_no = #{appliNo}
+	</select>		
+
+
+	<select id="selectResourceApplicateListTotCnt" parameterType="jcep.admin.model.FacilityResourceVO" resultType="int">
+			SELECT COUNT(*) totcnt
+			FROM tb_resour_faci_applicate a 
+			   INNER JOIN tb_resource b
+			   ON a.resour_faci_id = b.resour_faci_id
+			   AND a.resour_faci_divi_cd = 'R'
+			WHERE 1=1
+			<if test="searchText != null and searchText != ''">
+		        <choose>
+		        	<when test='searchType eq ""'>
+						AND	(b.resource_nm LIKE CONCAT('%',#{searchText},'%') OR a.comp_nm LIKE CONCAT('%',#{searchText},'%')) 
+					</when>
+		            <when test='searchType eq 1'>
+						AND	b.resource_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 2'>
+						AND	a.comp_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+				</choose>
+			</if>  
+	</select>	
+	
+	<update id="resourcFacilityApplicUpdate" parameterType="jcep.admin.model.FacilityResourceVO">
+			UPDATE tb_resour_faci_applicate
+			SET applic_st_cd = #{applicStCd}
+			WHERE appli_no = #{appliNo}
+	</update>		
+	
+	<delete id="resourceFacilityApplicDelete" parameterType="jcep.admin.model.FacilityResourceVO">
+			delete from tb_resour_faci_applicate where appli_no = #{appliNo}
+	</delete>			
 	
 </mapper>
 

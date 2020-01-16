@@ -36,34 +36,26 @@
 							<form role="form" id="searchFrm" action="#" class="form-horizontal" method="post">
 								<table class="table table-bordered table-striped" style="margin-bottom:0px;width:98%;margin-left:1%;margin-top:10px;">
 									<colgroup>
-										<col width="5%">
-										<col width="40%">
 										<col width="10%">
-										<col width="40%"> 
+										<col width="30%">
+										<col width="10%">
+										<col width="40%">
 									</colgroup>
 									<tbody>
 										<tr>
-											<th style="text-align:center;background:#eee;vertical-align:middle;">검색</th>
+											<th style="text-align:center;background:#eee;vertical-align:middle;">자원명</th>
+											<td>
+												<input type="text" name=searchText id="searchText" class="input-sm not-kor" style="width:250px;" value="${searchVO.searchText}" onkeydown="javascript:enterKey();">
+											<th style="text-align:center;background:#eee;vertical-align:middle;">관리부서</th>
 											<td>
 												<select name="searchType" id="searchType" class="select" style="width:150px; height: 31.5px;">
 													<option value="">전체</option>
-													<option value="1" ${searchVO.searchType eq 1 ? 'selected="selected"' : '' }>자원명</option>
-												</select>
-												<input type="text" name=searchText id="searchText" class="input-sm not-kor" style="width:250px;" value="${searchVO.searchText}" onkeydown="javascript:enterKey();">
+													<c:forEach var="resourceStCd" items="${resourceStCd}" varStatus="status">
+														<option value="${resourceStCd.commonCd}" ${searchVO.searchType eq resourceStCd.commonCd  ? 'selected="selected"' : '' }><c:out value="${resourceStCd.commonNm}"/></option>
+													</c:forEach>
+												</select>	
 												<a href="javascript:goSearch();" class="btn btn-primary" style="margin-left: 5px;"><b>검색</b></a>
-											</td>
-											<!-- <th style="text-align:center;background:#eee;vertical-align:middle;">예약일</th>
-											<td>
-												<label class="input"> 
-													<input class="input-sm" type="text" name="startdate" id="startdate" placeholder=""   />
-													<i class="icon-append fa fa-calendar"></i>
-													&nbsp;~&nbsp;
-												</label>
-												<label class="input"> 
-													<input class="input-sm" type="text" name="finishdate" id="finishdate" placeholder="">
-													<i class="icon-append fa fa-calendar"></i>
-												</label>
-											</td> -->
+											</td>													
 										</tr>
 									</tbody>
 								</table>
@@ -99,7 +91,11 @@
 												<tr>
 													<td style="vertical-align: middle;"><c:out value="${paginationInfo.totalRecordCount+1 - ((searchVO.pageIndex-1) * searchVO.pageSize + status.count)}"/></td>
 													<td style="vertical-align: middle;"><img src="<c:out value="${result.resourceImg}"/>"  width="177" height="125" /></td>
-													<td style="vertical-align: middle;"><c:out value="${result.resourceNm}"/></td>
+													<td style="vertical-align: middle;" >
+														<a href="javascript:goPopView('${result.resourceId}');">
+															<c:out value="${result.resourceNm}"/>
+														</a>
+													</td>
 													<td style="vertical-align: middle;"><c:out value="${result.resourceSt}"/></td>
 													<td style="vertical-align: middle;"><c:out value="${result.resourceRegDt}"/></td>
 													<td style="vertical-align: middle;"><a href="javascript:resourceDelete('<c:out value="${result.resourceId}"/>','<c:out value="${result.resourceImg}"/>')" class="btn btn-primary" ><b>삭제</b></a></td>
@@ -120,49 +116,82 @@
 			        	</c:if>
 					</div>
 			</section>
-			<section id="widget-grid" class="">
-				<div class="well well-sm">
-						<div class="table-responsive">
-							<table class="table table-bordered table-striped" style="margin-bottom:0px;width:98%;margin-left:1%;margin-top:10px;">
-								<colgroup>
-									<col width="20%">
-									<col width="*">
-								</colgroup>
-								<tbody>
-									<form id="insertFrm" name="insertFrm" action="#" method="POST">
-										<tr>
-											<th style="text-align:center;background:#eee;vertical-align:middle;">자원명 *</th>
-											<td>
-												<label class="input">
-													<input type="text" id="resourceNm" name="resourceNm" class="input-sm" value="" maxlength="20" style="width:250px;">
-												</label>
-											</td>
-										</tr>
-										<tr>
-											<th style="text-align:center;background:#eee;vertical-align:middle;">자원 상태 </th>
-											<td>
-												<select id="resourceSt" name="resourceSt" style="width: 250px; height: 30px;">
-													<option value="Y">대여가능</option>
-													<option value="N">대여불가능</option>
-												</select>
-											</td>
-										</tr>
-									</form>
-									<form id="imageFrm" name="imageFrm" action="#" method="POST" enctype="multipart/form-data">	
-										<tr>
-											<th style="text-align:center;background:#eee;vertical-align:middle;">썸네일 *</th>
-											<td>
-												<input type="file" name="resourceImgFile" id="resourceImgFile" onchange="getThumbnailPrivew(this,$('#image'))"><br>
-												<input type="hidden" id="chkImg" name="chkImg" value="" />
-												<div id='image'></div>
-											</td>
-										</tr>
-									</form>
-								</tbody>
-							</table>
-						</div>
-				</div>
-			</section>
+			
+		<!-- Modal -->
+		<div class="modal fade" id="myModal" tabindex="-1" role="dialog">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+							&times;
+						</button>
+						<h4 class="modal-title">
+						 <b>자원 등록 관리</b>
+						</h4>
+					</div>
+					<div class="modal-body">
+							<div class="table-responsive">
+								<div class="col-xs-12">
+										<h6 class="page-title txt-color-blueDark"></h6>
+									</div>
+									<form id="insertFrm" name="insertFrm" action="#" method="POST" enctype="multipart/form-data">
+									<input type="hidden" id="resourceId" name="resourceId" value="" />
+									<table class="table table-bordered table-striped" style="margin-bottom:0px;width:98%;margin-left:1%;margin-top:10px;">
+										<colgroup>
+											<col width="20%">
+											<col width="*">
+										</colgroup>
+										<tbody>
+												<tr>
+													<th style="text-align:center;background:#eee;vertical-align:middle;">썸네일 *</th>
+													<td>
+														<input type="file" name="resourceImgFile" id="resourceImgFile" onchange="getThumbnailPrivew(this,$('#image'))"><br>
+														<input type="hidden" id="chkImg" name="chkImg" value="" />
+														<div id='image'></div>
+													</td>
+												</tr>		
+												<tr>
+													<th style="text-align:center;background:#eee;vertical-align:middle;">자원명 *</th>
+													<td>
+														<label class="input">
+															<input type="text" id="resourceNm" name="resourceNm" class="input-sm" value="" maxlength="20" style="width:250px;">
+														</label>
+													</td>
+												</tr>
+												<tr>
+													<th style="text-align:center;background:#eee;vertical-align:middle;">관리부서 </th>
+													<td>
+														<select id="resourceMngDeptCd" name="resourceMngDeptCd" style="width: 250px; height: 30px;">
+															<option value="">선택</option>
+																<c:forEach var="mngDeptCd" items="${mngDeptCd}" varStatus="status">
+																	<option value="${mngDeptCd.commonCd}">${mngDeptCd.commonNm}</option>
+																</c:forEach>																
+														</select>
+													</td>
+												<tr>
+													<th style="text-align:center;background:#eee;vertical-align:middle;">자원 상태 </th>
+													<td>
+														<select id="resourceSt" name="resourceSt" style="width: 250px; height: 30px;">
+																<c:forEach var="resourceStCd" items="${resourceStCd}" varStatus="status">
+																	<option value="${resourceStCd.commonCd}">${resourceStCd.commonNm}</option>
+																</c:forEach>																
+														</select>
+													</td>
+												</tr>
+										</tbody>
+									</table>
+								</form>
+							</div>
+						</div>	
+						<footer>
+						<div class="modal-footer" style="align-items: center;">
+					        <button type="button" class="btn btn-primary" onclick="resoureSave();">저장</button>
+			            </div>
+						</footer>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->			
+			
 			<div style="padding-bottom:5px;text-align:right;">
 				<a href="#" class="btn btn-primary" id="createBtn" ><b>등록</b></a>
 			</div>
@@ -176,29 +205,7 @@
 	<script type="text/javaScript" >
 		$(document).ready(function () {
 			$("#createBtn").click(function(){
-				if(checkValue()){
-					 $.ajax({
-							type : 'post',
-							url:'/db/resource/resourceInsert.do',
-							data: $('#insertFrm').serialize(),
-							dataType: 'json',
-							success : function(data) {
-								if(data.returnCode == 0){
-				                    alert("등록을 실패 하였습니다.");
-				                    return;
-				                }else{
-				                	imageUpload();
-			                		alert("등록이 완료 되었습니다.");
-			                		location.reload();
-									return false;
-				                }
-							},  
-						    error:function(request,status,error){ //ajax 오류인경우  
-					            alert("작업중 에러가 발생했습니다.");      
-					            console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
-					   		} 
-					 });
-				}
+				goPopView();
 			});
 		});
 		
@@ -230,30 +237,64 @@
 			return retValue;
 		}
 		
-		function imageUpload(){
-			var form = $('#imageFrm')[0];
-			var formData = new FormData(form);
-			$.ajax({
-		        type: "POST",
-		        enctype: 'multipart/form-data',
-		        url: "/db/resource/resourceImgUpload.do",
-		        data: formData,
-		        processData: false,
-		        contentType: false,
-		        cache: false,
-		        timeout: 600000,
-		        async: false,
-		        success: function (data) {
-		        	if(data == '100'){
-				       console.log('업로드가 완료되었습니다.');
-			        }
-		        },
-		        error: function (e) {
-		            console.log("ERROR : ", e);
-		            alert("사진 업로드가 실패하였습니다.")
-		        }
-		    });
-		}
+        function goPopView(resourceId){
+        	
+        	if(resourceId === undefined || resourceId === ""){
+        		inputClear();
+	        	$('#myModal').modal('show');
+        		
+        	}else{
+   			 $.ajax({
+					type : 'post',
+					url:'/db/resource/resourceRegistrationManagementReg.do',
+					enctype: 'multipart/form-data',
+					data: "resourceId="+resourceId,
+					dataType: 'json',
+					success : function(data) {
+		         		var resultData = data.resourceDetailResult;
+		         		$("#resourceId").val(resultData.resourceId);
+						$("#resourceNm").val(resultData.resourceNm);
+						$("#resourceMngDeptCd").val(resultData.resourceMngDeptCd);
+						$("#resourceSt").val(resultData.resourceSt);
+						
+		         		$('#myModal').modal('show');
+					},  
+				    error:function(request,status,error){ //ajax 오류인경우  
+			            alert("작업중 에러가 발생했습니다.");      
+			            console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+			   		} 
+			 });				
+        		
+        	}
+        }   
+        
+        function inputClear(){
+        	$("#resourceId").val("");
+			$("#resourceNm").val("");
+			$("#resourceMngDeptCd").val("");
+			$("#resourceSt option:eq(0)").prop("selected","true");
+        	
+        }
+        
+        function resoureSave(){
+    		if(checkValue()){
+    			 $.ajax({
+    					type : 'post',
+    					url:'/db/resource/resourceSave.do',
+    					enctype: 'multipart/form-data',
+    					data: $('#insertFrm').serialize(),
+    					dataType: 'json',
+    					success : function(data) {
+    		         		alert("저장이 완료 되었습니다.");
+    		         		location.reload();
+    					},  
+    				    error:function(request,status,error){ //ajax 오류인경우  
+    			            alert("작업중 에러가 발생했습니다.");      
+    			            console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+    			   		} 
+    			 });
+    		}        	
+        }        
 		
 		function resourceDelete(resourceId,resourceImg){
 			if(confirm("정말로 삭제 하시겠습니까?")){
@@ -266,14 +307,9 @@
 					},
 					dataType: 'json',
 					success : function(data) {
-						if(data.returnCode == 0){
-		                    alert("삭제에 실패 하였습니다.");
-		                    return;
-		                }else{
 	                		alert("삭제가 완료 되었습니다.");
 	                		location.reload();
 							return false;
-		                }
 					},  
 				    error:function(request,status,error){ //ajax 오류인경우  
 			            alert("작업중 에러가 발생했습니다.");      
@@ -282,7 +318,6 @@
 			 	});
 			}
 		}
-        
         
     </script>
 </body>
