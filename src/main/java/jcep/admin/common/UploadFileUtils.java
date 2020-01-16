@@ -389,10 +389,10 @@ public class UploadFileUtils {
         if(!path.exists()) {
         	path.mkdir();
         }
-		Map<String, Object> fileMap = new HashMap<String, Object>();
 		List<Map<String, Object>> FileMapList = new ArrayList<Map<String,Object>>();
         
     	while(iterator.hasNext()){
+    		Map<String, Object> fileMap = new HashMap<String, Object>();
     		MultipartFile fileName = mRequest.getFile(iterator.next());
     		String fileOriginName = Long.toString(System.currentTimeMillis()) + "_" + fileName.getOriginalFilename();
     		File file = new File(path,fileOriginName);
