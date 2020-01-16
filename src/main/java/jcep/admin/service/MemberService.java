@@ -662,8 +662,9 @@ public class MemberService {
 	 * @return void형
 	 * @exception Exception
 	 */
-	public Integer adviceOnlineStatusBusinessUpdate(MemberVO params) throws Exception{
-		 return memberMapper.adviceOnlineStatusBusinessUpdate(params);
+	//2020-01-13 최선권 파일 업데이트 수정내용: 리턴값 / 파라미터
+	public int adviceOnlineStatusBusinessUpdate(HashMap<String,Object> hMap) throws Exception{
+		 return memberMapper.adviceOnlineStatusBusinessUpdate(hMap);
 	}
 	
 
@@ -818,8 +819,8 @@ public class MemberService {
 	 * @return void형
 	 * @exception Exception
 	 */
-	public Integer adviceOnlineStatusManagementUpdate(MemberVO params) throws Exception{
-		 return memberMapper.adviceOnlineStatusManagementUpdate(params);
+	public Integer adviceOnlineStatusManagementUpdate(HashMap<Object, Object> hMap) throws Exception{
+		 return memberMapper.adviceOnlineStatusManagementUpdate(hMap);
 	}
 	
 	/**
@@ -1026,14 +1027,14 @@ public class MemberService {
 		return memberMapper.expertDeliberateInformationManagementDetail(memberVo);
 	}
 	
-	public void fileDownload(ModelAndView mav) throws Exception{
+	public void noticeFileDownload(ModelAndView mav) throws Exception{
 		Map<String, Object> map=mav.getModelMap();
 		HttpServletRequest request=(HttpServletRequest) map.get("request");	
 		HttpServletResponse response=(HttpServletResponse) map.get("response");	
 		
 		String fileNum=request.getParameter("fileNum");
 		
-		MemberVO memberVo = memberMapper.fileDownload(fileNum);
+		MemberVO memberVo = memberMapper.noticeFileDownload(fileNum);
 		
 		BufferedInputStream fis = null;
 		BufferedOutputStream fos = null;
@@ -1066,5 +1067,23 @@ public class MemberService {
 
 	public int onestopfileUpload(MemberVO searchVO) throws Exception{
 		return memberMapper.onestopfileUpload(searchVO);
+	}
+	
+	public List<MemberVO> proMemberId(int joinTypeCd) throws Exception{
+		return memberMapper.proMemberId(joinTypeCd);		
+	}
+	
+	public int adviceOnlineStatusBusinessInsert(HashMap<String,Object> hMap)throws Exception{
+		return memberMapper.adviceOnlineStatusBusinessInsert(hMap);		
+	}
+	public int adviceOnlineStatusBusinessUpdateCheck(HashMap<String,Object> hMap)throws Exception{
+		return memberMapper.adviceOnlineStatusBusinessUpdateCheck(hMap);		
+	}
+	
+	public MemberVO selectAdviceOnlineStatusBusinessFile(HashMap<String,String> hMap)throws Exception{
+		return memberMapper.selectAdviceOnlineStatusBusinessFile(hMap);		
+	}
+	public MemberVO adviceOnlineStatusBusinessfileDownload(String attchFileNo)throws Exception{
+		return memberMapper.adviceOnlineStatusBusinessfileDownload(attchFileNo);		
 	}
 }
