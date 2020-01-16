@@ -2290,68 +2290,41 @@ x	</select>
 	<select id="selectAdviceOnlineStatusManagementList" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
 			/*selectAdviceOnlineStatusManagementList*/
 			<![CDATA[
-				 SELECT  @rownum:=@rownum+1 as pageNum, 
-					a.onestop_support_no as onestopSupportNo, 
-					a.member_id as memberId, 
-					date_format(a.applicat_dt, '%Y.%m.%d') as applicatDt, 
-					a.pro_member_id as proMemberId, 
-					a.supp_buss_area_cd as suppBussAreaCd, 
-					a.buss_area_others as bussAreaOthers, 
-					a.comp_empl_cnt as compEmplCnt, 
-					a.comp_appl_nm as compApplNm, 
-					a.comp_posit as compPosit, 
-					a.comp_tel_no as compTelNo, 
-					a.comp_fax_no as compFaxNo, 
-					a.comp_hp_no as compHpNo, 
-					a.comp_mail as compMail, 
-					date_format(a.advice_hope_dt, '%Y.%m.%d') as adviceHopeDt, 
-					(case 
-					when a.advice_place_cd  = '000001' then 'ICT'
-					when a.advice_place_cd  = '000002' then '콘텐츠'
-					when a.advice_place_cd  = '000003' then '1인창조'
-					when a.advice_place_cd  = '000004' then '기타'
-					else ''
-					end
-					) as advicePlaceCd, 
-					(case 
-					when a.advice_area_cd  = '000001' then '법률정보'
-					when a.advice_area_cd  = '000002' then '세무/회계'
-					when a.advice_area_cd  = '000003' then '인사/노무'
-					when a.advice_area_cd  = '000004' then '자금/금융'
-					when a.advice_area_cd  = '000005' then '인력/교육'
-					when a.advice_area_cd  = '000006' then '기술(특허)/인증'
-					when a.advice_area_cd  = '000007' then '투자유지(관로/수출)'
-					else ''
-					end
-					) as adviceAreaCd, 
-					a.advice_applic_cont as adviceApplicCont, 
-					a.file_course as fileCourse, 
-					a.org_file_nm as orgFileNnm, 
-					a.upload_file_nm as uploadFileNm, 
-					a.applic_st_cd as applicStCd, 
-					date_format(a.reg_dt, '%Y.%m.%d') as regDt, 
-					a.reg_id as regId,
-					b.entpr_nm as entprNm
-					FROM tb_onestop_support a, tb_enterprise b
-					WHERE 1=1
-					AND a.member_id = b.member_id 
-					AND (SELECT @ROWNUM:=0)=0
+			SELECT  
+					a.onestop_support_no 				as onestopSupportNo
+					,a.member_id 							as memberId
+					,b.entpr_nm 							as entprNm
+					,a.comp_appl_nm 					as compApplNm
+                    ,(SELECT common_nm 
+                         FROM ta_common
+                       WHERE group_cd 		='G00030'
+                           AND common_cd 	= a.advice_area_cd
+                           AND use_flag		= 'Y'
+                     ) 											as adviceAreaCd
+					,a.pro_member_id 					as proMemberId
+					,date_format(a.applicat_dt, '%Y-%m-%d') as applicatDt
+                    ,(SELECT common_nm
+                        FROM ta_common
+                      WHERE group_cd 		= 'G00027'
+                      	  AND common_cd 	= a.applic_st_cd
+                      	  AND use_flag			= 'Y'
+                     ) 											as applicStCd
+			  FROM tb_onestop_support a
+               JOIN tb_enterprise b ON a.member_id = b.member_id
+			WHERE 1 = 1
 			]]>
 			<if test='searchText != null and searchText != "" '>
-			    <choose>
-				    <when test='searchType eq ""'>
-				 		AND a.member_id LIKE CONCAT('%',#{searchText},'%') OR b.entpr_nm LIKE CONCAT('%',#{searchText},'%')
-				 	</when>	
-				 	<when test='searchType eq 1'>
-				 		AND a.member_id LIKE CONCAT('%',#{searchText},'%')
-				 	</when>
-				 	<when test='searchType eq 2'>
-				 		AND b.entpr_nm LIKE CONCAT('%',#{searchText},'%')
-				 	</when>
-			 	</choose>
-			 </if>	
-			 	ORDER BY a.onestop_support_no DESC
-			 	LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+			<choose>
+				<when test='searchType eq ""'>AND (a.member_id LIKE CONCAT('%',#{searchText},'%') OR b.entpr_nm LIKE CONCAT('%',#{searchText},'%')) </when>
+				<when test='searchType eq 1'>AND a.member_id LIKE CONCAT('%',#{searchText},'%') </when>
+				<when test='searchType eq 2'>AND b.entpr_nm LIKE CONCAT('%',#{searchText},'%') </when>
+			</choose>
+			</if>
+			<if test='startDate != null and startDate != "" and endDate != null and endDate != ""'>
+				AND date_format(a.applicat_dt, '%Y-%m-%d') BETWEEN date_format(#{startDate}, '%Y-%m-%d') AND date_format(#{endDate}, '%Y-%m-%d') 
+			</if>
+		ORDER BY a.onestop_support_no DESC
+			 LIMIT #{recordCountPerPage} OFFSET #{firstIndex} 
 	</select>
 
 	<!-- 온라인상담 현황 관리 카운트 -->
@@ -2362,7 +2335,6 @@ x	</select>
 				FROM tb_onestop_support a, tb_enterprise b
 					WHERE 1=1
 					AND a.member_id = b.member_id 
-					AND (SELECT @ROWNUM:=0)=0
 			]]>
 			<if test='searchText != null and searchText != "" '>
 			    <choose>
@@ -2384,68 +2356,42 @@ x	</select>
 	<!-- 온라인상담 현황 관리 상세보기 -->
 	<select id="selectAdviceOnlineStatusManagementDetail" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
 			/*selectAdviceOnlineStatusManagementDetail*/
-					select 
-						a.entpr_head_addr as entprHeadAddr, 
-						a.entpr_head_detail_addr as entprHeadDetailAddr, 
-						a.entpr_ceo as entprCeo,
-						if(a.entpr_head_tel = ''
-                                             ,''
-                                                  ,if(left(a.entpr_head_tel,2) = "02", concat(left(a.entpr_head_tel,2),"-",mid(a.entpr_head_tel,3,4),"-",right(a.entpr_head_tel,4))
-                                                                                        , concat(left(a.entpr_head_tel,3),"-",mid(a.entpr_head_tel,4,4),"-",right(a.entpr_head_tel,4))
-                                                   )
-                        ) as entprHeadTel,
-						(select common_nm from ta_common where group_cd ='G00002' and common_cd = a.large_buss_area_cd) 
-                        as largeBussAreaCd, 
-                        (select common_nm from ta_common where group_cd ='G00003' and common_cd = a.medium_buss_area_cd) 
-                        as mediumBussAreaCd, 
-						b.onestop_support_no as onestopSupportNo, 
-						b.member_id as memberId, 
-						b.applicat_dt as applicatDt, 
-						(case 
-							when b.pro_member_id = '000001' then '기업'
-							when b.pro_member_id = '000002' then '전문가'
-							when b.pro_member_id = '000003' then '바이어'
-						else '' end) as proMemberId,
-						b.supp_buss_area_cd as suppBussAreaCd, 
-						b.buss_area_others as bussAreaOthers, 
-						b.comp_empl_cnt as compEmplCnt, 
-						b.comp_appl_nm as compApplNm, 
-						b.comp_posit as compPosit, 
-						if(b.comp_tel_no = ''
-                                             ,''
-                                                  ,if(left(b.comp_tel_no,2) = "02", concat(left(b.comp_tel_no,2),"-",mid(b.comp_tel_no,3,4),"-",right(b.comp_tel_no,4))
-                                                                                        , concat(left(b.comp_tel_no,3),"-",mid(b.comp_tel_no,4,4),"-",right(b.comp_tel_no,4))
-                                                   )
-                        ) as compTelNo, 
-						if(b.comp_fax_no = ''
-                                             ,''
-                                                  ,if(left(b.comp_fax_no,2) = "02", concat(left(b.comp_fax_no,2),"-",mid(b.comp_fax_no,3,4),"-",right(b.comp_fax_no,4))
-                                                                                        , concat(left(b.comp_fax_no,3),"-",mid(b.comp_fax_no,4,4),"-",right(b.comp_fax_no,4))
-                                                   )
-                        ) as compFaxNo, 
-						if(b.comp_hp_no = ''
-                                             ,''
-                                                  ,if(left(b.comp_hp_no,2) = "02", concat(left(b.comp_hp_no,2),"-",mid(b.comp_hp_no,3,4),"-",right(b.comp_hp_no,4))
-                                                                                        , concat(left(b.comp_hp_no,3),"-",mid(b.comp_hp_no,4,4),"-",right(b.comp_hp_no,4))
-                                                   )
-                        ) as compHpNo, 
-						b.comp_mail as compMail, 
-						b.advice_hope_dt as adviceHopeDt, 
-						(select common_nm from ta_common where group_cd ='G00029' and common_cd = b.advice_place_cd) 
-                         as advicePlaceCd, 
-                        (select common_nm from ta_common where group_cd ='G00030' and common_cd = b.advice_area_cd) 
-						 as adviceAreaCd, 
-						b.advice_applic_cont as adviceApplicCont, 
-						b.file_course as fileCourse, 
-						b.org_file_nm as orgFileNm, 
-						b.upload_file_nm as uploadFileNm, 
-						b.applic_st_cd as applicStCd, 
-						date_format(b.reg_dt, '%Y.%m.%d') as regDt, 
-						b.reg_id as regId 
-						from tb_enterprise a , tb_onestop_support b
-				WHERE a.member_id = b.member_id
-				   AND b.member_id LIKE CONCAT('%',#{memberId},'%')
-				   AND b.onestop_support_no LIKE CONCAT('%',#{onestopSupportNo},'%')				
+ 			<![CDATA[
+				SELECT b.onestop_support_no         as onestopSupportNo
+				          ,b.member_id                          as memberId
+				          ,b.applicat_dt                         as applicatDt
+				          ,b.pro_member_id                    as proMemberId
+				          ,a.entpr_nm                           as entprNm
+				          ,a.entpr_ceo                          as entprCeo
+				          ,(select common_nm from ta_common where group_cd ='G00002' and common_cd = a.large_buss_area_cd)  as largeBussAreaCd
+				          ,(select common_nm from ta_common where group_cd ='G00003' and common_cd = a.medium_buss_area_cd) as mediumBussAreaCd
+				          ,concat(a.entpr_head_addr,a.entpr_head_detail_addr) as entprHeadAddr
+				          ,if(a.entpr_head_tel = '', ''
+				                                               , if(left(a.entpr_head_tel,2) = "02", concat(left(a.entpr_head_tel,2),"-",mid(a.entpr_head_tel,3,4),"-",right(a.entpr_head_tel,4))
+				                                                                                             , concat(left(a.entpr_head_tel,3),"-",mid(a.entpr_head_tel,4,4),"-",right(a.entpr_head_tel,4)))) as entprHeadTel
+				                ,b.comp_empl_cnt              as compEmplCnt
+				                ,b.comp_appl_nm               as compApplNm
+				                ,b.comp_posit                   as compPosit
+				                ,if(b.comp_tel_no = '', ''
+				                                            , if(left(b.comp_tel_no, 2) = "02", concat(left(b.comp_tel_no, 2), "-", mid(b.comp_tel_no, 3, 4), "-", right(b.comp_tel_no, 4))
+				                                                                                       , concat(left(b.comp_tel_no, 3), "-", mid(b.comp_tel_no, 4, 4), "-", right(b.comp_tel_no, 4)))) as compTelNo 
+				                ,if(b.comp_fax_no = '', ''
+				                                             , if(left(b.comp_fax_no, 2) = "02", concat(left(b.comp_fax_no, 2), "-", mid(b.comp_fax_no, 3, 4), "-", right(b.comp_fax_no, 4))
+				                                                                                         , concat(left(b.comp_fax_no, 3), "-", mid(b.comp_fax_no, 4, 4), "-", right(b.comp_fax_no, 4)))) as compFaxNo
+				                ,if(b.comp_hp_no = '', ''
+				                                            ,concat(left(b.comp_hp_no, 3), "-", mid(b.comp_hp_no, 4, 4), "-", right(b.comp_hp_no, 4))) as compHpNo
+				                ,b.comp_mail as compMail 
+				                ,b.advice_hope_dt as adviceHopeDt
+				                ,(select common_nm from ta_common where group_cd ='G00029' and common_cd = b.advice_place_cd) as advicePlaceCd
+				                ,(select common_nm from ta_common where group_cd ='G00030' and common_cd = b.advice_area_cd) as adviceAreaCd
+				                ,b.advice_applic_cont as adviceApplicCont
+				                ,date_format(b.reg_dt, '%Y-%m-%d') as regDt 
+				  FROM       tb_enterprise a
+				               ,tb_onestop_support b
+				 WHERE      a.member_id = b.member_id
+				     AND      b.member_id = #{memberId}
+				     AND      b.onestop_support_no = #{onestopSupportNo}
+			]]>
 	</select>
 	
 	<!--  온라인상담 현황 관리 > 다음글-->
@@ -2520,13 +2466,13 @@ x	</select>
 			]]>
 	</select>	
 	
-	<update id="adviceOnlineStatusManagementUpdate" parameterType="jcep.admin.model.MemberVO">
+	<update id="adviceOnlineStatusManagementUpdate" parameterType="java.util.HashMap">
 			/* adviceOnlineStatusManagementUpdate */
 		<![CDATA[	
 			UPDATE tb_onestop_support
-			SET pro_member_id = #{proMemberId}			
-			WHERE member_id = #{memberId} 
-			   AND onestop_support_no = #{onestopSupportNo}
+			     SET pro_member_id 		= #{proMemberId}			
+			WHERE  member_id 				= #{memberId} 
+			   AND onestop_support_no   = #{onestopSupportNo}
 		]]>	   
 	</update>	
 	
@@ -3047,51 +2993,34 @@ x	</select>
 	<!-- 원스톱 업무일지 -->
 	<select id="selectAdviceOnlineStatusBusiness" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
 			/*selectAdviceOnlineStatusBusiness*/
-				select 
-					b.onestop_support_no as onestopSupportNo, 
-					b.member_id as memberId, 
-					b.onestop_support_no, b.member_id, 
-					b.applicat_dt, b.pro_member_id, 
-					b.supp_buss_area_cd, 
-					b.buss_area_others, 
-					b.comp_empl_cnt, 
-					b.comp_appl_nm, 
-					b.comp_posit, 
-					b.comp_tel_no, 
-					b.comp_fax_no, 
-					b.comp_hp_no, 
-					b.comp_mail, 
-					b.advice_hope_dt, 
-					b.advice_place_cd, 
-					b.advice_area_cd, 
-					b.advice_applic_cont, 
-					b.file_course, b.org_file_nm, 
-					b.upload_file_nm, 
-					b.applic_st_cd,
-					(select attch_file_no
-					from tb_onestop_buss_log a
-					where b.member_id = a.member_id) as attchFileNo,
-					(select file_course
-					from tb_onestop_buss_log a
-					where b.member_id = a.member_id) as fileCorse,
-					(select org_file_nm
-					from tb_onestop_buss_log a
-					where b.member_id = a.member_id) as orgFileNm,
-					date_format(b.reg_dt, '%Y.%m.%d') as regDt
-					from tb_onestop_support b
-				WHERE b.member_id LIKE CONCAT('%',#{memberId},'%')
-					AND b.onestop_support_no LIKE CONCAT('%',#{onestopSupportNo},'%') 
+			<![CDATA[
+				select onestop_support_no as onestopSupportNo, 
+					     member_id as memberId, 
+					     (SELECT member_nm	as memberNm
+			                 FROM tb_member
+			               WHERE 1=1
+			                   AND join_type_cd 		= '000002'
+			                   AND member_st_cd 	= 'Y'
+			                   AND member_id			= pro_member_id) as proMemberId
+						,date_format(applicat_dt, '%Y-%m-%d') as applicatDt
+				 FROM tb_onestop_support
+			   WHERE member_id = #{memberId}
+				   AND onestop_support_no  = #{onestopSupportNo}
+		]]>
 	</select>
 	
 	<!-- 원스톱 업무일지 -->
-	<update id="adviceOnlineStatusBusinessUpdate" parameterType="jcep.admin.model.MemberVO">
+	<!-- 2019-10-13 최선권 파일 업데이트-->
+	<update id="adviceOnlineStatusBusinessUpdate" parameterType="java.util.HashMap">
 			/* adviceOnlineStatusBusinessUpdate */
 			<![CDATA[
 				UPDATE tb_onestop_buss_log
-				SET file_course = #{fileCourse},
-						org_file_nm = #{orgFileNm},
-						upload_file_nm = #{uploadFileNm}	
-				WHERE attch_file_no = #{attchFileNo} 
+				     SET use_flag 					= 'N'
+				 WHERE 1 = 1
+				     AND attch_file_no 			=#{attchFileNo}
+				     AND onestop_support_no 	=#{onestopSupportNo}
+				     AND member_id 				= #{memberId}
+				     AND use_flag					= 'Y'
 			]]>
 	</update>	
 	
@@ -3488,7 +3417,7 @@ x	</select>
 		]]>
 	</select>
 	
-	<select id="fileDownload" parameterType="String" resultType="jcep.admin.model.MemberVO">
+	<select id="noticeFileDownload" parameterType="String" resultType="jcep.admin.model.MemberVO">
 		/*fileDownload*/
 			<![CDATA[
 				SELECT org_file_nm AS orgFileNm
@@ -3498,4 +3427,94 @@ x	</select>
 					AND	notice_idx = #{fileNum}
 			]]>
 	</select>
- </mapper>
+	
+	<select id="proMemberId" parameterType="int" resultType="jcep.admin.model.MemberVO">
+		/*proMemberId*/
+			<![CDATA[
+			SELECT member_nm  as memberNm
+					  ,member_id	as memberId
+			  FROM tb_member
+			 WHERE 1=1
+			     AND join_type_cd = #{joinTypeCd}
+			     AND member_st_cd = 'Y'
+			]]>
+	</select>
+	
+	<insert id="adviceOnlineStatusBusinessInsert"	parameterType="java.util.HashMap">
+		/*adviceOnlineStatusBusinessInsert*/
+			<![CDATA[
+			INSERT INTO tb_onestop_buss_log	(onestop_support_no
+															 ,member_id
+															 ,attch_file_no
+															 ,attch_file_divi_cd
+															 ,file_course
+															 ,org_file_nm
+															 ,upload_file_nm
+															 ,use_flag
+															 ,reg_dt
+															 ,reg_id
+															 )
+						                         VALUES  (#{onestopSupportNo}
+						                                      ,#{memberId}
+						                                      ,concat(#{attchFileNo}, "_",(SELECT count(a.attch_file_no)+1
+						                                                                                FROM tb_onestop_buss_log a
+						                                                                              WHERE onestop_support_no = #{onestopSupportNo}
+						                                                                                  AND a.attch_file_divi_cd 	= #{attchFileDiviCd}
+						                                                                                  AND a.member_id 			= #{memberId}
+						                                                                            )
+						                                                 )
+						                                      ,#{attchFileDiviCd}
+						                                      ,#{fileCourse}
+						                                      ,#{orgFileNm}
+						                                      ,#{uploadFileNm}
+						                                      ,'Y'
+						                                      ,sysdate()
+						                                      ,#{memberId}
+						                                      )
+			]]>
+	</insert>
+	
+	<select  id="adviceOnlineStatusBusinessUpdateCheck" parameterType="java.util.HashMap" resultType="int">
+		/*adviceOnlineStatusBusinessUpdateCheck*/
+			<![CDATA[
+				SELECT  count(org_file_nm) totCnt
+                  FROM tb_onestop_buss_log
+                WHERE 1 = 1
+					AND attch_file_no = #{attchFileNo}
+			]]>
+	</select>
+	
+	<select id="selectAdviceOnlineStatusBusinessFile" parameterType="java.util.HashMap" resultType="jcep.admin.model.MemberVO">
+			<![CDATA[
+				SELECT  file_course				AS fileCourse
+                           ,SUBSTRING_INDEX(org_file_nm, '_', -1)
+												 		AS orgFileNm
+                           ,SUBSTRING_INDEX(upload_file_nm, '_', -1)
+														AS uploadFileNm
+                           ,onestop_support_no AS onestopSupportNo
+                           ,member_id 				AS memberId
+                           ,attch_file_no 			AS attchFileNo
+                   FROM  tb_onestop_buss_log
+                 WHERE 1 = 1
+                     AND onestop_support_no 	= #{onestopSupportNo}
+                     AND attch_file_divi_cd 		= #{attchFileDiviCd}
+                     AND member_id 				= #{memberId}
+                     AND use_flag					= 'Y'
+   			]]>
+	</select>
+	
+	<select id="adviceOnlineStatusBusinessfileDownload" parameterType="String" resultType="jcep.admin.model.MemberVO">
+				<![CDATA[
+				SELECT  file_course				AS fileCourse
+                           ,org_file_nm 			AS orgFileNm
+                           ,upload_file_nm			AS uploadFileNm
+                           ,onestop_support_no AS onestopSupportNo
+                           ,member_id 				AS memberId
+                           ,attch_file_no 			AS attchFileNo
+                   FROM  tb_onestop_buss_log
+                 WHERE 1 = 1
+                     AND attch_file_no 			= #{attchFileNo}
+                     AND use_flag					= 'Y'
+   			]]>
+	</select>
+  </mapper>

@@ -118,7 +118,14 @@ public class JeonnamCommonsController {
     	return commonsList;
     }
     
-    
+	/**
+	 * 파일 다운로드
+	 * @author 최선권
+	 * @Date 20200114
+	 * @param MemberVO - 공통코드를 조회할 데이터를 MemberVO 담아서 가져온다.
+	 * @return ModelAndView
+	 * @exception Exception
+	 */
 	@RequestMapping(value="/fileDownload.do", method=RequestMethod.GET)
 	public ModelAndView fileBoardDownLoad(HttpServletRequest request, HttpServletResponse response){		
 		ModelAndView mav=new ModelAndView();
@@ -126,7 +133,7 @@ public class JeonnamCommonsController {
 		mav.addObject("response", response);
 		
 		try {
-			memberService.fileDownload(mav);
+			memberService.noticeFileDownload(mav);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

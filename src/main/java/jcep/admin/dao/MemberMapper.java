@@ -605,7 +605,7 @@ public interface MemberMapper {
 	 * @return Integer형
 	 * @exception Exception
 	 */
-	public Integer adviceOnlineStatusManagementUpdate(MemberVO params) throws Exception;
+	public Integer adviceOnlineStatusManagementUpdate(HashMap<Object, Object> hMap) throws Exception;
 
 	
 
@@ -618,13 +618,14 @@ public interface MemberMapper {
 	public MemberVO selectAdviceOnlineStatusBusiness(MemberVO params) throws Exception;
 
 
-	/**
+	/*2020-01-13 최선권 파일 업로드*
 	 * 원스톱 업무일지를 수정한다.
 	 * @param params - 수정할 정보가 담긴 MemberVO
 	 * @return Integer형
 	 * @exception Exception
 	 */
-	public Integer adviceOnlineStatusBusinessUpdate(MemberVO params) throws Exception;
+	//2020-01-13 최선권 파일 업데이트 수정내용: 리턴값 / 파라미터
+	public int adviceOnlineStatusBusinessUpdate(HashMap<String,Object> hMap) throws Exception;
 	
 	
 	public List<MemberVO> selectCommonsList(MemberVO commonsVo) throws Exception;
@@ -737,6 +738,15 @@ public interface MemberMapper {
 
 	public List<MemberVO> expertDeliberateInformationManagementDetail(MemberVO memberVo)throws Exception;
 
-	public MemberVO fileDownload(String fileNum)throws Exception;
+	public MemberVO noticeFileDownload(String fileNum)throws Exception;
+	
+	public List<MemberVO> proMemberId(int joinTypeCd) throws Exception;   
+	
+	public int adviceOnlineStatusBusinessInsert(HashMap<String,Object> hMap)throws Exception;
 
+	public int adviceOnlineStatusBusinessUpdateCheck(HashMap<String,Object> hMap)throws Exception;
+
+	public MemberVO selectAdviceOnlineStatusBusinessFile(HashMap<String,String> hMap)throws Exception;
+
+	public MemberVO adviceOnlineStatusBusinessfileDownload(String attchFileNo)throws Exception;
 }

@@ -615,84 +615,88 @@ SELECT  count(b.memberId) 									AS totcnt
 	</select>
 	
 	<!-- 신승원 20191219 사업관리 글목록 조회	 -->
+	<!-- 최선권 20200115 사업관리 글목록 조회 수정	 -->
 	<select id="selectBusinessManagementList" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
 			/*selectBusinessManagementList*/
 				<![CDATA[
-					SELECT a.buss_anncemnt_no as bussAnncemntNo,
-								a.buss_anncemnt_nm as bussAnncemntNm,
-								a.buss_fr_dt as bussFrDt,
-								a.buss_to_dt as bussToDt,
-								a.buss_cost_amt as bussCostAmt,
-								a.buss_dept_cd as bussDeptCd,
-								a.original_url as originalUrl,
-								a.buss_cont as bussCont,
-								a.buss_divi_cd as bussDiviCd,
-								(select b.applic_st_cd as applicStCd
-								from tb_buss_anncemnt_appl b
-								where a.buss_anncemnt_no = b.buss_anncemnt_no) as applicStCd,
-								(select b.member_id as memberId
-								from tb_buss_anncemnt_appl b
-								where a.buss_anncemnt_no = b.buss_anncemnt_no) as memberId,
-								(select b.approval_dt as approvalDt
-								from tb_buss_anncemnt_appl b
-								where a.buss_anncemnt_no = b.buss_anncemnt_no) as approvalDt,
-								date_format(a.reg_dt, '%Y.%m.%d') as regDt,
-								a.reg_id as regId
-								from tb_business_announcement a
-					where 1=1
-					
+				SELECT 	a.buss_anncemnt_no	AS	bussAnncemntNo
+						    ,a.buss_anncemnt_nm	AS	bussAnncemntNm
+					 	    ,(SELECT common_nm
+						        FROM ta_common
+						      WHERE 1=1
+				                  AND use_flag = 'Y'
+							      AND group_cd = 'G00046'
+				                  AND common_cd = a.anncemnt_st_cd
+				             ) 								AS anncemntStCd
+						     ,a.reg_id					AS	regId
+						     ,date_format(a.reg_dt, '%Y-%m-%d') AS regDt
+				             ,a.buss_fr_dt
+				             ,a.buss_to_dt
+				             ,(SELECT count(*)
+						         FROM tb_buss_anncemnt_appl b
+						       WHERE 1=1
+							       AND b.buss_anncemnt_no = a.buss_anncemnt_no
+						           AND (b.applic_st_cd = '000001' or b.applic_st_cd = '000002')
+				              ) 							as applicStCd
+				   FROM  tb_business_announcement a
+				 WHERE	1=1
 				]]>
-				<if test=' searchText != null and searchText != "" and datepicker1 != null and datepicker1 != "" and datepicker2 != null and datepicker2 != "" '>
-				    <choose>
-				    	<when test='searchType eq "" '>
-					 		AND a.buss_anncemnt_nm LIKE CONCAT('%',#{searchText},'%') OR a.buss_anncemnt_no LIKE CONCAT('%',#{searchText},'%') OR a.buss_fr_dt LIKE CONCAT('%',#{datepicker1},'%') OR a.buss_fr_dt LIKE CONCAT('%',#{datepicker2},'%')
-					 	</when>	
-					    <when test='searchType eq 1'>
-					 		AND a.buss_anncemnt_nm LIKE CONCAT('%',#{searchText},'%')
-					 	</when>
-					 	<when test='datepicker1 eq datepicker1'>
-					 		AND a.buss_fr_dt BETWEEN CONCAT(#{datepicker1}) AND CONCAT(#{datepicker2})
-					 	</when>	
-					 	<when test='datepicker2 eq datepicker2'>
-					 		AND a.buss_fr_dt BETWEEN CONCAT(#{datepicker1}) AND CONCAT(#{datepicker2})
-					 	</when>
-				 	</choose>
-				 </if>
-				
-					ORDER BY a.buss_anncemnt_no
+				<if test='searchText != null and searchText != "" '>
+					<choose>
+						<when test='searchType eq ""'>AND (a.buss_anncemnt_no LIKE CONCAT('%',#{searchText},'%') OR a.buss_anncemnt_nm LIKE CONCAT('%',#{searchText},'%')) </when>
+						<when test='searchType eq 1'>AND a.buss_anncemnt_nm LIKE CONCAT('%',#{searchText},'%') </when>
+						<when test='searchType eq 2'>AND a.buss_anncemnt_no LIKE CONCAT('%',#{searchText},'%') </when>
+					</choose>
+				</if>
+				 <if test='startDate != null and startDate != "" and endDate != null and endDate != ""'>
+				    AND  (a.buss_fr_dt BETWEEN date_format(#{startDate}, '%Y-%m-%d') AND date_format(#{endDate}, '%Y-%m-%d') OR
+				            a.buss_to_dt BETWEEN date_format(#{startDate}, '%Y-%m-%d') AND date_format(#{endDate}, '%Y-%m-%d')
+				            )
+				</if>
+				<if test='searchSelect != null and searchSelect != ""'>
+					<choose>
+						<when test='searchSelect eq 1'>AND a.anncemnt_st_cd = '000001' </when>
+						<when test='searchSelect eq 2'>AND a.anncemnt_st_cd = '000002' </when>
+						<when test='searchSelect eq 3'>AND a.anncemnt_st_cd = '000003' </when>
+					</choose>
+				</if>
+				<![CDATA[
+					ORDER BY a.buss_anncemnt_no DESC
 					LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
-				
+				]]>
 	</select>
 
 	<!-- 신승원 20191219 사업관리 글목록 조회 카운트	 -->
+	<!-- 최선권 20200115 사업관리 글목록 조회 수정	 -->
 	<select id="selectBusinessManagementListTotCnt" parameterType="jcep.admin.model.MemberVO" resultType="int">
 			/*selectBusinessManagementListTotCnt*/
-					<![CDATA[
+				<![CDATA[
 					SELECT	COUNT(*) as totcnt
-						FROM tb_business_announcement a
-					WHERE 1= 1
-					]]>
-				<if test=' searchText != null and searchText != "" and datepicker1 != null and datepicker1 != "" and datepicker2 != null and datepicker2 != "" '>
-				    <choose>
-				    	<when test='searchType eq ""  '>
-					 		AND a.buss_anncemnt_nm LIKE CONCAT('%',#{searchText},'%') OR a.buss_anncemnt_no LIKE CONCAT('%',#{searchText},'%') OR a.buss_fr_dt LIKE CONCAT('%',#{datepicker1},'%') OR a.buss_fr_dt LIKE CONCAT('%',#{datepicker2},'%')
-					 	</when>	
-					    <when test='searchType eq 1'>
-					 		AND a.buss_anncemnt_nm LIKE CONCAT('%',#{searchText},'%')
-					 	</when>
-					 	<when test='datepicker1 eq datepicker1'>
-					 		AND a.buss_fr_dt BETWEEN CONCAT(#{datepicker1}) AND CONCAT(#{datepicker2})
-					 	</when>	
-					 	<when test='datepicker2 eq datepicker2'>
-					 		AND a.buss_fr_dt BETWEEN CONCAT(#{datepicker1}) AND CONCAT(#{datepicker2})
-					 	</when>
-				 	</choose>
-				 </if>
-				
-				
-					
-					
-
+					  FROM	tb_business_announcement
+					WHERE	1= 1
+				]]>
+				<if test='searchText != null and searchText != "" '>
+					<choose>
+						<when test='searchType eq ""'>AND (buss_anncemnt_no LIKE CONCAT('%',#{searchText},'%') OR buss_anncemnt_nm LIKE CONCAT('%',#{searchText},'%')) </when>
+						<when test='searchType eq 1'>AND buss_anncemnt_nm LIKE CONCAT('%',#{searchText},'%') </when>
+						<when test='searchType eq 2'>AND buss_anncemnt_no LIKE CONCAT('%',#{searchText},'%') </when>
+					</choose>
+				</if>
+				 <if test='startDate != null and startDate != "" and endDate != null and endDate != ""'>
+				    AND  (buss_fr_dt BETWEEN date_format(#{startDate}, '%Y-%m-%d') AND date_format(#{endDate}, '%Y-%m-%d') OR
+				            buss_to_dt BETWEEN date_format(#{startDate}, '%Y-%m-%d') AND date_format(#{endDate}, '%Y-%m-%d')
+				            )
+				</if>
+				<if test='searchSelect != null and searchSelect != ""'>
+					<choose>
+						<when test='searchSelect eq 1'>AND anncemnt_st_cd = '000001' </when>
+						<when test='searchSelect eq 2'>AND anncemnt_st_cd = '000002' </when>
+						<when test='searchSelect eq 3'>AND .anncemnt_st_cd = '000003' </when>
+					</choose>
+				</if>
+				<![CDATA[
+					ORDER BY buss_anncemnt_no DESC
+				]]>
 	</select>
 	
 	

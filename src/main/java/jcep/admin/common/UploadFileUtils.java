@@ -1,20 +1,40 @@
 package jcep.admin.common;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
+import javax.annotation.Resource;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FilenameUtils;
 import org.imgscalr.Scalr;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
+
+import jcep.admin.dao.MemberMapper;
+import jcep.admin.model.MemberVO;
+
 
 public class UploadFileUtils {
+	/*파일경로*/
+	  @Resource(name="noticeFilePath")
+	static String noticeFilePath;
+
+	@Autowired
+	private MemberMapper memberMapper;
 	
 	public static String uploadFile(String uploadPath, String originalName, byte[] fileData) throws Exception {
         // UUID 발급
@@ -276,6 +296,81 @@ public class UploadFileUtils {
         return iconName.substring(uploadPath.length()).replace(File.separatorChar, '/');
     }
     
+    //파일 삭제
+    private static void fileDelete(ModelAndView mav) throws Exception {
+    	Map<String, Object> map=mav.getModelMap();
+		String filePath = (String) map.get("filePath");//저장되어있는 파일경로 및 파일이름 받아오기
+		File file = new File(filePath);
+ 		if( file.exists() ){ //파일존재여부확인
+ 		if(file.isDirectory()){ //파일이 디렉토리인지 확인
+ 		File[] files = file.listFiles();
+ 		for( int i=0; i<files.length; i++){
+ 			if( files[i].delete() ){
+ 				System.out.println(files[i].getName()+" 삭제성공");
+ 			}else{
+ 				System.out.println(files[i].getName()+" 삭제실패");
+ 				}
+ 			} 
+ 		} if(file.delete()){
+ 			System.out.println("파일삭제 성공");
+ 			}else{ System.out.println("파일삭제 실패");
+ 			}
+ 		}else{ System.out.println("파일이 존재하지 않습니다.");
+ 		}
+    }
     
-}
+    //파일 다운로드
+	public static void fileDownload(ModelAndView mav) throws Exception{
+		Map<String, Object> map=mav.getModelMap();
+		HttpServletResponse response=(HttpServletResponse) map.get("response");	
+		MemberVO memberVo=(MemberVO) map.get("memberVo");	
+		//요청하는 컨트롤러에서 ModelAndView에 MemberVo에 Data를 담아서 보내고 여기서 꺼내오자.
+		BufferedInputStream fis = null;
+		BufferedOutputStream fos = null;
+		
+		try {
+			int index = memberVo.getOrgFileNm().indexOf("_") + 1;
+			String dbName = memberVo.getOrgFileNm().substring(index);
+			
+			String fileName = new String(dbName.getBytes("UTF-8"), "ISO-8859-1");
+			
+			response.setContentType("application/octet-stream");
+			//response.setContentLength((int) boardDto.getFileSize());
+			response.setHeader("Content-Disposition", "attachment;filename=" + fileName + ";");
+			
+			fis = new BufferedInputStream(new FileInputStream(memberVo.getFileCourse()));
+			fos = new BufferedOutputStream(response.getOutputStream());
+			
+			while(true) {
+				int data = fis.read();
+				if(data == -1) break;
+				fos.write(data);
+			}
+			
+			fos.flush();
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+    
+	//단일 파일 업로드 
+	public static HashMap<String,String> OnefileUpload(MultipartFile fileName,File path) throws Exception{
+        if(!path.exists()) {
+           path.mkdir();
+        }
+
+    	String fileOriginName = Long.toString(System.currentTimeMillis()) + "_" + fileName.getOriginalFilename();
+    	System.out.println("fileNAME!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    	System.out.println(path+fileOriginName);
+        File file = new File(path,fileOriginName);
+    	fileName.transferTo(file);
+    	HashMap<String,String> hMap = new HashMap<String,String>();
+          hMap.put("fileCourse",file.getAbsolutePath());               //경로
+          hMap.put("orgFileNm",fileOriginName);               			//파일명
+
+		
+		return hMap;
+	}
+   }
 

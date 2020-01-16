@@ -674,9 +674,35 @@ public class MemberVO extends PagingVO {
 	
 	private String buyerHistSpecNm;
 	
+	/*20200113 최선권 원스톱지원업무일지정보 첨부파일구분코드 추가*/
+	private String attchFileDiviCd;
+
+	/*20200115 최선권 사업공고정보 공고상태 추가*/
+	private String anncemntStCd;
+
+	/*20200115 최선권 검색 셀렉트 구분변수 추가*/
+	private String searchSelect;
 	
 	
 	
+	public String getSearchSelect() {
+		return searchSelect;
+	}
+	public void setSearchSelect(String searchSelect) {
+		this.searchSelect = searchSelect;
+	}
+	public String getAnncemntStCd() {
+		return anncemntStCd;
+	}
+	public void setAnncemntStCd(String anncemntStCd) {
+		this.anncemntStCd = anncemntStCd;
+	}
+	public String getAttchFileDiviCd() {
+		return attchFileDiviCd;
+	}
+	public void setAttchFileDiviCd(String attchFileDiviCd) {
+		this.attchFileDiviCd = attchFileDiviCd;
+	}
 	public String getBuyerHistSpecNm() {
 		return buyerHistSpecNm;
 	}
