@@ -249,8 +249,8 @@
 			
 			<if test="searchFromDate != null and searchFromDate != '' and searchToDate != null and searchToDate != ''">
 			       <![CDATA[
-		           AND ((use_to_dt >= replace(#{searchToDate},'-','') AND use_to_dt <= replace(#{searchToDate},'-',''))
-						    OR (use_fr_dt >= replace(#{searchFromDate},'-','') AND use_fr_dt <= replace(#{searchFromDate},'-',''))
+		           AND ((use_to_dt >= replace(#{searchFromDate},'-','') AND use_to_dt <= replace(#{searchToDate},'-',''))
+						    OR (use_fr_dt >= replace(#{searchFromDate},'-','') AND use_fr_dt <= replace(#{searchToDate},'-',''))
 						    OR (use_fr_dt <= replace(#{searchFromDate},'-','') AND use_to_dt >= replace(#{searchToDate},'-','')))
 					]]>	     
 			</if> 			
@@ -281,8 +281,8 @@
 			</if> 
 			<if test="searchFromDate != null and searchFromDate != '' and searchToDate != null and searchToDate != ''">
 			       <![CDATA[
-		           AND ((use_to_dt >= replace(#{searchToDate},'-','') AND use_to_dt <= replace(#{searchToDate},'-',''))
-						    OR (use_fr_dt >= replace(#{searchFromDate},'-','') AND use_fr_dt <= replace(#{searchFromDate},'-',''))
+		           AND ((use_to_dt >= replace(#{searchFromDate},'-','') AND use_to_dt <= replace(#{searchToDate},'-',''))
+						    OR (use_fr_dt >= replace(#{searchFromDate},'-','') AND use_fr_dt <= replace(#{searchToDate},'-',''))
 						    OR (use_fr_dt <= replace(#{searchFromDate},'-','') AND use_to_dt >= replace(#{searchToDate},'-','')))
 					]]>	     
 			</if> 				 
