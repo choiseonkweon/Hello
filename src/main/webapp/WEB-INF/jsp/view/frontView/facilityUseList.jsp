@@ -218,6 +218,7 @@
 	  	
 	  	function resetResrv(){
 	  		$("#insertFrm input").val('');
+	  		$("#resourFaciDiviCd").val('F');
 	  		
 	  	}
 		
@@ -266,7 +267,7 @@
 								<c:forEach var="result" items="${resultList}" varStatus="status">
 									<li>
 										<div class="img">
-											<img src="<c:out value="${result.facilityImg}"/>" width="367" height="277" />
+											<img src="${pageContext.request.contextPath }<c:out value="${result.facilityImg}"/>" width="367" height="277" />
 										</div>
 										<table class="table01">
 											<colgroup>
@@ -440,32 +441,32 @@
 				</colgroup>
 				<tr>
 					<th>업체(기관)명</th>
-					<td><input type="text" id="compNm" name="compNm" style="width: 100%;" /></td>
+					<td><input type="text" id="compNm" name="compNm" style="width: 100%;" maxlength="30"/></td>
 				</tr>
 				<tr>
 					<th>주소</th>
 					<td>
 						<input class="extraRoadAddr" id="compAddr1" name="compAddr1"  readonly="readonly" onclick="javascript:openDaumPostcode()" value="" type="text" style="width: 275px; margin-right: 4px;" />
-						<button class="txtbtn" id="postBtn" style="width: 100px;">우편번호검색</button>
+						<a class="txtbtn" id="postBtn" style="width: 100px;">우편번호검색</a>
 						<input type="text" id="compAddr2" name="compAddr2" style="width: 275px;  margin-right: 4px;" />
 					</td>
 				</tr>
 				<tr>
 					<th>담당자성명</th>
 					<td>
-						<input type="text" id="compApplNm" name="compApplNm" value="" style="width: 150px;" />
+						<input type="text" id="compApplNm" name="compApplNm" value="" style="width: 150px;" maxlength="10"/>
 					</td>
 				</tr>
 				<tr>
 					<th>연락처</th>
 					<td>
-						<input type="text" id="compTelNo" name="compTelNo" value="" style="width: 150px;" />
+						<input type="text" id="compTelNo" name="compTelNo" value="" onkeydown="javascript:return onlyNumber(event)" style="width: 150px;" maxlength="12"/>
 					</td>
 				</tr>
 				<tr>
 					<th>이메일</th>
 					<td>
-						<input type="text" id="compMail1" name="compMail1" value="" style="width: 120px;" />
+						<input type="text" id="compMail1" name="compMail1" value="" style="width: 120px;" maxlength="30"/>
 						<em>@</em>
 						<input type="text" id="compMail2" name="compMail2" value="" style="width: 120px;" />
 						<select id="emailSelect" name="emailSelect" onchange="changeEmail()" style="width: 120px">
@@ -484,7 +485,7 @@
 				<tr>
 					<th>인원수</th>
 					<td>
-						<input type="text" id="usePersNum" name="usePersNum" value="" style="width: 100px;" />
+						<input type="text" id="usePersNum" name="usePersNum" value="" onkeydown="javascript:return onlyNumber(event)" maxlength="3" style="width: 100px;" />
 					</td>
 				</tr>
 			</table>
@@ -505,7 +506,7 @@
 				<tr>
 					<th>사용목적</th>
 					<td>
-						<input type="text" id="useObj" name="useObj" value="" style="width: 100%" />
+						<input type="text" id="useObj" name="useObj" value="" style="width: 100%" maxlength="100"/>
 					</td>
 				</tr>
 				<tr>

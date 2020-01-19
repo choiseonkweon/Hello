@@ -380,10 +380,9 @@ public class UploadFileUtils {
 	
 	
 
-	public static List<Map<String, Object>> getFileUpload(HttpServletRequest request,String filePath) throws Exception{
-    	MultipartHttpServletRequest mRequest = (MultipartHttpServletRequest) request;
+	public static List<Map<String, Object>> getFileUpload(MultipartHttpServletRequest request,String filePath) throws Exception{
     	
-    	Iterator<String> iterator = mRequest.getFileNames();
+    	Iterator<String> iterator = request.getFileNames();
 		
 		File path=new File(filePath);
         if(!path.exists()) {
@@ -393,13 +392,15 @@ public class UploadFileUtils {
         
     	while(iterator.hasNext()){
     		Map<String, Object> fileMap = new HashMap<String, Object>();
-    		MultipartFile fileName = mRequest.getFile(iterator.next());
-    		String fileOriginName = Long.toString(System.currentTimeMillis()) + "_" + fileName.getOriginalFilename();
-    		File file = new File(path,fileOriginName);
-    		fileName.transferTo(file);
-    		fileMap.put("fileCourse",file.getAbsolutePath());               //경로
-    		fileMap.put("orgFileNm",fileOriginName);               			//파일명
-    		FileMapList.add(fileMap);
+    		MultipartFile fileName = request.getFile(iterator.next());
+    		if(!"".equals(fileName.getOriginalFilename())) {
+    			String fileOriginName = Long.toString(System.currentTimeMillis()) + "_" + fileName.getOriginalFilename();
+    			File file = new File(path,fileOriginName);
+    			fileName.transferTo(file);
+    			fileMap.put("fileCourse",file.getAbsolutePath());               //경로
+    			fileMap.put("orgFileNm",fileOriginName);               			//파일명
+    			FileMapList.add(fileMap);
+    		}
     		
     	}        
 		

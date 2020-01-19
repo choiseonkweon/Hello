@@ -6,7 +6,10 @@ import java.awt.MediaTracker;
 import java.awt.Toolkit;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import egovframework.rte.fdl.property.EgovPropertyService;
@@ -32,6 +36,8 @@ import jcep.admin.model.FacilityResourceVO;
 import jcep.admin.model.MemberVO;
 import jcep.admin.service.FacilityResourceService;
 import jcep.admin.service.MemberService;
+import jcep.front.model.FacilityResourceFrontVO;
+import jcep.front.service.FacilityResourceFrontService;
 
 /**
  * @Class Name : FacilityResourceController.java
@@ -59,6 +65,15 @@ public class FacilityResourceController {
 	@Resource(name = "memberService")
 	protected MemberService memberService;	
 	
+	@Resource(name = "facilityResourceFrontService")
+	protected FacilityResourceFrontService facilityResourceFrontService;	
+	
+	
+    @Resource(name="facilityImgPath")
+    String facilityImgPath;	
+
+	@Resource(name="resourceImgPath")
+    String resourceImgPath;    
 	/**
 	 * 시설 등록 목록을 조회한다. (pageing)
 	 * @param searchVO - 조회할 정보가 담긴 FacilityResourceVO
@@ -147,17 +162,22 @@ public class FacilityResourceController {
 	 * @return "facilityInsert"
 	 * @exception Exception
 	 */
-    @RequestMapping("/facility/facilityInsert.do")
-    public String facilityInsert(HttpServletRequest request, Model model, @ModelAttribute("searchVO") FacilityResourceVO searchVO,@RequestParam("facilityImgFile") MultipartFile facilityImgFile) throws Exception {
-    	
-    	Integer returnCode = facilityResourceService.facilityInsert(searchVO,facilityImgFile);
+    @RequestMapping(value="/facility/facilitySave.do", produces="text/plain;charset=utf-8")
+    public String facilitySave(MultipartHttpServletRequest mRequest,@RequestParam(required=false) Map<String, Object> paramMap) throws Exception {
+
+    	if(("".equals(paramMap.get("facilityId").toString()) || null == paramMap.get("facilityId"))){
+    		Integer returnCode = facilityResourceService.facilityInsert(paramMap,mRequest,facilityImgPath);
+    		
+    		
+    	}else {
+    		Integer returnCode = facilityResourceService.facilityUpdate(paramMap,mRequest,facilityImgPath);
+    		
+    		
+    	} 
 		
     	return "jsonView";
     }
     
-    @Resource(name="facilityImgPath")
-    String facilityImgPath;
-	
     @ResponseBody
     @PostMapping(value="/facility/facilityImgUpload.do", produces="text/plain;charset=utf-8")
     public ResponseEntity<String> facilityImgUpload(HttpServletResponse response, Model model, FacilityResourceVO vo, @RequestParam("facilityImgFile") MultipartFile facilityImgFile) throws Exception {		
@@ -298,12 +318,13 @@ public class FacilityResourceController {
 	 * @exception Exception
 	 */
     @RequestMapping("/resource/resourceSave.do")
-    public String resourceSave(HttpServletRequest request, Model model, @ModelAttribute("searchVO") FacilityResourceVO searchVO) throws Exception {
-    	System.out.println(searchVO.getResourceSt());
-    	if(("".equals(searchVO.getResourceId()) || null == searchVO.getResourceId())) {
-    		Integer returnCode = facilityResourceService.resourceInsert(searchVO);
+    public String resourceSave(MultipartHttpServletRequest mRequest,@RequestParam(required=false) Map<String, Object> paramMap) throws Exception {
+    	if(("".equals(paramMap.get("resourceId").toString()) || null == paramMap.get("resourceId"))) {
+    		
+    		
+    		Integer returnCode = facilityResourceService.resourceInsert(paramMap,mRequest,resourceImgPath);
     	}else{
-    		Integer returnCode = facilityResourceService.resourceUpdate(searchVO);
+    		Integer returnCode = facilityResourceService.resourceUpdate(paramMap,mRequest,resourceImgPath);
     		
     		
     	}
@@ -311,9 +332,6 @@ public class FacilityResourceController {
     	return "jsonView";
     }
     
-	@Resource(name="resourceImgPath")
-    String resourceImgPath;
-	
     @ResponseBody
     @PostMapping(value="/resource/resourceImgUpload.do", produces="text/plain;charset=utf-8")
     public ResponseEntity<String> resourceImgUpload(HttpServletResponse response, Model model, FacilityResourceVO vo, @RequestParam("resourceImgFile") MultipartFile resourceImgFile) throws Exception {		
@@ -430,8 +448,12 @@ public class FacilityResourceController {
 	 */
     @RequestMapping("/facility/facilityApplicDetail.do")
     public String facilityApplicDetail(HttpServletRequest request, Model model, @ModelAttribute("searchVO") FacilityResourceVO searchVO) throws Exception {
-
+         
     	model.addAttribute("resultList", facilityResourceService.selectFacilityApplicateDetailList(searchVO));	
+    	FacilityResourceFrontVO frontVO = new FacilityResourceFrontVO();
+    	model.addAttribute("facilityList", facilityResourceFrontService.selectFacilityUseList(frontVO));
+
+
 		
     	return "jsonView";
     }	    
@@ -447,6 +469,8 @@ public class FacilityResourceController {
     public String resourceApplicDetail(HttpServletRequest request, Model model, @ModelAttribute("searchVO") FacilityResourceVO searchVO) throws Exception {
 
     	model.addAttribute("resultList", facilityResourceService.selectResourceApplicateDetailList(searchVO));	
+    	FacilityResourceFrontVO frontVO = new FacilityResourceFrontVO();
+    	model.addAttribute("resourceList", facilityResourceFrontService.selectResourceUseList(frontVO));    	
 		
     	return "jsonView";
     }	        

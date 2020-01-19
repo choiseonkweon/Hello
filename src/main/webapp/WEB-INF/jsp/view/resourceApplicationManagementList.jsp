@@ -55,13 +55,11 @@
 											<th style="text-align:center;background:#eee;vertical-align:middle;">예약일</th>
 											<td>
 														<label class="input"> 
-															<input class="input-sm" type="text" name="startdate" id="startdate" placeholder=""   />
-															<i class="icon-append fa fa-calendar"></i>
+															<input class="input-sm" type="text" name="searchFromDate" id="searchFromDate" placeholder=""  value="${searchVO.searchFromDate}" data-dateformat="yy-mm-dd"  />
 															&nbsp;~&nbsp;
 														</label>
 														<label class="input"> 
-															<input class="input-sm" type="text" name="finishdate" id="finishdate" placeholder="">
-															<i class="icon-append fa fa-calendar"></i>
+															<input class="input-sm" type="text" name="searchToDate" id="searchToDate" placeholder="" value="${searchVO.searchToDate}" data-dateformat="yy-mm-dd">
 														</label>
 												<a href="javascript:goSearch();" class="btn btn-primary" style="margin-left: 120px;"><b>검색</b></a>
 											</td>
@@ -75,7 +73,7 @@
 					<div class="well well-sm">
 						<div class="table-responsive">
 							<div class="col-xs-12">
-								<h6 class="page-title txt-color-blueDark"><b>총 : <fmt:formatNumber value="3" pattern="#,###" /> 건</b></h6>
+								<h6 class="page-title txt-color-blueDark"><b>총 : <fmt:formatNumber value="${paginationInfo.totalRecordCount}" pattern="#,###" /> 건</b></h6>
 							</div>
 							<form role="form" id="authFrm" name="authFrm" action="#" class="form-horizontal" method="post">
 								<table class="table table-hover">
@@ -173,7 +171,8 @@
 								<h6 class="page-title txt-color-blueDark"></h6>
 							</div>
 						<form id="insertFrm" name="insertFrm" action="#" method="POST" >
-						<input type="hidden" id="appliNo" name="appliNo" value="" />	
+						<input type="hidden" id="appliNo" name="appliNo" value="" />
+						<input type="hidden" id="applicStCd" name="applicStCd" value="000001" />	
 						<table class="table table-hover applicDetail">
 								<colgroup>
 						          <col width="10%">
@@ -209,7 +208,11 @@
 										<tr>
 								          <th class="tc tc01" rowspan="3" style="vertical-align: middle;">사용자원</th>
 								          <th class="tc">자원명</th>
-								          <td><span id="facilityNm"></span></td>
+								          <td><span id="faciNm" class="view"></span>
+												<select class="modify" id="facilityNm" name="facilityNm" style="width: 30%;">
+												</select>								                
+								          
+								          </td>
 										</tr>
 								        <tr>
 								          <th class="tc">목적(행사명)</th>
@@ -217,7 +220,36 @@
 								        </tr>
 								        <tr>
 								          <th class="tc">사용시간</th>
-								          <td><span id="useDate"></span></td>
+								          <td><span id="useDate"  class="view"></span>
+												<div class="set modify">
+													<input type="text" class="input-sm" data-dateformat="yyyy-mm-dd" id="useFrDt" name="useFrDt" value="" style="width: 110px; margin-right: 4px;" />
+													<select class="modify" name="useFrTm" id="useFrTm" style="width: 100px;">
+														<option value="0900">9시</option>
+														<option value="1000">10시</option>
+														<option value="1100">11시</option>
+														<option value="1200">12시</option>
+														<option value="1300">13시</option>
+														<option value="1400">14시</option>
+														<option value="1500">15시</option>
+														<option value="1600">16시</option>
+														<option value="1700">17시</option>
+													</select>
+												</div>
+												<div class="set modify">
+													<input type="text" class="input-sm" data-dateformat="yyyy-mm-dd" id="useToDt" name="useToDt" style="width: 110px; margin-right: 4px;" />
+													<select class="modify" name="useToTm" id="useToTm" style="width: 100px;">
+														<option value="1000">10시</option>
+														<option value="1100">11시</option>
+														<option value="1200">12시</option>
+														<option value="1300">13시</option>
+														<option value="1400">14시</option>
+														<option value="1500">15시</option>
+														<option value="1600">16시</option>
+														<option value="1700">17시</option>
+														<option value="1800">18시</option>
+													</select>
+												</div>									          
+								          </td>
 								        </tr>
 			      				</tbody>
 							</table>
@@ -242,6 +274,10 @@
 
 	<script type="text/javaScript" >
 		$(document).ready(function () {
+			fromDatePicker("searchFromDate","searchToDate");
+			toDatePicker("searchFromDate","searchToDate");					
+			fromDatePicker("useFrDt","useToDt");
+			toDatePicker("useFrDt","useToDt");			
 		});
 		
         /* pagination 페이지 링크 function */
@@ -276,7 +312,20 @@
 	                		$("#usePersNum").text(rData.usePersNum);
 	                		$("#facilityNm").text(rData.facilityNm);
 	                		$("#useObj").text(rData.useObj);
-	                		$("#useDate").text(rData.compNm);
+	                		$("#useDate").text(rData.useFrDt + " " + rData.useFrTm.substring(0,2)+"시 ~ " + rData.useToDt + " " + rData.useToTm.substring(0,2)+"시");
+	                		
+	                		var fData = data.resourceList;
+							var fDataLength = fData.length;
+							for(var i=0;i < fDataLength;i++){
+								document.insertFrm.facilityNm.options[i] = new Option(fData[i].resourceNm,fData[i].resourceId);
+							}	                
+	                		
+							$("#useFrTm").val(rData.useFrTm);
+							$("#useFrDt").val(rData.useFrDt);
+	                		
+	                		$("#useToTm").val(rData.useToTm);
+	                		$("#useToDt").val(rData.useToDt);
+	                		$("#facilityNm").val(rData.resourFaciId);	                		
 	                		
 				        	$('#myModal').modal('show');
 					},  
@@ -325,13 +374,14 @@
         }
         
         function updateResrv(){
+        	
 			 $.ajax({
 					type : 'post',
-					url:'/db/resource/resourceModifySave.do',
-					data: param,
+					url:'/db/facility/resourcFacilityApplicUpdate.do',
+					data: $('#insertFrm').serialize(),
 					dataType: 'json',
 					success : function(data) {
-	                		alert("완료 되었습니다.");
+	                		alert("저장 되었습니다.");
 	                		location.reload();
 							return false;
 					},  
@@ -340,7 +390,7 @@
 			            console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
 			   		} 
 			 });        	
-        }        
+       }         
         
         function modifyResrv(){
         	$(".view").css("display","none");
@@ -376,16 +426,42 @@
         }
         
         
-        function printArea(printThis) {
-            var win = null;
-            win = window.open();
-            self.focus();
-            win.document.open();
-            win.document.write(printThis);
-            win.document.close();
-            win.print();
-            win.close();
+        function printArea(){
+        	$('#myModal button').hide();
+        	var AreaContents = document.getElementById('myModal').innerHTML;
+            var strFeature;
+            strFeature = "width=850,height=800,toolbar=no,location=no,directories=no";
+            strFeature += ",status=no,menubar=no,scrollbars=yes,resizable=no";
+            var cssBody = '<link rel=\'stylesheet\' type=\'text/css\' media=\'screen\ href=\'<c:url value="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>\'>';
+        	cssBody += '<link rel=\'stylesheet\' type=\'text/css\' media=\'screen\' href=\'<c:url value="../css/bootstrap.min.css"/>\'>';
+        	cssBody += '<link rel=\'stylesheet\' type=\'text/css\' media=\'screen\' href=\'<c:url value="../css/font-awesome.min.css"/>\'>';
+        	cssBody += '<link rel=\'stylesheet\' type=\'text/css\' media=\'screen\' href=\'<c:url value="../css/sub.css"/>\'>';
+        	cssBody += '<link rel=\'stylesheet\' type=\'text/css\' media=\'screen\' href=\'<c:url value="../css/smartadmin-production-plugins.min.css"/>\'>';
+        	cssBody += '<link rel=\'stylesheet\' type=\'text/css\' media=\'screen\' href=\'<c:url value="../css/smartadmin-production.min.css"/>\'>';
+        	cssBody += '<link rel=\'stylesheet\' type=\'text/css\' media=\'screen\' href=\'<c:url value="../css/smartadmin-skins.min.css"/>\'>';
+        	cssBody += '<link rel=\'stylesheet\' type=\'text/css\' media=\'screen\' href=\'<c:url value="../css/smartadmin-rtl.min.css"/>\'>';
+        	cssBody += '<link rel=\'stylesheet\' type=\'text/css\' media=\'screen\' href=\'<c:url value="../css/demo.min.css"/>\'>';
+
+            objWin = window.open('', 'print', strFeature);
+        	
+            objWin.document.open();
+            objWin.document.write('<html><head>');
+            objWin.document.write(cssBody);
+            objWin.document.write('</head><body>');
+            objWin.document.write(AreaContents);
+            objWin.document.write('</body></html>');
+            objWin.document.close();
+            
+            setTimeout(function(){
+            	printBtn(objWin);
+            },500);
         }        
+        
+        function printBtn(objWin){
+        	$('#myModal button').show();
+        	objWin.print();
+            objWin.close();
+        }       
     </script>
 </body>
 </html>

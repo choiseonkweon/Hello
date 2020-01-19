@@ -33,7 +33,7 @@
 				<div class="well well-sm">
 						<div class="table-responsive">
 						<form id="insertFrm" name="insertFrm" action="#" method="POST" enctype="multipart/form-data">
-						    <input type="hidden" name="facilityId"  value="<c:out value='${facilityDetailResult.facilityId}'/>"/> 
+						    <input type="hidden" id="facilityId" name="facilityId"  value="<c:out value='${facilityDetailResult.facilityId}'/>"/> 
 							<table class="table table-bordered table-striped" style="margin-bottom:0px;width:98%;margin-left:1%;margin-top:10px;">
 									<colgroup>
 										<col width="20%">
@@ -94,9 +94,20 @@
 										<tr>
 												<th style="text-align:center;background:#eee;vertical-align:middle;">썸네일 *</th>
 												<td>
-													<input type="file" name="facilityImgFile" id="facilityImgFile" onchange="getThumbnailPrivew(this,$('#image'))"><br>
-													<input type="hidden" id="chkImg" name="chkImg" value="" />
-													<div id='image'></div>
+													<c:if  test="${empty facilityDetailResult.facilityImg}">
+															<input type="file" name="facilityImgFile" id="facilityImgFile" onchange="getThumbnailPrivew(this,$('#image'))"><br>
+															<input type="hidden" id="chkImg" name="chkImg" value="" />
+															<div id='image'></div>
+													</c:if>
+													<c:if  test="${!empty facilityDetailResult.facilityImg}">
+															<input type="hidden" id="chkImg" name="chkImg" value="Y" />
+															<input type="button" style="margin-bottom:15px;" class="fileBtn" onclick="$('#facilityImgFile').click();" value="파일 선택"/> <span id="fileName" class="fileBtn"><c:out value="${facilityDetailResult.facilityImg.replace('/','')}"/></span>
+															<input type="file" name="facilityImgFile" style="display:none;" id="facilityImgFile" onchange="fileChange(this,$('#image'))"><br>
+															<input type="hidden" id="facilityImg" name="facilityImg" value="${facilityDetailResult.facilityImg}" />
+															<div id='image'>
+																<img src="${pageContext.request.contextPath }<spring:message code="file.facilityImgPath"/><c:out value="${facilityDetailResult.facilityImg}"/>" border="0" alt="" />
+															</div>
+													</c:if>													
 												</td>
 											</tr>										
 										<tr>
@@ -124,7 +135,7 @@
 							</table>
 							</form>
 							<div style="padding-top:5px;padding-bottom:5px;text-align:right;width:99%">
-								<a href="/db/facility/facilityRegistrationManagementList.do" class="btn" ><b>취소</b></a>&nbsp;
+								<a href="#" id="cancelBtn" class="btn" ><b>취소</b></a>&nbsp;
 								<a href="#" id="createBtn" class="btn btn-primary" ><b>저장</b></a>
 							</div>
 						</div>
@@ -146,14 +157,18 @@
 
 			$("#createBtn").click(function(){
 				if(checkValue()){
+					var formData = new FormData(document.insertFrm);
+
 					 $.ajax({
 							type : 'post',
-							url:'/db/facility/facilityInsert.do',
+							url:'/db/facility/facilitySave.do',
 							enctype: 'multipart/form-data',
-							data: $('#insertFrm').serialize(),
+							data: formData,
 							dataType: 'json',
+							contentType : false,
+					        processData : false,  
 							success : function(data) {
-			                		alert("등록이 완료 되었습니다.");
+			                		alert("저장이 완료 되었습니다.");
 			                		location.reload();
 									return false;
 							},  
@@ -164,6 +179,14 @@
 					 });
 				}
 			});
+			
+			$("#cancelBtn").click(function(){
+				if(confirm("이 페이지에서 나가시겠습니까?")){
+					location.href = "/db/facility/facilityRegistrationManagementList.do"
+				}
+			});			
+			
+			
 			
 		});
 		
@@ -200,6 +223,13 @@
 			}
 			
 			return retValue;
+		}
+		
+		function fileChange(html,$target){
+			$("#facilityImgFile").css("display","");
+			$(".fileBtn").css("display","none");
+			getThumbnailPrivew(html,$target)
+			
 		}
     </script>
 </body>

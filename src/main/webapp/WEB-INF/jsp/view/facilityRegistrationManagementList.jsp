@@ -97,15 +97,17 @@
 											<c:forEach var="result" items="${resultList}" varStatus="status">
 												<tr>
 													<td style="vertical-align: middle;"><c:out value="${paginationInfo.totalRecordCount+1 - ((searchVO.pageIndex-1) * searchVO.pageSize + status.count)}"/></td>
-													<td style="vertical-align: middle;"><img src="<c:out value="${result.facilityImg}"/>"  width="150" height="125"/></td>
+													<td style="vertical-align: middle;"><img src="${pageContext.request.contextPath }<spring:message code="file.facilityImgPath"/><c:out value="${result.facilityImg}"/>"  width="150" height="125"/></td>
 													
 													<td style="vertical-align: middle;">
 														<a href="javascript:moveDetailView('${result.facilityId}');">
 															<c:out value="${result.facilityNm}"/>
 													   </a>
 													</td>
-													<td style="vertical-align: middle;"><c:out value="${result.facilityLoc}"/>
-													
+													<td style="vertical-align: middle;">
+														<a href="javascript:moveDetailView('${result.facilityId}');">													
+													      <c:out value="${result.facilityLoc}"/>
+													    </a>
 													</td>
 													<td style="vertical-align: middle;"><c:out value="${result.facilityScale}"/></td>
 													<td style="vertical-align: middle;"><c:out value="${result.facilityEquip}"/></td>
