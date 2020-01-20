@@ -1,25 +1,31 @@
  package jcep.admin.web;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import egovframework.rte.fdl.property.EgovPropertyService;
 import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
+import jcep.admin.common.UploadFileUtils;
 import jcep.admin.model.EnterpriseBuyerExpertVO;
 import jcep.admin.model.MemberVO;
 import jcep.admin.service.EnterpriseBuyerExpertService;
@@ -77,7 +83,7 @@ public class BusinessController {
 		searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
 		searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
 
-		ArrayList<MemberVO> authList = enterpriseBuyerExpertService.selectBusinessManagementList(searchVO);
+		ArrayList<Map<String,Object>> authList = enterpriseBuyerExpertService.selectBusinessManagementList(searchVO);
 		model.addAttribute("resultList", authList);
 		
 		int totCnt = enterpriseBuyerExpertService.selectBusinessManagementListTotCnt(searchVO);
@@ -133,42 +139,44 @@ public class BusinessController {
 	 * @return "businessManagementRegister"
 	 * @exception Exception
 	 */
+	@RequestMapping("/business/businessManagementDetail.do")
+	public ModelAndView businessManagementDetail(@ModelAttribute("searchVO") MemberVO searchVO, ModelAndView mv, HttpServletRequest request) throws Exception {
+		System.out.println("businessManagementDetail***********************"+searchVO);
+		
+		String bussAnncemntNo = request.getParameter("bussAnncemntNo");
+
+		Map<String,Object> detail = enterpriseBuyerExpertService.selectBusinessManagementDetail(bussAnncemntNo);
+		List<Map<String,Object>> files = enterpriseBuyerExpertService.selectBusinessManagementDetailFiles(bussAnncemntNo);
+		
+		mv.addObject("result", detail);		
+		mv.addObject("files", files);		
+		mv.setViewName("/view/businessManagementDetail");		
+		System.out.println("businessManagementDetail***********************"+searchVO);
+		return mv;
+	}
+	
+	
+	
 	@RequestMapping("/business/businessManagementRegisterUpdate.do")
-	public ModelAndView businessManagementRegisterUpeate(@ModelAttribute("searchVO") MemberVO searchVO, Model model, ModelAndView mv, HttpServletRequest request) throws Exception {
+	public ModelAndView businessManagementRegisterUpeate(@ModelAttribute("searchVO") MemberVO searchVO, ModelAndView mv, HttpServletRequest request) throws Exception {
 		System.out.println("businessManagementRegisterUpeate_1***********************"+searchVO);
 		
 		String bussAnncemntNo = request.getParameter("bussAnncemntNo");
-		searchVO.setBussAnncemntNo(bussAnncemntNo);
-		System.out.println("bussAnncemntNo :: " + bussAnncemntNo);
-		
 		
 		MemberVO commonsVo = new MemberVO();
-		
 		commonsVo.setGroupCd("g00023");
 		List<MemberVO> bussDeptCd = memberService.selectCommonsList(commonsVo);	//시업부서 세부전문분야분류 코드표
 		
+		
+//		Map<String,Object> detail = enterpriseBuyerExpertService.selectBusinessManagementRegisterUpeate(searchVO);
+//		List<Map<String,Object>> detail1 = enterpriseBuyerExpertService.selectBusinessManagementRegisterUpeateFile(searchVO);
+		
+//		mv.addObject("result", detail);		
 		mv.addObject("bussDeptCd",bussDeptCd);
 		
-		MemberVO detail = enterpriseBuyerExpertService.selectBusinessManagementRegisterUpeate(searchVO);
-		List<MemberVO> detail1 = enterpriseBuyerExpertService.selectBusinessManagementRegisterUpeateFile(searchVO);
-		List<MemberVO> detail2 = enterpriseBuyerExpertService.selectBusinessManagementRegisterUpeateFile(searchVO);
-		System.out.println( "사업부서::" + detail.getBussDeptCd());
-		model.addAttribute("detail", detail);
-		model.addAttribute("detail1", detail1);
-		model.addAttribute("detail2", detail2);
-		model.addAttribute("viewType", "modify");
-		System.out.println("detail :: " + detail);
-		System.out.println("detail1 :: " + detail1);
-		System.out.println("detail2 :: " + detail2);
-		
-		/*List<MemberVO> detail1 = enterpriseBuyerExpertService.selectBusinessManagementRegisterUpeateFile(searchVO);
-		model.addAttribute("detail", detail1);
-		System.out.println("detail :: " + detail1);*/
-		
-		
 		System.out.println("businessManagementRegisterUpeate_2***********************"+searchVO);
-		
 		mv.setViewName("/view/businessManagementRegister");
+		/*		Map<String,Object> detail = enterpriseBuyerExpertService.selectBusinessManagementRegisterUpeate(searchVO);*/
 		
 		return mv;
 	}
@@ -380,72 +388,31 @@ public class BusinessController {
     }
     */
     @RequestMapping("/business/businessManagementRegisterInsert.do")
-	public ModelAndView businessManagementRegisterInsert(MemberVO searchVO,HttpServletRequest request, HttpSession session, MultipartHttpServletRequest multipartRequest) throws Exception {
+	public String businessManagementRegisterInsert(MemberVO searchVO,HttpServletRequest request, HttpSession session, MultipartHttpServletRequest multipartRequest) throws Exception {
     	System.out.println("businessManagementRegisterInsert_1***********************"+searchVO);
-    	
-    	ModelAndView mav = new ModelAndView("jsonView");
-		MemberVO memberVo = new MemberVO();
-		File path=new File(noticeFilePath);
-		if(!path.exists()) {
-			path.mkdir();
-		}
+    	int check = enterpriseBuyerExpertService.businessManagementRegisterInsert(searchVO);
+    	if(check >0) {
+        	//멀티파일 insert
+        	String filePath = noticeFilePath;
+        	List<Map<String, Object>> fileMap = UploadFileUtils.MultiFileUpload(multipartRequest, filePath);
+        	for(int i = 0; i<fileMap.size(); i++) {
+        		HashMap<String,String> hMap = new HashMap<String,String>();
 
-		Iterator <String> itr = multipartRequest.getFileNames();
-		while(itr.hasNext()) {
-			MultipartFile mpf = multipartRequest.getFile(itr.next());
-			System.out.println(mpf.getOriginalFilename());	
-			String fileOriginName = Long.toString(System.currentTimeMillis()) + "_" + mpf.getOriginalFilename();
-			File file = new File(path,fileOriginName);
-			try {
-				mpf.transferTo(file);
-				memberVo.setFileCourse(file.getAbsolutePath());					//경로
-				memberVo.setOrgFileNm(fileOriginName);							//파일명
-
-			}catch(Exception e) {
-				e.printStackTrace();
-			}
-		}
-		
-		System.out.println("get겟겟겟 :: " + memberVo.getFileCourse());
-		System.out.println("org겟겟겟 :: " + memberVo.getOrgFileNm());
-		
-		String bussCostAmt = String.valueOf("bussCostAmt");
-		
-		memberVo.setBussAnncemntNo(request.getParameter("bussAnncemntNo"));
-		memberVo.setBussAnncemntNm(request.getParameter("bussAnncemntNm"));
-		memberVo.setBussFrDt(request.getParameter("bussFrDt"));
-		memberVo.setBussToDt(request.getParameter("bussToDt"));
-		memberVo.setBussCostAmt(Integer.parseInt(request.getParameter("bussCostAmt")));
-		memberVo.setBussDeptCd(request.getParameter("bussDeptCd"));
-		memberVo.setOriginalUrl(request.getParameter("originalUrl"));
-		memberVo.setBussCont(request.getParameter("bussCont"));
-		memberVo.setBussDiviCd(request.getParameter("bussDiviCd"));
-		memberVo.setApplicStCd(request.getParameter("applicStCd"));
-		memberVo.setMemberId(request.getParameter("memberId")); //로그인한 아이디 가져오기
-		memberVo.setApprovalDt(request.getParameter("approvalDt"));
-/*		memberVo.setOrgFileNm(request.getParameter("orgFileNm"));
-		memberVo.setOrgFileNm(request.getParameter("fileupload"));*/
-		memberVo.setRegDt(request.getParameter("regDt"));
-		memberVo.setRegId(request.getParameter("regId"));
-		
-		
-		
-		//System.out.println(request.getParameter("remark"));
-		System.out.println("에이작스");
-
-    	String bussAnncemntNo = request.getParameter("bussAnncemntNo");
-    	String bussAnncemntNm = request.getParameter("bussAnncemntNm");
-    	searchVO.setBussAnncemntNm(bussAnncemntNm);
-    	System.out.println("bussAnncemntNo :: " + bussAnncemntNo);
-    	System.out.println("bussAnncemntNm :: " + bussAnncemntNm);
-    	
-   		Integer returnCode = enterpriseBuyerExpertService.businessManagementRegisterInsert(memberVo);
-   		Integer returnCode1 = enterpriseBuyerExpertService.businessManagementRegisterInsertFile(memberVo);
-   		Integer returnCode2 = enterpriseBuyerExpertService.businessManagementRegisterInsertApplicStCd(memberVo);
-   		
+        		hMap.put("bussAnncemntNo",searchVO.getBussAnncemntNo());		//사업공고번호
+        		hMap.put("attchFileNo",searchVO.getBussAnncemntNo()+i);				//첨부파일번호
+        		hMap.put("fileCourse",(String)fileMap.get(i).get("fileCourse"));			//파일경로
+        		hMap.put("orgFileNm",(String)fileMap.get(i).get("orgFileNm"));			//파일명
+        		int fileInsertcheck = enterpriseBuyerExpertService.businessManagementRegisterInsertFile(hMap);
+        		System.out.println(fileInsertcheck);
+        		System.out.println("======= "+i+"번째 파일 인서트 완료 =======");
+        		System.out.println("파일경로:"+(String)fileMap.get(i).get("fileCourse"));
+        		System.out.println("파일명:"+(String)fileMap.get(i).get("orgFileNm"));
+        		System.out.println("===============================");
+        	}    		
+    	}
    		System.out.println("businessManagementRegisterInsert_2***********************"+searchVO);
 
-		return mav;
+		return "jsonView";
 	}
 	
     
@@ -483,7 +450,78 @@ public class BusinessController {
 		
 		return mv;
 	}
+	@ResponseBody
+	@RequestMapping(value = "/bussAnncemntApplList.do")
+	public ModelAndView bussAnncemntApplList(MemberVO searchVO,HttpServletRequest request) throws Exception {
+//    	System.out.println("bussAnncemntApplList***********************"+searchVO);
+		ModelAndView mav = new ModelAndView("jsonView");
+
+		String bussAnncemntNo = searchVO.getBussAnncemntNo(); 
+    	List<Map<String,String>> data = enterpriseBuyerExpertService.selectBussAnncemntApplList(bussAnncemntNo);
+    	mav.addObject("data",data);
+    	//   	System.out.println("bussAnncemntApplList***********************"+searchVO);
+		return mav;
+	}
+
+	@ResponseBody
+    @RequestMapping(value="/bussAnncemntApplUpdate.do", produces="text/plain;charset=utf-8")
+    public ModelAndView bussAnncemntApplUpdate(@RequestParam(required=false) Map<String, String> map) throws Exception {
+
+		//    	System.out.println("bussAnncemntApplList***********************"+searchVO);
+		ModelAndView mav = new ModelAndView("jsonView");
+		
+		int  returnCode = enterpriseBuyerExpertService.bussAnncemntApplUpdate(map);
+		//mav.addObject("data",data);
+		//   	System.out.println("bussAnncemntApplList***********************"+searchVO);
+		return mav;
+	}
 	
+	@ResponseBody
+	@RequestMapping(value="/bussAnncemntApplDelete.do", produces="text/plain;charset=utf-8")
+	public ModelAndView bussAnncemntApplDelete(@RequestParam(required=false) Map<String, String> map) throws Exception {
+		
+		//    	System.out.println("bussAnncemntApplList***********************"+searchVO);
+		ModelAndView mav = new ModelAndView("jsonView");
+		
+		int  returnCode = enterpriseBuyerExpertService.bussAnncemntApplDelete(map);
+		//mav.addObject("data",data);
+		//   	System.out.println("bussAnncemntApplList***********************"+searchVO);
+		return mav;
+	}
+	
+	  @RequestMapping(value = "/businessManagementDetailFileDownload.do", produces="text/plain;charset=utf-8")
+	  public ModelAndView  businessManagementDetailFileDownload(@RequestParam(required=false) Map<String, String> map, ModelAndView mv,  HttpServletRequest request, HttpServletResponse response) throws Exception {
+		  	MemberVO memberVo = enterpriseBuyerExpertService.businessManagementDetailFileDownload(map);
+		  	//다운로드 할 파일 정보를 불러온다.
+		  	mv.addObject("memberVo",memberVo);
+		  	mv.addObject("response",response);
+			try {
+				UploadFileUtils.fileDownload(mv);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		  	return null;
+	  }
+	  
+		@RequestMapping(value = "/business/businessManagementUpdate.do",  produces="text/plain;charset=utf-8")
+		public ModelAndView businessManagementUpdate(@RequestParam(required=false) Map<String, String> map) throws Exception {
+
+			String bussAnncemntNo = map.get("bussAnncemntNo");
+			ModelAndView mav= new ModelAndView();
+			Map<String,Object> result = enterpriseBuyerExpertService.selectBusinessManagementDetail(bussAnncemntNo);
+			List<Map<String,Object>> files = enterpriseBuyerExpertService.selectBusinessManagementDetailFiles(bussAnncemntNo);
+			
+			MemberVO commonsVo = new MemberVO();
+			commonsVo.setGroupCd("g00023");
+			List<MemberVO> bussDeptCd = memberService.selectCommonsList(commonsVo);	//시업부서 세부전문분야분류 코드표
+
+			mav.addObject("bussDeptCd",bussDeptCd);
+			mav.addObject("result",result);
+			mav.addObject("files",files);
+			mav.setViewName("/view/businessManagementUpdate");
+			return mav;
+		}
 	
 }
 

@@ -1306,23 +1306,11 @@
 	    AND notice_idx = #{noticeIdx}
 		]]>
 	</select>
+
 	<!--  20191121 신승원 공지사항 > 다음글-->
 	<select id="selectNoticeDetailPlus" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
 			/*selectNoticeDetailPlus*/
 			<![CDATA[
-				select a.*
-				from(SELECT  @rownum:=@rownum+1 as pageNum,
-						        	notice_idx 					AS noticeIdx
-									,notice_title 				AS noticeTitle
-									,notice_cont 				AS noticeCont
-									,SUBSTRING_INDEX(org_file_nm, '_', -1)
-																	 AS orgFileNm
-									,date_format(reg_dt, '%Y.%m.%d') 
-																	AS regDt
-				FROM ta_notice
-				WHERE 1=1 and (SELECT @ROWNUM:=0)=0
-			ORDER BY notice_idx ASC) a
-				where a.pageNum = #{pageNum}+1				
 			]]>
 	</select>
 	
@@ -1331,17 +1319,6 @@
 	<select id="selectNoticeDetailMinus" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
 			/*selectNoticeDetailMinus*/
 			<![CDATA[
-				select a.*
-				from(SELECT  @rownum:=@rownum+1 as pageNum,
-					notice_idx as noticeIdx,
-					notice_title as noticeTitle,
-				    notice_cont as noticeCont,
-				    org_file_nm as orgFileNm,
-				    date_format(reg_dt, '%Y.%m.%d') as regDt
-				FROM ta_notice 
-				WHERE 1=1 and (SELECT @ROWNUM:=0)=0
-			ORDER BY notice_idx ASC) a
-				where a.pageNum = #{pageNum}-1
 			]]>
 	</select>
 	

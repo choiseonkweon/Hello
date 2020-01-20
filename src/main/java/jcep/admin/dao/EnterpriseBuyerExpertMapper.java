@@ -1,7 +1,9 @@
 package jcep.admin.dao;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import egovframework.rte.psl.dataaccess.mapper.Mapper;
 import jcep.admin.model.EnterpriseBuyerExpertVO;
@@ -231,7 +233,7 @@ public interface EnterpriseBuyerExpertMapper {
 	 * @return 바이어 목록
 	 * @exception Exception
 	 */
-	public ArrayList<MemberVO> selectBusinessManagementList(MemberVO params) throws Exception;
+	public ArrayList<Map<String,Object>> selectBusinessManagementList(MemberVO params) throws Exception;
 
 	/**
 	 * 사업공고정보 목록을 조회한다.
@@ -330,14 +332,6 @@ public interface EnterpriseBuyerExpertMapper {
 	
 
 
-	/**
-	 * 관리자 사업관리 정보를 등록한다.
-	 * @param params - 수정할 정보가 담긴 MemberVO
-	 * @return Integer형
-	 * @exception Exception
-	 */
-	public Integer businessManagementRegisterInsertFile(MemberVO params) throws Exception;
-
 
 
 	/**
@@ -348,7 +342,17 @@ public interface EnterpriseBuyerExpertMapper {
 	 */
 	public Integer businessManagementRegisterInsertApplicStCd(MemberVO params) throws Exception;
 	
+	public int businessManagementRegisterInsertFile(HashMap<String,String> hMap)throws Exception;
 	
+	public Map<String,Object> selectBusinessManagementDetail(String parmas)throws Exception;
+
+	public List<Map<String,Object>> selectBusinessManagementDetailFiles(String parmas)throws Exception;
+
+	public List<Map<String,String>> selectBussAnncemntApplList(String parmas)throws Exception;
 	
-	
+	public int bussAnncemntApplUpdate(Map<String,String> params)throws Exception;
+
+	public int bussAnncemntApplDelete(Map<String,String> params)throws Exception;
+
+	public MemberVO businessManagementDetailFileDownload(Map<String,String> params)throws Exception;
 }

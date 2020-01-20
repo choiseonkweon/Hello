@@ -100,8 +100,9 @@
 	<bean id="resourceImgPath" class="java.lang.String">
 	    <constructor-arg value="C:\JCEP_SYSTEM\JCEP_SYSTEM\target\upload\resourceImg"/>
 	</bean>
-	<bean id="noticeFilePath" class="java.lang.String">
-	    <constructor-arg value="C:\JCEP_SYSTEM\JCEP_SYSTEM\target\upload\noticeFile"/>
+	<bean id="noticeFilePath" class="java.lang.String">  
+<!--	    <constructor-arg value="C:\JCEP_SYSTEM\JCEP_SYSTEM\target\upload\noticeFile"/>-->
+	    <constructor-arg value="C:/JCEP_SYSTEM/target/upload/noticeFile"/>
 	</bean>
 	
 	<!-- fileViewResolver(download) -->

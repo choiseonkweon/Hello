@@ -357,7 +357,7 @@
 				</choose>
 				</if>
 		<![CDATA[
-          Order BY a.regDt ASC
+          Order BY a.regDt DESC
               LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
 ]]>
 	</select>
@@ -616,52 +616,57 @@ SELECT  count(b.memberId) 									AS totcnt
 	
 	<!-- 신승원 20191219 사업관리 글목록 조회	 -->
 	<!-- 최선권 20200115 사업관리 글목록 조회 수정	 -->
-	<select id="selectBusinessManagementList" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
+	<select id="selectBusinessManagementList" parameterType="jcep.admin.model.MemberVO" resultType="java.util.Map">
 			/*selectBusinessManagementList*/
 				<![CDATA[
-				SELECT 	a.buss_anncemnt_no	AS	bussAnncemntNo
-						    ,a.buss_anncemnt_nm	AS	bussAnncemntNm
+				SELECT a.*
+                FROM (SELECT buss_anncemnt_no	AS	bussAnncemntNo
+						    ,buss_anncemnt_nm	AS	bussAnncemntNm
+						    ,(CASE WHEN DATE_FORMAT(now(),'%Y-%m-%d') BETWEEN buss_fr_dt AND buss_to_dt THEN '000002'
+			                          WHEN DATE_FORMAT(now(),'%Y-%m-%d') > buss_to_dt THEN '000001'
+			                          ELSE '000003' END
+		                    ) 								AS anncemntStCd
 					 	    ,(SELECT common_nm
 						        FROM ta_common
 						      WHERE 1=1
 				                  AND use_flag = 'Y'
 							      AND group_cd = 'G00046'
-				                  AND common_cd = a.anncemnt_st_cd
-				             ) 								AS anncemntStCd
-						     ,a.reg_id					AS	regId
-						     ,date_format(a.reg_dt, '%Y-%m-%d') AS regDt
-				             ,a.buss_fr_dt
-				             ,a.buss_to_dt
+				                  AND common_cd = anncemntStCd
+				             ) 								AS result
+						     ,reg_id					AS	regId
+						     ,Date_format(reg_dt, '%Y-%m-%d') AS regDt
+				             ,buss_fr_dt as bussFrDt
+				             ,buss_to_dt as bussToDt
 				             ,(SELECT count(*)
 						         FROM tb_buss_anncemnt_appl b
 						       WHERE 1=1
-							       AND b.buss_anncemnt_no = a.buss_anncemnt_no
+							       AND b.buss_anncemnt_no = bussAnncemntNo
 						           AND (b.applic_st_cd = '000001' or b.applic_st_cd = '000002')
 				              ) 							as applicStCd
-				   FROM  tb_business_announcement a
+				   FROM  tb_business_announcement) a
 				 WHERE	1=1
 				]]>
 				<if test='searchText != null and searchText != "" '>
 					<choose>
-						<when test='searchType eq ""'>AND (a.buss_anncemnt_no LIKE CONCAT('%',#{searchText},'%') OR a.buss_anncemnt_nm LIKE CONCAT('%',#{searchText},'%')) </when>
-						<when test='searchType eq 1'>AND a.buss_anncemnt_nm LIKE CONCAT('%',#{searchText},'%') </when>
-						<when test='searchType eq 2'>AND a.buss_anncemnt_no LIKE CONCAT('%',#{searchText},'%') </when>
+						<when test='searchType eq ""'>AND (a.bussAnncemntNo LIKE CONCAT('%',#{searchText},'%') OR a.bussAnncemntNm LIKE CONCAT('%',#{searchText},'%')) </when>
+						<when test='searchType eq 1'>AND a.bussAnncemnNm LIKE CONCAT('%',#{searchText},'%') </when>
+						<when test='searchType eq 2'>AND a.bussAnncemntNo LIKE CONCAT('%',#{searchText},'%') </when>
 					</choose>
 				</if>
 				 <if test='startDate != null and startDate != "" and endDate != null and endDate != ""'>
-				    AND  (a.buss_fr_dt BETWEEN date_format(#{startDate}, '%Y-%m-%d') AND date_format(#{endDate}, '%Y-%m-%d') OR
-				            a.buss_to_dt BETWEEN date_format(#{startDate}, '%Y-%m-%d') AND date_format(#{endDate}, '%Y-%m-%d')
+				    AND  (a.bussFrDt BETWEEN date_format(#{startDate}, '%Y-%m-%d') AND date_format(#{endDate}, '%Y-%m-%d') OR
+				            a.bussToDt BETWEEN date_format(#{startDate}, '%Y-%m-%d') AND date_format(#{endDate}, '%Y-%m-%d')
 				            )
 				</if>
 				<if test='searchSelect != null and searchSelect != ""'>
 					<choose>
-						<when test='searchSelect eq 1'>AND a.anncemnt_st_cd = '000001' </when>
-						<when test='searchSelect eq 2'>AND a.anncemnt_st_cd = '000002' </when>
-						<when test='searchSelect eq 3'>AND a.anncemnt_st_cd = '000003' </when>
+						<when test='searchSelect eq 1'>AND a.anncemntStCd = '000001' </when>
+						<when test='searchSelect eq 2'>AND a.anncemntStCd = '000002' </when>
+						<when test='searchSelect eq 3'>AND a.anncemntStCd = '000003' </when>
 					</choose>
 				</if>
 				<![CDATA[
-					ORDER BY a.buss_anncemnt_no DESC
+					ORDER BY a.regDt DESC
 					LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
 				]]>
 	</select>
@@ -671,31 +676,54 @@ SELECT  count(b.memberId) 									AS totcnt
 	<select id="selectBusinessManagementListTotCnt" parameterType="jcep.admin.model.MemberVO" resultType="int">
 			/*selectBusinessManagementListTotCnt*/
 				<![CDATA[
-					SELECT	COUNT(*) as totcnt
-					  FROM	tb_business_announcement
-					WHERE	1= 1
+				SELECT count(a.bussAnncemntNo)
+                FROM (SELECT buss_anncemnt_no	AS	bussAnncemntNo
+						    ,buss_anncemnt_nm	AS	bussAnncemntNm
+						    ,(CASE WHEN DATE_FORMAT(now(),'%Y-%m-%d') BETWEEN buss_fr_dt AND buss_to_dt THEN '000002'
+			                          WHEN DATE_FORMAT(now(),'%Y-%m-%d') > buss_to_dt THEN '000003'
+			                          ELSE '000001' END
+		                    ) 								AS anncemntStCd
+					 	    ,(SELECT common_nm
+						        FROM ta_common
+						      WHERE 1=1
+				                  AND use_flag = 'Y'
+							      AND group_cd = 'G00046'
+				                  AND common_cd = anncemntStCd
+				             ) 								AS result
+						     ,reg_id					AS	regId
+						     ,Date_format(reg_dt, '%Y-%m-%d') AS regDt
+				             ,buss_fr_dt as bussFrDt
+				             ,buss_to_dt as bussToDt
+				             ,(SELECT count(*)
+						         FROM tb_buss_anncemnt_appl b
+						       WHERE 1=1
+							       AND b.buss_anncemnt_no = bussAnncemntNo
+						           AND (b.applic_st_cd = '000001' or b.applic_st_cd = '000002')
+				              ) 							as applicStCd
+				   FROM  tb_business_announcement) a
+				 WHERE	1=1
 				]]>
 				<if test='searchText != null and searchText != "" '>
 					<choose>
-						<when test='searchType eq ""'>AND (buss_anncemnt_no LIKE CONCAT('%',#{searchText},'%') OR buss_anncemnt_nm LIKE CONCAT('%',#{searchText},'%')) </when>
-						<when test='searchType eq 1'>AND buss_anncemnt_nm LIKE CONCAT('%',#{searchText},'%') </when>
-						<when test='searchType eq 2'>AND buss_anncemnt_no LIKE CONCAT('%',#{searchText},'%') </when>
+						<when test='searchType eq ""'>AND (a.bussAnncemntNo LIKE CONCAT('%',#{searchText},'%') OR a.bussAnncemntNm LIKE CONCAT('%',#{searchText},'%')) </when>
+						<when test='searchType eq 1'>AND a.bussAnncemnNm LIKE CONCAT('%',#{searchText},'%') </when>
+						<when test='searchType eq 2'>AND a.bussAnncemntNo LIKE CONCAT('%',#{searchText},'%') </when>
 					</choose>
 				</if>
 				 <if test='startDate != null and startDate != "" and endDate != null and endDate != ""'>
-				    AND  (buss_fr_dt BETWEEN date_format(#{startDate}, '%Y-%m-%d') AND date_format(#{endDate}, '%Y-%m-%d') OR
-				            buss_to_dt BETWEEN date_format(#{startDate}, '%Y-%m-%d') AND date_format(#{endDate}, '%Y-%m-%d')
+				    AND  (a.bussFrDt BETWEEN date_format(#{startDate}, '%Y-%m-%d') AND date_format(#{endDate}, '%Y-%m-%d') OR
+				            a.bussToDt BETWEEN date_format(#{startDate}, '%Y-%m-%d') AND date_format(#{endDate}, '%Y-%m-%d')
 				            )
 				</if>
 				<if test='searchSelect != null and searchSelect != ""'>
 					<choose>
-						<when test='searchSelect eq 1'>AND anncemnt_st_cd = '000001' </when>
-						<when test='searchSelect eq 2'>AND anncemnt_st_cd = '000002' </when>
-						<when test='searchSelect eq 3'>AND .anncemnt_st_cd = '000003' </when>
+						<when test='searchSelect eq 1'>AND a.anncemntStCd = '000001' </when>
+						<when test='searchSelect eq 2'>AND a.anncemntStCd = '000002' </when>
+						<when test='searchSelect eq 3'>AND a.anncemntStCd = '000003' </when>
 					</choose>
 				</if>
 				<![CDATA[
-					ORDER BY buss_anncemnt_no DESC
+					ORDER BY a.regDt DESC
 				]]>
 	</select>
 	
@@ -858,32 +886,36 @@ SELECT  count(b.memberId) 									AS totcnt
 	
 	<insert id="businessManagementRegisterInsert" parameterType="jcep.admin.model.MemberVO">
 		/*businessManagementRegisterInsert*/
-		INSERT INTO tb_business_announcement
-		(
-			buss_anncemnt_nm,
-			buss_fr_dt,
-			buss_to_dt,
-			buss_cost_amt,
-			buss_dept_cd,
-			buss_anncemnt_no,
-			original_url,
-			buss_cont,
-			reg_dt,
-			reg_id
-		)
-		values
-		(
-			#{bussAnncemntNm},
-			#{bussFrDt},
-			#{bussToDt},
-			#{bussCostAmt},
-			#{bussDeptCd},
-			#{bussAnncemntNo},
-			#{originalUrl},
-			#{bussCont},
-			DATE_FORMAT(now(),'%Y%m%d'),
-			'admin'
-		)
+		<![CDATA[
+			INSERT INTO tb_business_announcement(
+												buss_anncemnt_no
+			                                    ,buss_anncemnt_nm
+			                                    ,buss_fr_dt
+			                                    ,buss_to_dt
+			                                    ,buss_cost_amt
+			                                    ,buss_dept_cd
+			                                    ,original_url
+			                                    ,buss_cont
+			                                    ,buss_divi_cd
+			                                    ,anncemnt_st_cd
+			                                    ,reg_dt
+			                                    ,reg_id
+												)
+										  VALUES(
+												#{bussAnncemntNo}
+			                                    ,#{bussAnncemntNm}
+			                                    ,#{bussFrDt}
+			                                    ,#{bussToDt}
+			                                    ,#{bussCostAmt}
+			                                    ,#{bussDeptCd}
+			                                    ,#{originalUrl}
+			                                    ,#{bussCont}
+			                                    ,#{bussDiviCd}
+			                                    ,''
+			                                    ,sysdate()
+			                                    ,'admin'
+			                                    )
+ 			]]>
 		
 		</insert>
 	
@@ -902,13 +934,13 @@ SELECT  count(b.memberId) 									AS totcnt
 		)
 		values
 		(
-			#{bussAnncemntNo},
-			(select concat('N',IFNULL(LPAD(MAX(SUBSTRING(attch_file_no,2,LENGTH(attch_file_no))) + 1,4,'0'),'0000')) from tb_buss_attch_file a),
-			#{fileCourse},
-			#{orgFileNm},
-			#{orgFileNm},
-			DATE_FORMAT(now(),'%Y%m%d'),
-			'admin'
+			#{bussAnncemntNo}
+			,#{attchFileNo}
+			,#{fileCourse}
+			,#{orgFileNm}
+			,#{orgFileNm}
+			,sysdate()
+			,'관리자'
 		)
 		
 		]]>
@@ -940,11 +972,113 @@ SELECT  count(b.memberId) 									AS totcnt
 		)
 		
 		]]>
-	
-	
 	</insert>
 	
+	<select id="selectBusinessManagementDetail" parameterType="String" resultType="java.util.Map">
+		/*selectBusinessManagementDetail*/
+		<![CDATA[
+			SELECT	buss_anncemnt_no		AS	bussAnncemntNo
+					 	,buss_anncemnt_nm		AS	bussAnncemntNm
+						,buss_fr_dt					AS	bussFrDt
+						,buss_to_dt					AS	bussToDt
+						,buss_cost_amt			AS	bussCostAmt
+						,buss_dept_cd				AS	bussDeptCd
+						,original_url					AS	originalUrl
+						,buss_cont					AS	bussCont
+						,buss_divi_cd				AS	bussDiviCd
+						,Date_format(reg_dt, '%Y-%m-%d')
+														AS	regDt
+						,reg_id						AS	regId
+			   FROM	tb_business_announcement
+		     WHERE	1=1
+		         AND	buss_anncemnt_no = #{bussAnncemntNo}
+		]]>
+	</select>
+	<select id="selectBusinessManagementDetailFiles" parameterType="String" resultType="java.util.Map">
+		/*selectBusinessManagementDetailFiles*/
+		<![CDATA[
+			SELECT	buss_anncemnt_no		AS	bussAnncemntNo
+						,attch_file_no				AS	attchFileNo
+						,file_course					AS	fileCourse
+						,org_file_nm				AS	orgFileNm
+						,upload_file_nm			AS	uploadFileNm
+						,reg_dt						AS	regDt
+						,reg_id						AS	regId
+			  FROM 	tb_buss_attch_file
+		     WHERE 	1=1
+		        AND 	buss_anncemnt_no = #{bussAnncemntNo}
+			]]>
+	</select>
+
+	<select id="selectBussAnncemntApplList" parameterType="String" resultType="java.util.Map">
+		/*selectBussAnncemntApplList*/
+		<![CDATA[
+			SELECT	a.buss_anncemnt_no	AS	bussAnncemntNo
+						,a.member_id		AS	memberId        
+						,b.entpr_nm		AS entprNm
+						,a.applicat_dt		AS	applicatDt
+						,(SELECT	common_nm
+						    FROM		ta_common
+						  WHERE		1=1
+						      AND		use_flag = 'Y'
+						      AND		group_cd = 'G00027'
+						      AND		common_cd = a.applic_st_cd
+						 )						AS applicStCd
+						,(CASE WHEN a.applic_st_cd ='000001' THEN 'N'
+							      WHEN a.applic_st_cd ='000002' THEN 'N'
+				                   ELSE 'Y' END
+			 			)						AS applicSt
+						,a.approval_dt		AS	approvalDt
+						,a.remark			AS	remark
+						,a.reg_dt			AS	regDt
+						,a.reg_id				AS	regId
+				        ,c.org_file_nm		AS	orgFileNm
+        				,c.attch_file_no	AS	attchFileNo
+			  FROM 	tb_enterprise b
+						,tb_buss_anncemnt_appl a
+LEFT OUTER JOIN	tb_buss_anncemnt_attch_file c 	ON		a.buss_anncemnt_no = c.buss_anncemnt_no
+																   AND	a.member_id = c.member_id
+			  WHERE 1=1
+				 AND a.member_id = b.member_id
+		         AND 	a.buss_anncemnt_no = #{bussAnncemntNo}
+			]]>
+	</select>
 	
+	<update id="bussAnncemntApplUpdate" parameterType="java.util.Map">
+		/*bussAnncemntApplUpdate*/
+		<![CDATA[
+			UPDATE tb_buss_anncemnt_appl
+   				 SET applic_st_cd = #{applicStCd}
+                       ,remark = #{remark}
+             WHERE 1=1
+                 AND member_id = #{memberId}
+                 AND buss_anncemnt_no = #{bussAnncemntNo}
+		]]>
+	</update>
+
+	<delete id="bussAnncemntApplDelete" parameterType="java.util.Map">
+		/*bussAnncemntApplUpdate*/
+		<![CDATA[
+			DELETE tb_buss_anncemnt_appl
+             WHERE 1=1
+                 AND member_id = #{memberId}
+                 AND buss_anncemnt_no = #{bussAnncemntNo}
+		]]>
+	</delete>
+	<select id="businessManagementDetailFileDownload" parameterType="java.util.Map" resultType="jcep.admin.model.MemberVO">
+		/*businessManagementDetailFileDownload*/
+		<![CDATA[
+		SELECT buss_anncemnt_no	AS bussAnncemntNo
+				   ,member_id				AS memberId
+				   ,attch_file_no			AS attchFileNo
+				   ,file_course				AS fileCourse
+				   ,org_file_nm				AS	orgFileNm
+				   ,upload_file_nm			AS uploadFileNm
+		  FROM tb_buss_anncemnt_attch_file
+		WEHRE 1=1
+		    AND attch_file_no	=#{attchFileNo}
+		]]>
+	</select>
 </mapper>
 
 

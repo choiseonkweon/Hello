@@ -428,14 +428,14 @@ public class OnestopSupportController {
 	     System.out.println("pageNum :  " + pageNum);
 	     
 	     MemberVO detail = memberService.selectNoticeDetail(searchVO);         //해당페이지의 정보
-	     MemberVO detail1 = memberService.selectNoticeDetailPlus(searchVO);      //다음글에 대한 정보
-	     MemberVO detail2 = memberService.selectNoticeDetailMinus(searchVO);   //이전글에 대한 정보
+//	     MemberVO detail1 = memberService.selectNoticeDetailPlus(searchVO);      //다음글에 대한 정보
+//	     MemberVO detail2 = memberService.selectNoticeDetailMinus(searchVO);   //이전글에 대한 정보
 	  
 	     mv.addObject("paginationInfo", paginationInfo);
 	     mv.addObject("viewType", "modify");
 	     mv.addObject("detail", detail);
-	     mv.addObject("detail1", detail1);
-	     mv.addObject("detail2", detail2);
+//	     mv.addObject("detail1", detail1);
+//	     mv.addObject("detail2", detail2);
 	     mv.addObject("pageNum", pageNum);
 
 	     System.out.println("detail :: " + detail);

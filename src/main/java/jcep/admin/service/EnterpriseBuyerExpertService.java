@@ -7,6 +7,7 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -1221,7 +1222,7 @@ public class EnterpriseBuyerExpertService {
 	 * @return 바이어 목록
 	 * @exception Exception
 	 */
-	public ArrayList<MemberVO> selectBusinessManagementList(MemberVO params) throws Exception {
+	public ArrayList<Map<String,Object>> selectBusinessManagementList(MemberVO params) throws Exception {
     	return enterpriseBuyerExpertMapper.selectBusinessManagementList(params);
     }
 	
@@ -1336,16 +1337,6 @@ public class EnterpriseBuyerExpertService {
 	}
 	
 
-	/**
-	 * 관리자 사업관리 정보를 등록한다.
-	 * @param params - 수정할 정보가 담긴 MemberVO
-	 * @return void형
-	 * @exception Exception
-	 */
-	public Integer businessManagementRegisterInsertFile(MemberVO params) throws Exception{
-		 return enterpriseBuyerExpertMapper.businessManagementRegisterInsertFile(params);
-	}
-
 
 	/**
 	 * 관리자 사업관리 정보를 등록한다.
@@ -1357,7 +1348,32 @@ public class EnterpriseBuyerExpertService {
 		 return enterpriseBuyerExpertMapper.businessManagementRegisterInsertApplicStCd(params);
 	}
 	
+	public int businessManagementRegisterInsertFile(HashMap<String,String> hMap)throws Exception{
+		 return enterpriseBuyerExpertMapper.businessManagementRegisterInsertFile(hMap);
+	}
 	
+	public Map<String,Object> selectBusinessManagementDetail(String parmas)throws Exception{
+		return enterpriseBuyerExpertMapper.selectBusinessManagementDetail(parmas);
+	}
+	public List<Map<String,Object>> selectBusinessManagementDetailFiles(String parmas)throws Exception{
+		return enterpriseBuyerExpertMapper.selectBusinessManagementDetailFiles(parmas);
+	}
+	
+	public List<Map<String,String>> selectBussAnncemntApplList(String parmas)throws Exception{
+		return enterpriseBuyerExpertMapper.selectBussAnncemntApplList(parmas);
+	}
+	
+	public int bussAnncemntApplUpdate(Map<String,String> params)throws Exception{
+		return enterpriseBuyerExpertMapper.bussAnncemntApplUpdate(params);
+	}
+	
+	public int bussAnncemntApplDelete(Map<String,String> params)throws Exception{
+		return enterpriseBuyerExpertMapper.bussAnncemntApplDelete(params);
+	}
+	
+	public MemberVO businessManagementDetailFileDownload(Map<String,String> params)throws Exception{
+		return enterpriseBuyerExpertMapper.businessManagementDetailFileDownload(params);
+	}
 	
 	
 	
