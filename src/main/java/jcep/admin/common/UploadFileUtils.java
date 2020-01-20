@@ -380,26 +380,27 @@ public class UploadFileUtils {
 	
 	
 	//멀티파일 업로드
-	public static List<Map<String, Object>> getFileUpload(HttpServletRequest request,String filePath) throws Exception{
-    	MultipartHttpServletRequest mRequest = (MultipartHttpServletRequest) request;
+	public static List<Map<String, Object>> getFileUpload(MultipartHttpServletRequest request,String filePath) throws Exception{
     	
-    	Iterator<String> iterator = mRequest.getFileNames();
+    	Iterator<String> iterator = request.getFileNames();
 		
 		File path=new File(filePath);
         if(!path.exists()) {
         	path.mkdir();
         }
-		Map<String, Object> fileMap = new HashMap<String, Object>();
 		List<Map<String, Object>> FileMapList = new ArrayList<Map<String,Object>>();
         
     	while(iterator.hasNext()){
-    		MultipartFile fileName = mRequest.getFile(iterator.next());
-    		String fileOriginName = Long.toString(System.currentTimeMillis()) + "_" + fileName.getOriginalFilename();
-    		File file = new File(path,fileOriginName);
-    		fileName.transferTo(file);
-    		fileMap.put("fileCourse",file.getAbsolutePath());               //경로
-    		fileMap.put("orgFileNm",fileOriginName);               			//파일명
-    		FileMapList.add(fileMap);
+    		Map<String, Object> fileMap = new HashMap<String, Object>();
+    		MultipartFile fileName = request.getFile(iterator.next());
+    		if(!"".equals(fileName.getOriginalFilename())) {
+    			String fileOriginName = Long.toString(System.currentTimeMillis()) + "_" + fileName.getOriginalFilename();
+    			File file = new File(path,fileOriginName);
+    			fileName.transferTo(file);
+    			fileMap.put("fileCourse",file.getAbsolutePath());               //경로
+    			fileMap.put("orgFileNm",fileOriginName);               			//파일명
+    			FileMapList.add(fileMap);
+    		}
     		
     	}        
 		

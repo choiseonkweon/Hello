@@ -68,7 +68,7 @@
 			#{compAddr2},
 			#{compApplNm},
 			#{compTelNo},
-			#{compMail1},
+			concat(#{compMail1},'@',#{compMail1}),
 			#{usePersNum},
 			#{useObj},
 			date_format(#{useFrDt}, '%Y%m%d'),
@@ -86,7 +86,7 @@
 	<select id="selectResourceUseList" parameterType="jcep.front.model.FacilityResourceFrontVO" resultType="jcep.front.model.FacilityResourceFrontVO">
 			/* selectResourceUseList */
 			SELECT
-				resour_faci_id AS resoureId,
+				resour_faci_id AS resourceId,
 				resource_nm AS resourceNm,
 				resource_img AS resourceImg,
 				resource_st_cd AS resourceStCd,

@@ -24,7 +24,7 @@ public class FacilityResourceVO extends PagingVO {
 	private String facilityId,facilityNm,facilityLoc,facilityScale,facilityCost,facilityEquip,facilityImg,facilitySt,facilityRegDt,facilityRegId,facilityMngDeptCd,facilityFuncCd
 	                    ,resourceId,resourceNm,resourceImg,resourceSt,resourceRegDt,resourceRegId,resourceMngDeptCd
 	                    ,appliNo,resourFaciId,memberId,resourFaciDiviCd,compNm,useFrDt,useFrTm,useToDt,useToTm,applicStCd
-	                    ,useObj,compMail,compTelNo,compApplNm,compAddr1,compAddr2
+	                    ,useObj,compMail,compTelNo,compApplNm,compAddr1,compAddr2,searchFromDate,searchToDate
 	;
 
 	private int usePersNum;
@@ -277,6 +277,18 @@ public class FacilityResourceVO extends PagingVO {
 	}
 	public void setCompAddr2(String compAddr2) {
 		this.compAddr2 = compAddr2;
+	}
+	public String getSearchFromDate() {
+		return searchFromDate;
+	}
+	public void setSearchFromDate(String serachFromDate) {
+		this.searchFromDate = serachFromDate;
+	}
+	public String getSearchToDate() {
+		return searchToDate;
+	}
+	public void setSearchToDate(String searchToDate) {
+		this.searchToDate = searchToDate;
 	}
 
 }

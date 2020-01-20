@@ -122,32 +122,32 @@
 				</colgroup>
 				<tr>
 					<th>업체(기관)명</th>
-					<td><input type="text" id="compNm" name="compNm" style="width: 100%;" /></td>
+					<td><input type="text" id="compNm" name="compNm" style="width: 100%;" maxlength="30"/></td>
 				</tr>
 				<tr>
 					<th>주소</th>
 					<td>
 						<input class="extraRoadAddr" id="compAddr1" name="compAddr1"  readonly="readonly" onclick="javascript:openDaumPostcode()" value="" type="text" style="width: 275px; margin-right: 4px;" />
-						<button class="txtbtn" style="width: 100px;"  onclick="javascript:openDaumPostcode()">우편번호검색</button>
+						<a class="txtbtn" style="width: 100px;"  onclick="javascript:openDaumPostcode()">우편번호검색</a>
 						<input type="text" id="compAddr2" name="compAddr2" style="width: 275px;  margin-right: 4px;" />
 					</td>
 				</tr>
 				<tr>
 					<th>담당자성명</th>
 					<td>
-						<input type="text" id="compApplNm" name="compApplNm" value="" style="width: 150px;" />
+						<input type="text" id="compApplNm" name="compApplNm" value="" style="width: 150px;" maxlength="10"/>
 					</td>
 				</tr>
 				<tr>
 					<th>연락처</th>
 					<td>
-						<input type="text" id="compTelNo" name="compTelNo" value="" style="width: 150px;" />
+						<input type="text" id="compTelNo" name="compTelNo" value="" onkeydown="javascript:return onlyNumber(event)" maxlength="12"  style="width: 150px;" />
 					</td>
 				</tr>
 				<tr>
 					<th>이메일</th>
 					<td>
-						<input type="text" id="compMail1" name="compMail1" value="" style="width: 120px;" />
+						<input type="text" id="compMail1" name="compMail1" value="" style="width: 120px;" maxlength="30"/>
 						<em>@</em>
 						<input type="text" id="compMail2" name="compMail2" value="" style="width: 120px;" />
 						<select id="emailSelect" name="emailSelect" onchange="changeEmail()" style="width: 120px">
@@ -166,7 +166,7 @@
 				<tr>
 					<th>인원수</th>
 					<td>
-						<input type="text" id="usePersNum" name="usePersNum" value="" style="width: 100px;" />
+						<input type="text" id="usePersNum" name="usePersNum" value="" onkeydown="javascript:return onlyNumber(event)" maxlength="3"  style="width: 100px;" />
 					</td>
 				</tr>
 			</table>
@@ -260,7 +260,8 @@
 							for(var i=0;i < rDataLength;i++){
 								document.insertFrm.facilityNm.options[i+1] = new Option(rData[i].resourceNm,rData[i].resourceId);
 							}
-							$("#resourcePop").show(0);
+							resetResrv();
+							$("#resourcePop").show();
 						},  
 					    error:function(request,status,error){ //ajax 오류인경우  
 				            alert("작업중 에러가 발생했습니다.");      
@@ -402,6 +403,11 @@
 	  	}				
 	
 		
+	  	function resetResrv(){
+	  		$("#insertFrm input").val('');
+	  		$("#resourFaciDiviCd").val('R');
+	  		
+	  	}	  	
     </script>
 </body>
 </html>

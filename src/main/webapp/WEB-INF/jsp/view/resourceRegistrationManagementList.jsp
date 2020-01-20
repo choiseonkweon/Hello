@@ -46,7 +46,7 @@
 											<th style="text-align:center;background:#eee;vertical-align:middle;">자원명</th>
 											<td>
 												<input type="text" name=searchText id="searchText" class="input-sm not-kor" style="width:250px;" value="${searchVO.searchText}" onkeydown="javascript:enterKey();">
-											<th style="text-align:center;background:#eee;vertical-align:middle;">관리부서</th>
+											<th style="text-align:center;background:#eee;vertical-align:middle;">상태</th>
 											<td>
 												<select name="searchType" id="searchType" class="select" style="width:150px; height: 31.5px;">
 													<option value="">전체</option>
@@ -90,7 +90,7 @@
 											<c:forEach var="result" items="${resultList}" varStatus="status">
 												<tr>
 													<td style="vertical-align: middle;"><c:out value="${paginationInfo.totalRecordCount+1 - ((searchVO.pageIndex-1) * searchVO.pageSize + status.count)}"/></td>
-													<td style="vertical-align: middle;"><img src="<c:out value="${result.resourceImg}"/>"  width="177" height="125" /></td>
+													<td style="vertical-align: middle;"><img src="${pageContext.request.contextPath }<spring:message code="file.resourceImgPath"/><c:out value="${result.resourceImg}"/>"  width="177" height="125" /></td>
 													<td style="vertical-align: middle;" >
 														<a href="javascript:goPopView('${result.resourceId}');">
 															<c:out value="${result.resourceNm}"/>
@@ -136,6 +136,7 @@
 									</div>
 									<form id="insertFrm" name="insertFrm" action="#" method="POST" enctype="multipart/form-data">
 									<input type="hidden" id="resourceId" name="resourceId" value="" />
+									<input type="hidden" id="resourceImgPath" name="resourceImgPath" value="<spring:message code="file.resourceImgPath" />" />
 									<table class="table table-bordered table-striped" style="margin-bottom:0px;width:98%;margin-left:1%;margin-top:10px;">
 										<colgroup>
 											<col width="20%">
@@ -144,10 +145,12 @@
 										<tbody>
 												<tr>
 													<th style="text-align:center;background:#eee;vertical-align:middle;">썸네일 *</th>
-													<td>
-														<input type="file" name="resourceImgFile" id="resourceImgFile" onchange="getThumbnailPrivew(this,$('#image'))"><br>
-														<input type="hidden" id="chkImg" name="chkImg" value="" />
-														<div id='image'></div>
+													<td id="file">
+														  	
+															<input type="file" name="resourceImgFile" id="resourceImgFile" onchange="getThumbnailPrivew(this,$('#image'))"><br>
+															<input type="hidden" id="chkImg" name="chkImg" value="" />
+															<div id='image'></div>
+
 													</td>
 												</tr>		
 												<tr>
@@ -185,7 +188,7 @@
 						</div>	
 						<footer>
 						<div class="modal-footer" style="align-items: center;">
-					        <button type="button" class="btn btn-primary" onclick="resoureSave();">저장</button>
+					        <button type="button" class="btn btn-primary" onclick="resourceSave();">저장</button>
 			            </div>
 						</footer>
 				</div><!-- /.modal-content -->
@@ -202,12 +205,20 @@
 	</div>
 	<!-- END MAIN PANEL -->
 	
-	<script type="text/javaScript" >
+	
+</body>
+<script type="text/javascript" >
+	
 		$(document).ready(function () {
 			$("#createBtn").click(function(){
 				goPopView();
 			});
 		});
+		
+		function resrouceFileClick(){
+			$("#resourceImgFile").click();
+			
+		}
 		
         /* pagination 페이지 링크 function */
         function fn_egov_link_page(pageNo){
@@ -257,6 +268,20 @@
 						$("#resourceMngDeptCd").val(resultData.resourceMngDeptCd);
 						$("#resourceSt").val(resultData.resourceSt);
 						
+						
+						$("#file").empty();
+						var resourceImgPath = $("#resourceImgPath").val();
+						
+						
+						var html = "<input type=\'hidden\' id=\'chkImg\' name=\'chkImg\' value=\'Y\' />";
+						      html += "<input type=\'button\' style=\'margin-bottom:15px;\' class=\'fileBtn\' onclick=\'resrouceFileClick();\' value=\'파일 선택\'/> <span id=\'fileName\' class=\'fileBtn\'>"+resultData.resourceImg.replace('/','')+"</span>";
+						      html += "<input type=\'file\' name=\'resourceImgFile\' style=\'display:none;\' id=\'resourceImgFile\' onchange=\'fileChange(this)\'><br>";						
+						      html += "<input type=\'hidden\' id=\'resourceImg\' name=\'resourceImg\' value=\'"+resultData.resourceImg+"\' />";
+						      html += "<div id=\'image\'>";
+						      html += "<img src=\'${pageContext.request.contextPath }"+resourceImgPath+resultData.resourceImg+"\' border=\'0\' alt=\'\' />";
+						      html += "</div>";
+						  $("#file").append(html);      
+						  
 		         		$('#myModal').modal('show');
 					},  
 				    error:function(request,status,error){ //ajax 오류인경우  
@@ -276,13 +301,16 @@
         	
         }
         
-        function resoureSave(){
+        function resourceSave(){
     		if(checkValue()){
+    			var formData = new FormData(document.insertFrm);
     			 $.ajax({
     					type : 'post',
     					url:'/db/resource/resourceSave.do',
     					enctype: 'multipart/form-data',
-    					data: $('#insertFrm').serialize(),
+    					data: formData,
+						contentType : false,
+				        processData : false,      					
     					dataType: 'json',
     					success : function(data) {
     		         		alert("저장이 완료 되었습니다.");
@@ -318,7 +346,14 @@
 			 	});
 			}
 		}
+		
+		function fileChange(html){
+			$("#resourceImgFile").css("display","");
+			$(".fileBtn").css("display","none");
+			getThumbnailPrivew(html,$("#image"));
+			
+		}		
         
     </script>
-</body>
+
 </html>

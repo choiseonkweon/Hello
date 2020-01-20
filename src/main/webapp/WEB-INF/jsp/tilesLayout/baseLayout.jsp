@@ -8,6 +8,9 @@
 <head>
 	<meta charset="UTF-8">
 	<%@ include file="/WEB-INF/include/include-header.jspf" %>
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script> 
+<script type="text/javascript" src="../js/common.js"></script> 	
 </head>
 <body class="wrapper">
 	<nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">        

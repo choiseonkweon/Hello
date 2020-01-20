@@ -2,12 +2,15 @@ package jcep.admin.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import jcep.admin.common.UploadFileUtils;
 import jcep.admin.dao.FacilityResourceMapper;
@@ -31,7 +34,6 @@ import jcep.admin.model.FacilityResourceVO;
 
 	@Autowired
     private FacilityResourceMapper facilityResourceMapper;
-
 
 	/**
 	 * 시설 목록을 조회한다.
@@ -69,13 +71,33 @@ import jcep.admin.model.FacilityResourceVO;
 	 * @return Integer형
 	 * @exception Exception
 	 */
-	public Integer facilityInsert(FacilityResourceVO params,MultipartFile facilityImgFile) throws Exception{
-	//	HashMap<String,String> fileData = UploadFileUtils.OnefileUpload(facilityImgFile,facilityImgPath);
+	public Integer facilityInsert(Map<String, Object> params,MultipartHttpServletRequest mRequest,String filePath) throws Exception{
 		
+		List<Map<String,Object>> fileData = UploadFileUtils.getFileUpload(mRequest,filePath);
+
+		
+		params.put("facilityImg", "/"+ fileData.get(0).get("orgFileNm").toString());
 		
 		 return facilityResourceMapper.facilityInsert(params);
 	}
 	
+	
+	/**
+	 * 시설정보를 수정한다.
+	 * @param params - 수정할 정보가 담긴 FacilityResourceVO
+	 * @return Integer형
+	 * @exception Exception
+	 */
+	public Integer facilityUpdate(Map<String, Object> params,MultipartHttpServletRequest mRequest,String filePath) throws Exception{
+		
+		
+		List<Map<String,Object>> fileData = UploadFileUtils.getFileUpload(mRequest,filePath);
+		if(!fileData.isEmpty()) {
+			params.put("facilityImg", "/"+ fileData.get(0).get("orgFileNm").toString());
+		}
+		
+		 return facilityResourceMapper.facilityUpdate(params);
+	}	
 	/**
 	 * 시설 이미지 업로드
 	 * @param params - 조회할 정보가 담긴 VO
@@ -122,9 +144,29 @@ import jcep.admin.model.FacilityResourceVO;
 	 * @return Integer형
 	 * @exception Exception
 	 */
-	public Integer resourceInsert(FacilityResourceVO params) throws Exception{
+	public Integer resourceInsert(Map<String, Object> params,MultipartHttpServletRequest mRequest,String filePath) throws Exception{
+		List<Map<String,Object>> fileData = UploadFileUtils.getFileUpload(mRequest,filePath);
+
+		
+		params.put("resourceImg", "/"+ fileData.get(0).get("orgFileNm").toString());	
+		
 		return facilityResourceMapper.resourceInsert(params);
 	}
+	
+	/**
+	 * 자원정보를 등록한다.
+	 * @param params - 등록할 정보가 담긴 FacilityResourceVO
+	 * @return Integer형
+	 * @exception Exception
+	 */
+	public Integer resourceUpdate(Map<String, Object> params,MultipartHttpServletRequest mRequest,String filePath) throws Exception{
+		List<Map<String,Object>> fileData = UploadFileUtils.getFileUpload(mRequest,filePath);
+		if(!fileData.isEmpty()) {
+			params.put("resourceImg", "/"+ fileData.get(0).get("orgFileNm").toString());	
+		}
+		
+		return facilityResourceMapper.resourceUpdate(params);
+	}	
 	
 	/**
 	 * 자원 이미지 업로드

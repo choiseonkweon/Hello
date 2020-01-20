@@ -1,6 +1,7 @@
 package jcep.admin.dao;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import egovframework.rte.psl.dataaccess.mapper.Mapper;
 import jcep.admin.model.FacilityResourceVO;
@@ -52,7 +53,15 @@ public interface FacilityResourceMapper {
 	 * @return Integer형
 	 * @exception Exception
 	 */
-	public Integer facilityInsert(FacilityResourceVO params) throws Exception;
+	public Integer facilityInsert(Map<String, Object> params) throws Exception;
+	
+	/**
+	 * 시설정보를 수정한다.
+	 * @param params - 등록할 정보가 담긴 FacilityResourceVO
+	 * @return Integer형
+	 * @exception Exception
+	 */
+	public Integer facilityUpdate(Map<String, Object> params) throws Exception;	
 	
 	/**
 	 * 시설 이미지 업로드
@@ -93,7 +102,15 @@ public interface FacilityResourceMapper {
 	 * @return Integer형
 	 * @exception Exception
 	 */
-	public Integer resourceInsert(FacilityResourceVO params) throws Exception;
+	public Integer resourceInsert(Map<String, Object> params) throws Exception;
+	
+	/**
+	 * 자원정보를 수정한다.
+	 * @param params - 등록할 정보가 담긴 FacilityResourceVO
+	 * @return Integer형
+	 * @exception Exception
+	 */
+	public Integer resourceUpdate(Map<String, Object> params) throws Exception;	
 	
 	/**
 	 * 자원정보를 삭젠한다.

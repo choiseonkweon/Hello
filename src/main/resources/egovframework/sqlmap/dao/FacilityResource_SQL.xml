@@ -46,7 +46,9 @@
 				facility_cost AS facilityCost,
 				facility_equip AS facilityEquip,
 				facility_img AS facilityImg,
-				facility_st_cd AS facilitySt
+				facility_st_cd AS facilitySt,
+				facility_mng_dept_cd  AS facilityMngDeptCd,
+				facility_func_cd AS facilityFuncCd
 			FROM tb_facility
 			WHERE 1=1
 			AND resour_faci_id = #{facilityId}
@@ -81,11 +83,13 @@
 				,facility_equip
 				,facility_img
 				,facility_st_cd
+				,facility_mng_dept_cd
+				,facility_func_cd
 				,reg_dt
 				,reg_id
 			)
 			VALUES(
-				 (select concat('F',IFNULL(LPAD(MAX(SUBSTRING(resour_faci_id,2,LENGTH(resour_faci_id))) + 1,4,'0'),'000000000')) from tb_facility a)
+				 (select concat('F',IFNULL(LPAD(MAX(SUBSTRING(resour_faci_id,2,LENGTH(resour_faci_id))) + 1,9,'0'),'000000000')) from tb_facility a)
 				,#{facilityNm}
 				,#{facilityLoc}
 				,#{facilityScale}
@@ -93,10 +97,27 @@
 				,#{facilityEquip}
 				,#{facilityImg}
 				,#{facilitySt}
+				,#{facilityMngDeptCd}
+				,#{facilityFuncCd}
 				,CURRENT_TIMESTAMP
 				,'admin'<!-- 나중에 로그인한 아이디로 수정예정  -->
 			)
 	</insert>
+
+	<update id="facilityUpdate" parameterType="jcep.admin.model.FacilityResourceVO">
+		UPDATE tb_facility
+		    SET  facility_nm = #{facilityNm}
+		          ,facility_loc = #{facilityLoc}
+		          ,facility_scale = #{facilityScale}
+		          ,facility_cost = #{facilityCost}
+		          ,facility_equip = #{facilityEquip}
+		          ,facility_img = #{facilityImg}
+		          ,facility_st_cd = #{facilitySt}
+		          ,facility_mng_dept_cd = #{facilityMngDeptCd}
+		          ,facility_func_cd = #{facilityFuncCd}
+	    WHERE resour_faci_id = #{facilityId}
+
+	</update>
 
 <!-- 시설 및 자원 관리 > 자원 등록 관리 -->
 	<select id="selectResourceList" parameterType="jcep.admin.model.FacilityResourceVO" resultType="jcep.admin.model.FacilityResourceVO">
@@ -225,6 +246,14 @@
 					</when>
 				</choose>
 			</if> 
+			
+			<if test="searchFromDate != null and searchFromDate != '' and searchToDate != null and searchToDate != ''">
+			       <![CDATA[
+		           AND ((use_to_dt >= replace(#{searchFromDate},'-','') AND use_to_dt <= replace(#{searchToDate},'-',''))
+						    OR (use_fr_dt >= replace(#{searchFromDate},'-','') AND use_fr_dt <= replace(#{searchToDate},'-',''))
+						    OR (use_fr_dt <= replace(#{searchFromDate},'-','') AND use_to_dt >= replace(#{searchToDate},'-','')))
+					]]>	     
+			</if> 			
 			ORDER BY a.appli_no DESC
 			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
 	</select>	
@@ -249,7 +278,14 @@
 						AND	a.comp_nm LIKE CONCAT('%',#{searchText},'%')
 					</when>
 				</choose>
-			</if>  
+			</if> 
+			<if test="searchFromDate != null and searchFromDate != '' and searchToDate != null and searchToDate != ''">
+			       <![CDATA[
+		           AND ((use_to_dt >= replace(#{searchFromDate},'-','') AND use_to_dt <= replace(#{searchToDate},'-',''))
+						    OR (use_fr_dt >= replace(#{searchFromDate},'-','') AND use_fr_dt <= replace(#{searchToDate},'-',''))
+						    OR (use_fr_dt <= replace(#{searchFromDate},'-','') AND use_to_dt >= replace(#{searchToDate},'-','')))
+					]]>	     
+			</if> 				 
 	</select>
 	
 <!-- 시설 및 자원 관리 > 시설신청정보 -->
@@ -261,9 +297,9 @@
 				a.resour_faci_divi_cd AS resourFaciDiviCd,
                 b.facility_nm as facilityNm,
 				a.comp_nm AS compNm,
-                a.use_fr_dt as useFrDt,
+                date_format(a.use_fr_dt,'%Y-%m-%d') as useFrDt,
                 a.use_fr_tm as useFrTm,
-                a.use_to_dt as useToDt,
+                date_format(a.use_to_dt,'%Y-%m-%d') as useToDt,
                 a.use_to_tm as useToTm,
                 a.applic_st_cd as applicStCd,
                 a.use_pers_num as usePersNum,
@@ -320,6 +356,14 @@
 					</when>
 				</choose>
 			</if>
+
+			<if test="searchFromDate != null and searchFromDate != '' and searchToDate != null and searchToDate != ''">
+			       <![CDATA[
+		           AND ((use_to_dt >= replace(#{searchToDate},'-','') AND use_to_dt <= replace(#{searchToDate},'-',''))
+						    OR (use_fr_dt >= replace(#{searchFromDate},'-','') AND use_fr_dt <= replace(#{searchFromDate},'-',''))
+						    OR (use_fr_dt <= replace(#{searchFromDate},'-','') AND use_to_dt >= replace(#{searchToDate},'-','')))
+					]]>	     
+			</if> 	
 		 
 			ORDER BY a.appli_no DESC
 			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
@@ -334,9 +378,9 @@
 				a.resour_faci_divi_cd AS resourFaciDiviCd,
                 b.resource_nm as facilityNm,
 				a.comp_nm AS compNm,
-                a.use_fr_dt as useFrDt,
+				date_format(a.use_fr_dt,'%Y-%m-%d') as useFrDt,
                 a.use_fr_tm as useFrTm,
-                a.use_to_dt as useToDt,
+				date_format(a.use_to_dt,'%Y-%m-%d') as useToDt,
                 a.use_to_tm as useToTm,
                 a.applic_st_cd as applicStCd,
                 a.use_pers_num as usePersNum,
@@ -375,13 +419,33 @@
 					</when>
 				</choose>
 			</if>  
+			<if test="searchFromDate != null and searchFromDate != '' and searchToDate != null and searchToDate != ''">
+			       <![CDATA[
+		           AND ((use_to_dt >= replace(#{searchToDate},'-','') AND use_to_dt <= replace(#{searchToDate},'-',''))
+						    OR (use_fr_dt >= replace(#{searchFromDate},'-','') AND use_fr_dt <= replace(#{searchFromDate},'-',''))
+						    OR (use_fr_dt <= replace(#{searchFromDate},'-','') AND use_to_dt >= replace(#{searchToDate},'-','')))
+					]]>	     
+			</if> 				
 	</select>	
 	
 	<update id="resourcFacilityApplicUpdate" parameterType="jcep.admin.model.FacilityResourceVO">
 			UPDATE tb_resour_faci_applicate
 			SET applic_st_cd = #{applicStCd}
+			      <if test="useFrDt != null and useFrDt != ''">
+			      	,use_fr_dt = date_format(#{useFrDt}, '%Y%m%d')
+			      </if>
+			      <if test="useFrTm != null and useFrTm != ''">
+			      	,use_to_tm = #{useFrTm}
+			      </if>
+			      <if test="useToDt != null and useToDt != ''">
+			      	,use_to_dt = date_format(#{useToDt}, '%Y%m%d')
+			      </if>
+			      <if test="useToTm != null and useToTm != ''">
+			      	,use_to_tm = #{useToTm}
+			      </if>			      			      			      
 			WHERE appli_no = #{appliNo}
 	</update>		
+
 	
 	<delete id="resourceFacilityApplicDelete" parameterType="jcep.admin.model.FacilityResourceVO">
 			delete from tb_resour_faci_applicate where appli_no = #{appliNo}
