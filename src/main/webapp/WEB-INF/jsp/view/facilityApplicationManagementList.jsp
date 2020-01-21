@@ -276,10 +276,8 @@
 
 	<script type="text/javaScript" >
 		$(document).ready(function () {
-			fromDatePicker("searchFromDate","searchToDate");
-			toDatePicker("searchFromDate","searchToDate");					
-			fromDatePicker("useFrDt","useToDt");
-			toDatePicker("useFrDt","useToDt");
+			betweenPicker("searchFromDate","searchToDate");
+			betweenPicker("useFrDt","useToDt");
 		});
 		
         /* pagination 페이지 링크 function */

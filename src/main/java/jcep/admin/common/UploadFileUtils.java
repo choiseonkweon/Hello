@@ -379,7 +379,7 @@ public class UploadFileUtils {
 	}
 	
 	
-
+	//멀티파일 업로드
 	public static List<Map<String, Object>> getFileUpload(MultipartHttpServletRequest request,String filePath) throws Exception{
     	
     	Iterator<String> iterator = request.getFileNames();
@@ -406,5 +406,47 @@ public class UploadFileUtils {
 		
 		return FileMapList;
 	}	
+	
+	//멀티파일 업로드2
+	public static List<Map<String, Object>> MultiFileUpload(MultipartHttpServletRequest multipartRequest,String filePath) throws Exception{
+        List<MultipartFile> fileList = multipartRequest.getFiles("multiFiles[]");
+        List<Map<String, Object>> FileMapList = new ArrayList<Map<String,Object>>();    	
+		
+
+    	File path=new File(filePath);
+		if(!path.exists()) {
+			path.mkdir();
+		}
+
+		for (MultipartFile mpf : fileList) {
+			Map<String, Object> fileMap = new HashMap<String, Object>();
+
+            String originFileName = mpf.getOriginalFilename(); // 원본 파일 명
+            long fileSize = mpf.getSize(); // 파일 사이즈
+
+            
+            String safeFile = Long.toString(System.currentTimeMillis()) + "_" + mpf.getOriginalFilename();
+            File file = new File(path,safeFile);	//파일경로
+            try {
+            	
+            	mpf.transferTo(file);
+				fileMap.put("fileCourse" , file.getAbsolutePath());
+				fileMap.put("orgFileNm" , originFileName);
+				FileMapList.add(fileMap);
+            } catch (IllegalStateException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            
+            
+           
+        }     
+		
+		return FileMapList;
+	}	
+	
    }
 

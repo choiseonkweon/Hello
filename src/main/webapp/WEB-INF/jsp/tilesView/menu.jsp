@@ -53,7 +53,15 @@
 							<a href="/db/business/businessManagementList.do" title="사업 관리"><span class="menu-item-parent">사업 관리</span></a>
 						</li>
 						<li class="">
-							<a href="/db/business/businessOrderStatusList.do" title="사업 관리"><span class="menu-item-parent">사업 수주 현황</span></a>
+							<a href="#" title="사업운영 실적관리" style="font-size: 12px;"><span class="menu-item-parent">사업운영 실적관리</span></a>						
+							<ul>
+								<li>
+									<a href="/db/business/businessSupportBenefitList.do" title="기업지원"><span class="menu-item-parent">기업지원</span></a>
+								</li>
+								<li>
+									<a href="/db/business/businessInfraResourFaciUseResultList.do" title="인프라지원"><span class="menu-item-parent">인프라지원</span></a>
+								</li>								
+							</ul>
 						</li>
 					</ul>	
 				</li>
@@ -111,7 +119,6 @@
 
 	</aside>
 	<!-- END NAVIGATION -->
-	
 	<script type="text/javascript">
 	    $(document).ready(function() {
 	        /* DO NOT REMOVE : GLOBAL FUNCTIONS! */
