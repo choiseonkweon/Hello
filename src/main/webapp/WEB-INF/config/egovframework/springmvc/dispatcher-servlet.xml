@@ -95,10 +95,10 @@
 	
 	<!-- 로컬 파일업로드 디렉토리   -->
 	<bean id="facilityImgPath" class="java.lang.String">
-	    <constructor-arg value="C:\JCEP_SYSTEM\JCEP_SYSTEM\target\upload\facilityImg"/>
+	    <constructor-arg value="C:\JCEP_SYSTEM\JCEP\Hello\src\main\webapp\upload\facilityImg"/>
 	</bean>
 	<bean id="resourceImgPath" class="java.lang.String">
-	    <constructor-arg value="C:\JCEP_SYSTEM\JCEP_SYSTEM\target\upload\resourceImg"/>
+	    <constructor-arg value="C:\JCEP_SYSTEM\JCEP\Hello\src\main\webapp\upload\resourceImg"/>
 	</bean>
 	<bean id="noticeFilePath" class="java.lang.String">
 	    <constructor-arg value="C:\JCEP_SYSTEM\JCEP_SYSTEM\target\upload\noticeFile"/>
