@@ -1,0 +1,486 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jcep.admin.dao.BusinessMapper">
+
+<!-- 사업관리 > 사업운영 실적관리 > 기업지원 > 지원사업수혜실적 -->
+	<select id="selectBusinessSupportBenefitList" parameterType="jcep.admin.model.BusinessVO" resultType="java.util.Map">
+			SELECT 
+					a.buss_anncemnt_no 	AS bussAnncemntNo,
+					a.benefit_perform_nm 	AS benefitPerformNm,
+				    b.buss_fr_dt 				AS bussFrDt,
+				    b.buss_to_dt 				AS bussToDt,
+				    b.buss_dept_cd 			AS bussDeptCd,
+				    b.buss_dept_nm 			AS bussDeptNm,
+				    a.reg_dt 					AS regDt
+			    
+			  FROM (
+						SELECT 
+						    		buss_anncemnt_no , 
+						    		member_id , 
+						    		benefit_perform_nm,
+						    		MIN(date_format(reg_dt,'%Y-%m-%d')) as reg_dt 
+						   FROM  tb_jcep_benefit_perform
+						GROUP BY buss_anncemnt_no
+			) a INNER JOIN  (SELECT 
+				 								buss_anncemnt_no,
+											    date_format(buss_fr_dt,'%Y-%m-%d') AS buss_fr_dt,
+											    date_format(buss_to_dt,'%Y-%m-%d') AS buss_to_dt,
+											    buss_dept_cd,		
+											    (SELECT common_nm FROM ta_common t WHERE t.group_cd = 'G00023' AND t.common_cd = t1.buss_dept_cd) AS buss_dept_nm	 								
+			 						 FROM	 tb_business_announcement t1		
+			) b
+			ON a.buss_anncemnt_no = b.buss_anncemnt_no
+			WHERE 1=1
+			<if test="searchText != null and searchText != ''">
+		        <choose>
+		        	<when test='searchType eq ""'>
+						AND	(a.benefit_perform_nm LIKE CONCAT('%',#{searchText},'%') OR b.buss_dept_nm LIKE CONCAT('%',#{searchText},'%') )
+					</when>
+		            <when test='searchType eq 1'>
+						AND	a.benefit_perform_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 2'>
+						AND	b.buss_dept_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+				</choose>
+			</if> 
+			ORDER BY a.buss_anncemnt_no DESC
+			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+	</select>
+	
+	<select id="selectBusinessSupportBenefitListTotCnt" parameterType="jcep.admin.model.BusinessVO" resultType="int">
+			SELECT 
+					count(*) AS totCnt
+			    
+			  FROM (
+						SELECT 
+						    		buss_anncemnt_no , 
+						    		member_id , 
+						    		benefit_perform_nm,
+						    		MIN(date_format(reg_dt,'%Y-%m-%d')) as reg_dt 
+						   FROM  tb_jcep_benefit_perform
+						GROUP BY buss_anncemnt_no
+			) a INNER JOIN  (SELECT 
+				 								buss_anncemnt_no,
+											    date_format(buss_fr_dt,'%Y-%m-%d') AS buss_fr_dt,
+											    date_format(buss_to_dt,'%Y-%m-%d') AS buss_to_dt,
+											    buss_dept_cd,		
+											    (SELECT common_nm FROM ta_common t WHERE t.group_cd = 'G00023' AND t.common_cd = t1.buss_dept_cd) AS buss_dept_nm	 								
+			 						 FROM	 tb_business_announcement t1		
+			) b
+			ON a.buss_anncemnt_no = b.buss_anncemnt_no
+			WHERE 1=1
+			<if test="searchText != null and searchText != ''">
+		        <choose>
+		        	<when test='searchType eq ""'>
+						AND	(a.benefit_perform_nm LIKE CONCAT('%',#{searchText},'%') OR b.buss_dept_nm LIKE CONCAT('%',#{searchText},'%') )
+					</when>
+		            <when test='searchType eq 1'>
+						AND	a.benefit_perform_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 2'>
+						AND	b.buss_dept_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+				</choose>
+			</if>
+			<if test="searchFromDate != null and searchFromDate != '' and searchToDate != null and searchToDate != ''">
+			       <![CDATA[
+		           AND ((b.buss_to_dt >= replace(#{searchFromDate},'-','') AND b.buss_to_dt <= replace(#{searchToDate},'-',''))
+						    OR (b.buss_fr_dt >= replace(#{searchFromDate},'-','') AND b.buss_fr_dt <= replace(#{searchToDate},'-',''))
+						    OR (b.buss_fr_dt <= replace(#{searchFromDate},'-','') AND b.buss_to_dt >= replace(#{searchToDate},'-','')))
+					]]>	     
+			</if> 				 
+	</select>
+	
+<!-- 사업관리 > 사업운영 실적관리 > 기업지원 > 지원사업수혜실적 상세 -->
+	<select id="selectBusinessSupportBenefitDetailList" parameterType="java.util.Map" resultType="java.util.Map">
+			SELECT 
+			    		a.buss_anncemnt_no 	AS bussAnncemntNo , 
+			    		a.member_id 				AS memberId, 
+			    		a.benefit_perform_nm 	AS benefitPerformNm,
+			    		a.buss_cont 				AS bussCont,
+			    		a.entpr_nm 				AS entprNm,
+			    		a.emp_create_staff 		AS empCreateStaff,
+			    		a.remark 					AS remark,
+			    		b.buss_anncemnt_nm 	AS bussAnncemntNm
+			   FROM tb_jcep_benefit_perform a 
+			   INNER JOIN tb_business_announcement b
+			      ON a.buss_anncemnt_no =  b.buss_anncemnt_no
+  			 WHERE a.buss_anncemnt_no = #{bussAnncemntNo}
+			
+	</select>	
+
+<!-- 사업관리 > 사업운영 실적관리 > 기업지원 > 콘텐츠개발 및 제작지원실적 -->
+	<select id="selectBusinessContentPerformList" parameterType="jcep.admin.model.BusinessVO" resultType="java.util.Map">
+			SELECT
+				resour_faci_id AS facilityId,
+				facility_nm AS facilityNm,
+				facility_loc AS facilityLoc,
+				facility_scale AS facilityScale,
+				facility_cost AS facilityCost,
+				facility_equip AS facilityEquip,
+				facility_img AS facilityImg,
+				facility_st_cd AS facilitySt
+			FROM tb_facility
+			WHERE 1=1
+			<if test="searchText != null and searchText != ''">
+		        <choose>
+		        	<when test='searchType eq ""'>
+						AND	facility_nm LIKE CONCAT('%',#{searchText},'%') OR facility_loc LIKE CONCAT('%',#{searchText},'%') OR facility_scale LIKE CONCAT('%',#{searchText},'%') OR facility_equip LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 1'>
+						AND	facility_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 2'>
+						AND	facility_loc LIKE CONCAT('%',#{searchText},'%')
+					</when>
+				</choose>
+			</if> 
+			ORDER BY resour_faci_id DESC
+			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+	</select>
+	
+	<select id="selectBusinessContentPerformListTotCnt" parameterType="jcep.admin.model.BusinessVO" resultType="int">
+			SELECT COUNT(*) totcnt
+			FROM tb_facility
+			WHERE 1=1
+			<if test="searchText != null and searchText != ''">
+		        <choose>
+		        	<when test='searchType eq ""'>
+						AND	facility_nm LIKE CONCAT('%',#{searchText},'%') OR facility_loc LIKE CONCAT('%',#{searchText},'%') OR facility_scale LIKE CONCAT('%',#{searchText},'%') OR facility_equip LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 1'>
+						AND	facility_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 2'>
+						AND	facility_loc LIKE CONCAT('%',#{searchText},'%')
+					</when>
+				</choose>
+			</if> 
+	</select>
+	
+	
+	
+	
+<!-- 사업관리 > 사업운영 실적관리 > 기업지원 > 지적재산권현황 -->	
+	<select id="selectBusinessIntltProptyList" parameterType="jcep.admin.model.BusinessVO" resultType="java.util.Map">
+			SELECT
+				resour_faci_id AS facilityId,
+				facility_nm AS facilityNm,
+				facility_loc AS facilityLoc,
+				facility_scale AS facilityScale,
+				facility_cost AS facilityCost,
+				facility_equip AS facilityEquip,
+				facility_img AS facilityImg,
+				facility_st_cd AS facilitySt
+			FROM tb_facility
+			WHERE 1=1
+			<if test="searchText != null and searchText != ''">
+		        <choose>
+		        	<when test='searchType eq ""'>
+						AND	facility_nm LIKE CONCAT('%',#{searchText},'%') OR facility_loc LIKE CONCAT('%',#{searchText},'%') OR facility_scale LIKE CONCAT('%',#{searchText},'%') OR facility_equip LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 1'>
+						AND	facility_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 2'>
+						AND	facility_loc LIKE CONCAT('%',#{searchText},'%')
+					</when>
+				</choose>
+			</if> 
+			ORDER BY resour_faci_id DESC
+			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+	</select>
+	
+	<select id="selectBusinessIntltProptyListTotCnt" parameterType="jcep.admin.model.BusinessVO" resultType="int">
+			SELECT COUNT(*) totcnt
+			FROM tb_facility
+			WHERE 1=1
+			<if test="searchText != null and searchText != ''">
+		        <choose>
+		        	<when test='searchType eq ""'>
+						AND	facility_nm LIKE CONCAT('%',#{searchText},'%') OR facility_loc LIKE CONCAT('%',#{searchText},'%') OR facility_scale LIKE CONCAT('%',#{searchText},'%') OR facility_equip LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 1'>
+						AND	facility_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 2'>
+						AND	facility_loc LIKE CONCAT('%',#{searchText},'%')
+					</when>
+				</choose>
+			</if> 
+	</select>
+	
+<!-- 사업관리 > 사업운영 실적관리 > 기업지원 > 기업유치,창업현황 -->		
+	<select id="selectBusinessAttractList" parameterType="jcep.admin.model.BusinessVO" resultType="java.util.Map">
+			SELECT
+				resour_faci_id AS facilityId,
+				facility_nm AS facilityNm,
+				facility_loc AS facilityLoc,
+				facility_scale AS facilityScale,
+				facility_cost AS facilityCost,
+				facility_equip AS facilityEquip,
+				facility_img AS facilityImg,
+				facility_st_cd AS facilitySt
+			FROM tb_facility
+			WHERE 1=1
+			<if test="searchText != null and searchText != ''">
+		        <choose>
+		        	<when test='searchType eq ""'>
+						AND	facility_nm LIKE CONCAT('%',#{searchText},'%') OR facility_loc LIKE CONCAT('%',#{searchText},'%') OR facility_scale LIKE CONCAT('%',#{searchText},'%') OR facility_equip LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 1'>
+						AND	facility_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 2'>
+						AND	facility_loc LIKE CONCAT('%',#{searchText},'%')
+					</when>
+				</choose>
+			</if> 
+			ORDER BY resour_faci_id DESC
+			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+	</select>
+	
+	<select id="selectBusinessAttractListTotCnt" parameterType="jcep.admin.model.BusinessVO" resultType="int">
+			SELECT COUNT(*) totcnt
+			FROM tb_facility
+			WHERE 1=1
+			<if test="searchText != null and searchText != ''">
+		        <choose>
+		        	<when test='searchType eq ""'>
+						AND	facility_nm LIKE CONCAT('%',#{searchText},'%') OR facility_loc LIKE CONCAT('%',#{searchText},'%') OR facility_scale LIKE CONCAT('%',#{searchText},'%') OR facility_equip LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 1'>
+						AND	facility_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 2'>
+						AND	facility_loc LIKE CONCAT('%',#{searchText},'%')
+					</when>
+				</choose>
+			</if> 
+	</select>
+	
+<!-- 사업관리 > 사업운영 실적관리 > 인프라지원 > 장비,시설 활용실적 -->		
+	<select id="selectBusinessInfraResourFaciUseResultList" parameterType="jcep.admin.model.BusinessVO" resultType="java.util.Map">
+			SELECT
+				resour_faci_id AS facilityId,
+				facility_nm AS facilityNm,
+				facility_loc AS facilityLoc,
+				facility_scale AS facilityScale,
+				facility_cost AS facilityCost,
+				facility_equip AS facilityEquip,
+				facility_img AS facilityImg,
+				facility_st_cd AS facilitySt
+			FROM tb_facility
+			WHERE 1=1
+			<if test="searchText != null and searchText != ''">
+		        <choose>
+		        	<when test='searchType eq ""'>
+						AND	facility_nm LIKE CONCAT('%',#{searchText},'%') OR facility_loc LIKE CONCAT('%',#{searchText},'%') OR facility_scale LIKE CONCAT('%',#{searchText},'%') OR facility_equip LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 1'>
+						AND	facility_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 2'>
+						AND	facility_loc LIKE CONCAT('%',#{searchText},'%')
+					</when>
+				</choose>
+			</if> 
+			ORDER BY resour_faci_id DESC
+			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+	</select>
+	
+	<select id="selectBusinessInfraResourFaciUseResultListTotCnt" parameterType="jcep.admin.model.BusinessVO" resultType="int">
+			SELECT COUNT(*) totcnt
+			FROM tb_facility
+			WHERE 1=1
+			<if test="searchText != null and searchText != ''">
+		        <choose>
+		        	<when test='searchType eq ""'>
+						AND	facility_nm LIKE CONCAT('%',#{searchText},'%') OR facility_loc LIKE CONCAT('%',#{searchText},'%') OR facility_scale LIKE CONCAT('%',#{searchText},'%') OR facility_equip LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 1'>
+						AND	facility_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 2'>
+						AND	facility_loc LIKE CONCAT('%',#{searchText},'%')
+					</when>
+				</choose>
+			</if> 
+	</select>	
+	
+<!-- 사업관리 > 사업운영 실적관리 > 인프라지원 > 기업입주현황 -->		
+	<select id="selectBusinessInfraEnterpriseList" parameterType="jcep.admin.model.BusinessVO" resultType="java.util.Map">
+			SELECT
+				resour_faci_id AS facilityId,
+				facility_nm AS facilityNm,
+				facility_loc AS facilityLoc,
+				facility_scale AS facilityScale,
+				facility_cost AS facilityCost,
+				facility_equip AS facilityEquip,
+				facility_img AS facilityImg,
+				facility_st_cd AS facilitySt
+			FROM tb_facility
+			WHERE 1=1
+			<if test="searchText != null and searchText != ''">
+		        <choose>
+		        	<when test='searchType eq ""'>
+						AND	facility_nm LIKE CONCAT('%',#{searchText},'%') OR facility_loc LIKE CONCAT('%',#{searchText},'%') OR facility_scale LIKE CONCAT('%',#{searchText},'%') OR facility_equip LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 1'>
+						AND	facility_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 2'>
+						AND	facility_loc LIKE CONCAT('%',#{searchText},'%')
+					</when>
+				</choose>
+			</if> 
+			ORDER BY resour_faci_id DESC
+			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+	</select>
+	
+	<select id="selectBusinessInfraEnterpriseListTotCnt" parameterType="jcep.admin.model.BusinessVO" resultType="int">
+			SELECT COUNT(*) totcnt
+			FROM tb_facility
+			WHERE 1=1
+			<if test="searchText != null and searchText != ''">
+		        <choose>
+		        	<when test='searchType eq ""'>
+						AND	facility_nm LIKE CONCAT('%',#{searchText},'%') OR facility_loc LIKE CONCAT('%',#{searchText},'%') OR facility_scale LIKE CONCAT('%',#{searchText},'%') OR facility_equip LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 1'>
+						AND	facility_nm LIKE CONCAT('%',#{searchText},'%')
+					</when>
+		            <when test='searchType eq 2'>
+						AND	facility_loc LIKE CONCAT('%',#{searchText},'%')
+					</when>
+				</choose>
+			</if> 
+	</select>		
+
+<!-- 사업찾기 -->		
+	<select id="selectBussSearchList" parameterType="jcep.admin.model.BusinessVO" resultType="java.util.Map">
+			SELECT
+				A.buss_anncemnt_no AS bussAnncemntNo,
+				A.buss_anncemnt_nm AS bussAnncemntNm,
+				date_format(A.buss_fr_dt,'%Y-%m-%d') AS bussFrDt,
+				date_format(A.buss_to_dt,'%Y-%m-%d')  AS bussToDt,
+				A.buss_cost_amt AS bussCostAmt,
+				A.buss_dept_cd AS bussDeptCd,
+				(SELECT common_nm FROM ta_common t WHERE t.group_cd = 'G00023' AND common_cd = A.buss_dept_cd) AS bussDeptNm,
+				A.original_url AS originalUrl,
+				A.buss_cont AS bussCont,
+				A.buss_divi_cd AS bussDiviCd,
+				A.anncemnt_st_cd AS anncemntStCd,
+				A.reg_dt AS regDt,
+				A.reg_id AS regId
+			FROM tb_business_announcement A
+			WHERE 1=1
+			  AND A.buss_divi_cd = 'Y'
+			  AND NOT EXISTS(SELECT 'N' FROM tb_jcep_benefit_perform B where B.buss_anncemnt_no = A.buss_anncemnt_no ) 
+			<if test="searchType != null and searchType != ''">
+		        AND A.buss_dept_cd = #{searchType}
+			</if> 
+			<if test="searchText != null and searchText != ''">
+		        AND A.buss_anncemnt_nm LIKE CONCAT('%',#{searchText},'%')
+			</if> 			
+			ORDER BY A.buss_anncemnt_no DESC
+	</select>	
+		
+<!-- 기업찾기 -->		
+	<select id="selectEntprSearchList" parameterType="jcep.admin.model.BusinessVO" resultType="java.util.Map">
+	SELECT * 
+	   FROM (
+			SELECT
+					A.buss_anncemnt_no AS bussAnncemntNo,
+					A.buss_anncemnt_nm AS bussAnncemntNm,
+		            B.member_id AS memberId,
+					(SELECT entpr_nm FROM tb_enterprise WHERE member_id = B.member_id) AS  entprNm,
+		            A.buss_dept_cd AS bussDeptCd,
+		            (SELECT common_nm FROM ta_common t WHERE t.group_cd = 'G00023' AND common_cd = A.buss_dept_cd) AS bussDeptNm,
+		            C.entpr_creat_job_cnt AS entprCreatJobCnt
+			 FROM tb_business_announcement A
+            INNER JOIN tb_buss_anncemnt_appl B
+			    ON A.buss_anncemnt_no =  B.buss_anncemnt_no
+			INNER JOIN tb_enterprise_jcep_buss C
+			    ON B.buss_anncemnt_no = C.buss_anncemnt_no
+               AND B.member_id           = C.member_id
+			WHERE 1=1
+			    AND A.buss_divi_cd = 'Y'
+                AND B.applic_st_cd = '000004'
+                AND C.entpr_buss_yn = 'Y'
+			) T
+			 WHERE 1=1
+			<if test="searchText1 != null and searchText1 != ''">
+		        AND T.entprNm LIKE CONCAT('%',#{searchText1},'%')
+			</if> 		
+			<if test="membersId != null">
+			    AND T.memberId in 
+				<foreach collection="membersId" item="item" index="index" separator="," open="(" close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="bussAnncemntNo != null and bussAnncemntNo != ''">
+		        AND T.bussAnncemntNo = #{bussAnncemntNo}
+			</if> 				
+	</select>		
+	
+<!-- 지원사업수혜실적정보 존재여부 조회 -->	
+	<select id="selectJcepBenefitPerformCnt" parameterType="java.util.Map" resultType="int">
+		SELECT count(*) cnt
+		  FROM tb_jcep_benefit_perform 
+		WHERE 1=1
+		    AND buss_anncemnt_no = #{bussAnncemntNo}
+		    AND member_id            = #{memberId}
+	</select>		
+	
+	
+<!-- 지원사업수혜실적정보 등록 -->	
+	<insert id="insertJcepBenefitPerform" parameterType="java.util.Map">
+		INSERT INTO  tb_jcep_benefit_perform(
+			buss_anncemnt_no,
+			member_id,
+			benefit_perform_nm,
+			buss_cont,
+			entpr_nm,
+			emp_create_staff,
+			remark,
+			reg_dt,
+			reg_id
+		)VALUES(
+			#{bussAnncemntNo},
+			#{memberId},
+			#{benefitPerformNm},
+			#{bussCont},
+			#{entprNm},
+			#{empCreateStaff},
+			#{remark},
+			CURRENT_TIMESTAMP,
+			'admin'
+		)
+
+	</insert>	
+	
+<!-- 지원사업수혜실적정보 수정 -->	
+	<select id="updateJcepBenefitPerform" parameterType="java.util.Map" resultType="int">
+		UPDATE tb_jcep_benefit_perform
+		     SET benefit_perform_nm 	= #{benefitPerformNm},
+		           buss_cont              	= #{bussCont},
+		           entpr_nm					= #{entprNm},
+		           emp_create_staff		= #{empCreateStaff},
+		           remark						= #{remark}
+		 WHERE buss_anncemnt_no = #{bussAnncemntNo}
+		     AND member_id            = #{memberId}    
+	</select>	
+	
+<!-- 지원사업수혜실적정보 삭제 -->	
+	<select id="deleteJcepBenefitPerform" parameterType="java.util.Map" resultType="int">
+		DELETE FROM tb_jcep_benefit_perform 
+		WHERE buss_anncemnt_no = #{bussAnncemntNo}
+			AND member_id not in 
+				<foreach collection="memberId" item="item" index="index" separator="," open="(" close=")">
+					#{item}
+				</foreach>		
+	</select>				
+</mapper>
+

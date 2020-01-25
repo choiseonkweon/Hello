@@ -24,6 +24,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import egovframework.rte.fdl.property.EgovPropertyService;
 import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 import jcep.admin.model.BusinessVO;
@@ -31,9 +34,11 @@ import jcep.admin.common.UploadFileUtils;
 import jcep.admin.model.EnterpriseBuyerExpertVO;
 import jcep.admin.model.FacilityResourceVO;
 import jcep.admin.model.MemberVO;
+import jcep.admin.model.BusinessVO;
 import jcep.admin.service.BusinessService;
 import jcep.admin.service.EnterpriseBuyerExpertService;
 import jcep.admin.service.MemberService;
+import net.sf.json.JSONArray;
 
 /**
  * @Class Name : BusinessController.java
@@ -518,7 +523,7 @@ public class BusinessController {
 	}	
 	
 	/**
-	 * 사업관리 > 사업운영 실적관리 > 기업지원 > 지원사업수혜실적  등록 및 수정 (pageing)
+	 * 사업관리 > 사업운영 실적관리 > 기업지원 > 지원사업수혜실적  등록 및 수정 화면 이동 (pageing)
 	 * @param FacilityResourceFrontVO - 등록할 정보가 담긴 VO
 	 * @param searchVO -  조회조건 정보가 담긴 VO
 	 * @param status
@@ -529,13 +534,61 @@ public class BusinessController {
 	public ModelAndView facilityRegistrationManagementReg(@RequestParam(required=false) Map<String, Object> paramMap, Model model, ModelAndView mv, HttpServletRequest request) throws Exception {
 		//수정 
 		if(!("".equals(paramMap.get("bussAnncemntNo")) || null == paramMap.get("bussAnncemntNo"))) {
-		  	System.out.println("수정");
+		  	model.addAttribute("resultList", businessService.selectBusinessSupportBenefitDetailList(paramMap));  
+		  	
 		}
 		
 		mv.setViewName("/view/businessSupportBenefitReg");
 		
 		return mv;
 	}	
+	
+	/**
+	 * 사업관리 > 사업운영 실적관리 > 기업지원 > 지원사업수혜실적  등록 및 수정 화면 이동 (pageing)
+	 * @param FacilityResourceFrontVO - 등록할 정보가 담긴 VO
+	 * @param searchVO -  조회조건 정보가 담긴 VO
+	 * @param status
+	 * @return "facilityRegistrationManagementReg"
+	 * @exception Exception
+	 */
+	@RequestMapping("/business/benefitPerformSave.do")
+	public String benefitPerformSave(@RequestParam(required=false) Map<String,List<Map<String,Object>>> paramList, Model model, ModelAndView mv) throws Exception {
+        ObjectMapper om = new ObjectMapper();
+        List<Map<String,Object>> list =  om.readValue(om.writeValueAsString(JSONArray.fromObject(paramList.get("params"))), List.class);
+       String bussAnncemntNo =  om.readValue(om.writeValueAsString(paramList.get("bussAnncemntNo")),String.class);
+       
+       System.out.println(bussAnncemntNo);
+
+        businessService.benefitPerformSave(list, bussAnncemntNo);
+       
+        /*
+        Map<String,Object> delMap = new HashMap<String,Object>();
+        ArrayList<String> delCheckMemId = new ArrayList<String>();
+       
+        int idx = 0;
+        for(Map<String,Object> map : list) {
+        	delCheckMemId.add(map.get("memberId").toString());
+        	
+        	// 수혜사업 조회
+        	if(businessService.selectJcepBenefitPerformCnt(map) > 0) {
+        		// 존재  update or delete
+        		businessService.updateJcepBenefitPerform(map);
+        		
+        	}else {// 미존재  insert
+        		businessService.insertJcepBenefitPerform(map);
+        		
+        	}
+        	idx++;
+        	
+        }
+        delMap.put("bussAnncemntNo", paramList.get("bussAnncemntNo"));
+        delMap.put("memberId", delCheckMemId);
+        
+        businessService.deleteJcepBenefitPerform(delMap);
+        */
+        
+		return "jsonView";
+	}		
 	
 	
 	/**
@@ -708,19 +761,72 @@ public class BusinessController {
 	}	
 	
 	/**
-	 * 사업관리 > 사업운영 실적관리 > 인프라지원 > 지적재산권현황  목록을 조회한다. (pageing)
+	 * 사업찾기 
 	 * @param searchVO - 조회할 정보가 담긴 EnterpriseBuyerExpertVO
 	 * @param model
 	 * @return "businessOrderStatusList"
 	 * @exception Exception
 	 */
-	@RequestMapping(value = "/business/businessAnncemntList.do")
-	public String businessAnncemntList(@ModelAttribute("searchVO") BusinessVO searchVO, ModelAndView mv, Model model) throws Exception {
-		ArrayList<Map<String,Object>> bussAnncemntList = businessService.selectSearchBussiness(searchVO);
+	@RequestMapping(value = "/business/bussSearchList.do")
+	public String bussSearchList(@ModelAttribute("searchVO") BusinessVO searchVO, ModelAndView mv, Model model) throws Exception {
+//		
+//		searchVO.setPageUnit(propertiesService.getInt("pageUnit"));
+//		searchVO.setPageSize(propertiesService.getInt("pageSize"));
+//		
+//		PaginationInfo paginationInfo = new PaginationInfo();
+//		paginationInfo.setCurrentPageNo(searchVO.getPageIndex());
+//		paginationInfo.setRecordCountPerPage(searchVO.getPageUnit());
+//		paginationInfo.setPageSize(searchVO.getPageSize());
+//		
+//		searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
+//		searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
+//		searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
+//
+//		model.addAttribute("paginationInfo", paginationInfo);		
+		
+		ArrayList<Map<String,Object>> bussAnncemntList = businessService.selectBussSearchList(searchVO);
 		model.addAttribute("resultList", bussAnncemntList);
 		
     	return "jsonView";
 	}	
+	
+	/**
+	 * 기업찾기 (pageing)
+	 * @param searchVO - 조회할 정보가 담긴 EnterpriseBuyerExpertVO
+	 * @param model
+	 * @return "businessOrderStatusList"
+	 * @exception Exception
+	 */
+	@RequestMapping(value = "/business/entprSearchList.do")
+	public String entprSearchList(@ModelAttribute("searchVO") BusinessVO searchVO, ModelAndView mv, Model model) throws Exception {
+		ArrayList<Map<String,Object>> bussAnncemntList = businessService.selectEntprSearchList(searchVO);
+		model.addAttribute("resultList", bussAnncemntList);
+		
+    	return "jsonView";
+	}		
+	
+	/**
+	 * 기업찾기 > 선택한 기업 조회 (pageing)
+	 * @param searchVO - 조회할 정보가 담긴 EnterpriseBuyerExpertVO
+	 * @param model
+	 * @return "businessOrderStatusList"
+	 * @exception Exception
+	 */
+	@RequestMapping(value = "/business/entprSelectList.do")
+	public String entprSelectList(@RequestParam(value="membersId[]",required=false) List<String> membersId,@RequestParam(required=false) Map<String,Object> paramMap, ModelAndView mv, Model model) throws Exception {
+		if(!membersId.isEmpty() && !("".equals(paramMap.get("bussAnncemntNo")) && paramMap.get("bussAnncemntNo") == null)) {
+			BusinessVO searchVO = new BusinessVO();
+			
+			searchVO.setMembersId(membersId);
+			searchVO.setBussAnncemntNo(paramMap.get("bussAnncemntNo").toString());
+			
+			ArrayList<Map<String,Object>> bussAnncemntList = businessService.selectEntprSearchList(searchVO);
+			model.addAttribute("resultList", bussAnncemntList);
+		}
+		
+    	return "jsonView";
+	}	
+	
 	@ResponseBody
 	@RequestMapping(value="/bussAnncemntApplDelete.do", produces="text/plain;charset=utf-8")
 	public ModelAndView bussAnncemntApplDelete(@RequestParam(required=false) Map<String, String> map) throws Exception {
@@ -770,16 +876,3 @@ public class BusinessController {
 
 	
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
