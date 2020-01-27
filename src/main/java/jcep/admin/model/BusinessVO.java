@@ -21,7 +21,7 @@ public class BusinessVO extends PagingVO {
 
 	private static final long serialVersionUID = 1L;
 
-	private String searchType, searchText, searchFromDate,searchToDate,searchText1,bussAnncemntNo;
+	private String searchType, searchText, searchFromDate,searchToDate,searchText1,bussAnncemntNo,bussSearchType;
 	private List<String> membersId;
 
 	public String getSearchType() {
@@ -78,5 +78,13 @@ public class BusinessVO extends PagingVO {
 
 	public void setBussAnncemntNo(String bussAnncemntNo) {
 		this.bussAnncemntNo = bussAnncemntNo;
+	}
+
+	public String getBussSearchType() {
+		return bussSearchType;
+	}
+
+	public void setBussSearchType(String bussSearchType) {
+		this.bussSearchType = bussSearchType;
 	}
 }

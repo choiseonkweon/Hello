@@ -81,6 +81,17 @@ import jcep.admin.model.FacilityResourceVO;
 	public int selectBusinessContentPerformListTotCnt(BusinessVO params) throws Exception {
 		return businessMapper.selectBusinessContentPerformListTotCnt(params);
 	}	
+	
+	/**
+	 * 사업관리 > 사업운영 실적관리 > 기업지원 > 지원사업수혜실적  상세 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 지원사업수혜실적 목록 총 갯수
+	 * @exception
+	 */
+	public ArrayList<Map<String,Object>> selectBusinessContentPerformDetailList(Map<String, Object> params) throws Exception {
+		return businessMapper.selectBusinessContentPerformDetailList(params);
+	}	
+	
 	/**
 	 * 사업관리 > 사업운영 실적관리 > 기업지원 > 지적재산권현황 목록을 조회한다.
 	 * @param params - 조회할 정보가 담긴 VO
@@ -170,15 +181,45 @@ import jcep.admin.model.FacilityResourceVO;
 		return businessMapper.selectBussSearchList(params);
    }	
 	
+	public int selectBussSearchListCnt(BusinessVO params) throws Exception {
+		return businessMapper.selectBussSearchListCnt(params);
+	}		
+	
 	/**
-	 * 기업찾기
+	 * 기업찾기 - 지원사업수혜실적
 	 * @param params - 조회할 정보가 담긴 VO
 	 * @return 사업찾기 목록
 	 * @exception Exception
 	 */
-	public ArrayList<Map<String,Object>> selectEntprSearchList(BusinessVO params) throws Exception {
-		return businessMapper.selectEntprSearchList(params);
+	public ArrayList<Map<String,Object>> selectBenefitPerformEntprSearchList(BusinessVO params) throws Exception {
+		return businessMapper.selectBenefitPerformEntprSearchList(params);
    }	
+	
+	public int selectBenefitPerformEntprSearchListCnt(BusinessVO params) throws Exception {
+		return businessMapper.selectBenefitPerformEntprSearchListCnt(params);
+   }		
+	
+	/**
+	 * 기업찾기 - 기업선택
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 사업찾기 목록
+	 * @exception Exception
+	 */	
+	public ArrayList<Map<String,Object>> selectBenefitPerformEntprSelectList(BusinessVO params) throws Exception {
+		return businessMapper.selectBenefitPerformEntprSelectList(params);
+	}
+	
+	
+	/**
+	 * 기업찾기 - 콘텐츠
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 사업찾기 목록
+	 * @exception Exception
+	 */
+	public ArrayList<Map<String,Object>> selectContentPerformEntprSearchList(BusinessVO params) throws Exception {
+		return businessMapper.selectContentPerformEntprSearchList(params);
+   }		
+	
 	
 	/**
 	 * 지원사업수혜실적정보 존재여부 조회한다.
@@ -255,5 +296,83 @@ import jcep.admin.model.FacilityResourceVO;
 	 */
 	public Integer deleteJcepBenefitPerform(Map<String,Object> params) throws Exception{
 		 return businessMapper.deleteJcepBenefitPerform(params);
-	}			
+	}		
+	
+	/**
+	 * 콘텐츠개발 및 제작지원실적 존재여부 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 지원사업수혜실적 목록 총 갯수
+	 * @exception
+	 */
+	public int selectJcepContentPerformCnt(Map<String,Object> params) throws Exception {
+		return businessMapper.selectJcepContentPerformCnt(params);
+	}
+	
+	/**
+	 * 콘텐츠개발 및 제작지원실적 저장한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 지원사업수혜실적 목록 총 갯수
+	 * @exception
+	 */
+	public int contentPerformSave(List<Map<String,Object>> params,String bussAnncemntNo) throws Exception {
+		int result = 0;
+		
+        Map<String,Object> delMap = new HashMap<String,Object>();
+        ArrayList<String> delCheckMemId = new ArrayList<String>();
+       
+        int idx = 0;
+        for(Map<String,Object> map : params) {
+        	delCheckMemId.add(map.get("memberId").toString());
+        	
+        	// 수혜사업 조회
+        	if(selectJcepContentPerformCnt(map) > 0) {
+        		// 존재  update or delete
+        		updateJcepContentPerform(map);
+        		
+        	}else {// 미존재  insert
+        		insertJcepContentPerform(map);
+        		
+        	}
+        	idx++;
+        	
+        }
+        delMap.put("bussAnncemntNo", bussAnncemntNo);
+        delMap.put("memberId", delCheckMemId);
+        
+        deleteJcepContentPerform(delMap);		
+		
+		return result;
+	}	
+	
+	
+	/**
+	 * 콘텐츠개발 및 제작지원실적 등록한다.
+	 * @param params - 등록 정보
+	 * @return Integer형
+	 * @exception Exception
+	 */
+	public Integer insertJcepContentPerform(Map<String,Object> params) throws Exception{
+		 return businessMapper.insertJcepContentPerform(params);
+	}	
+	
+	/**
+	 * 콘텐츠개발 및 제작지원실적 수정한다.
+	 * @param params - 수정 정보
+	 * @return Integer형
+	 * @exception Exception
+	 */
+	public Integer updateJcepContentPerform(Map<String,Object> params) throws Exception{
+		 return businessMapper.updateJcepContentPerform(params);
+	}		
+	
+	/**
+	 * 콘텐츠개발 및 제작지원실적 삭제한다.
+	 * @param params - 삭제 정보
+	 * @return Integer형
+	 * @exception Exception
+	 */
+	public Integer deleteJcepContentPerform(Map<String,Object> params) throws Exception{
+		 return businessMapper.deleteJcepContentPerform(params);
+	}		
+	
 }

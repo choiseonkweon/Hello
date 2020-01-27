@@ -53,7 +53,7 @@
 											<td>
 												<span id="bussAnncemntNm"><c:out value="${resultList[0].bussAnncemntNm}"/></span>
 												<c:if test="${empty resultList[0].bussAnncemntNo}">
-													<button type="button" class="btn btn-default btn-sm" onclick="goBussSearch();">찾기</button>
+													<button type="button" class="btn btn-default btn-sm" onclick="goBussSearch('Y');">찾기</button>
 												</c:if>
 											</td>
 										</tr>
@@ -69,7 +69,7 @@
 							</table>
 							</form>
 							<div style="margin-top:25px;margin-bottom:50px;">
-								<button type="button" class="btn btn-default btn-sm" onclick="goEntprSearch();">기업찾기</button>
+								<button type="button" class="btn btn-default btn-sm" onclick="goEntprSearch('Y');">기업찾기</button>
 										<table id="resultTable" class="table table-hover" style="margin-bottom:0px;width:98%;margin-left:1%;margin-top:10px;">
 											<colgroup>
 												<col width="25%">
@@ -111,7 +111,7 @@
 		
 	</div>
 	<!-- END MAIN PANEL -->
-	
+
 <!-- Modal -->
 <div class="modal fade" id="bussModal" tabindex="-1" role="dialog">
 	<div class="modal-dialog">
@@ -124,72 +124,22 @@
 				 <b>사업찾기</b>
 				</h4>
 			</div>
-			<div class="modal-body">
-					<div class="table-responsive">
-						<div class="col-xs-12">
-								<h6 class="page-title txt-color-blueDark"></h6>
-						</div>
-							<form role="form" id="bussSearchFrm" name="bussSearchFrm" action="#" class="form-horizontal" method="post">
-								<table class="table table-bordered table-striped" style="margin-bottom:0px;width:98%;margin-left:1%;margin-top:10px;">
-									<colgroup>
-										<col width="10%">
-										<col width="30%">
-										<col width="10%">
-										<col width="50%"> 									
-									</colgroup>
-									<tbody>
-										<tr>
-											<th style="text-align:center;background:#eee;vertical-align:middle;">부서</th>
-											<td>
-												<select name="searchType" id="searchType" class="select" style="width:150px; height: 31.5px;">
-													<option value="">전체</option>
-													<option value="1" ${searchVO.searchType eq 1 ? 'selected="selected"' : '' }>시설명</option>
-													<option value="2" ${searchVO.searchType eq 2 ? 'selected="selected"' : '' }>업체명</option>													
-												</select>
-											</td>										
-											<th style="text-align:center;background:#eee;vertical-align:middle;">사업명</th>
-											<td>
-												<input type="text" name=searchText id="searchText" class="input-sm not-kor" style="width:200px;" value="${searchVO.searchText}" onkeydown="javascript:enterKey('B');">
-												<a href="javascript:goBussSearch();" class="btn btn-primary" style="margin-left: 120px;"><b>검색</b></a>
-											</td>
-										</tr>
-									</tbody>
-								</table>
-							</form>
-						</div>
-					</div>
-					<!-- data table -->
-					<div class="well well-sm">
-						<div class="table-responsive">
-							<form role="form" id="authFrm" name="authFrm" action="#" class="form-horizontal" method="post">
-								<table class="table table-hover">
-								<colgroup>
-									<col>
-									<col width="30%">
-									<col width="30%">
-								</colgroup>								
-								<thead>
-									<tr>
-										<th>사업명</th>
-										<th>사업기간</th>
-										<th>사업부서</th>
-									</tr>
-								</thead>
-									<tbody id="bussListBody"></tbody>
-								</table>
-							</form>						
-					</div>
-			
-				</div>	
-				<footer>
+			<div id="bussResultBody">	</div>
+			<footer>
 				<div class="modal-footer modify" style="align-items: center;">
 			        <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">취소</button>
 	            </div>
-				</footer>
+			</footer>
+			<!-- 검색조건 유지 -->
+		
 		</div><!-- /.modal-content -->
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->	
 
+<!-- 사업찾기 팝업 구분을 위한 form  -->
+<form id="bussTypeForm" name="bussTypeForm" method="post">
+    <input type="hidden" id="bussSearchType" name="bussSearchType" value="S"/>	
+</form>
 <!-- Modal -->
 <div class="modal fade" id="entprModal" tabindex="-1" role="dialog">
 	<div class="modal-dialog">
@@ -202,79 +152,66 @@
 				 <b>기업찾기</b>
 				</h4>
 			</div>
-			<div class="modal-body">
-					<div class="table-responsive">
-						<div class="col-xs-12">
-								<h6 class="page-title txt-color-blueDark"></h6>
-						</div>
-							<form role="form" id="entprSearchFrm" name="entprSearchFrm" action="#" class="form-horizontal" method="post">
-								<table class="table table-bordered table-striped" style="margin-bottom:0px;width:98%;margin-left:1%;margin-top:10px;">
-									<colgroup>
-										<col width="15%">
-										<col width="85%">
-									</colgroup>
-									<tbody>
-										<tr>
-											<th style="text-align:center;background:#eee;vertical-align:middle;">기업명</th>
-											<td>
-												<input type="text" name=searchText1 id="searchText1" class="input-sm not-kor" style="width:200px;" value="${searchVO.searchText}" onkeydown="javascript:enterKey('E');">
-												<a href="javascript:goEntprSearch();" class="btn btn-primary" style="margin-left: 120px;"><b>검색</b></a>
-											</td>
-										</tr>
-									</tbody>
-								</table>
-							</form>
-						</div>
-					</div>
-					<!-- data table -->
-					<div class="well well-sm">
-						<div class="table-responsive">
-							<table class="table table-hover">
-								<colgroup>
-									<col width="3%">
-									<col width="30%">
-									<col width="30%">
-									<col width="30%">
-								</colgroup>								
-								<thead>
-									<tr>
-										<th><input type="checkbox" id="allCheck" name="allCheck" value="all"/></th>
-										<th>사업명</th>
-										<th>참여기업</th>
-										<th>사업부서</th>
-									</tr>
-								</thead>
-									<tbody id="entprListBody"></tbody>
-							</table>
-					</div>
-				</div>	
-				<footer>
+			<div id="entprResultBody"></div>
+	
+			<footer>
 				<div class="modal-footer modify" style="align-items: center;">
 					<button type="button" class="btn btn-default btn-sm" onclick="selectEntpr();">선택</button>
 			        <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">취소</button>
 	            </div>
-				</footer>
+			</footer>
+			
 		</div><!-- /.modal-content -->
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->	
 	
-	<!-- 검색조건 유지 -->
-    <input type="hidden" name="searchType" value="<c:out value='${searchVO.searchType}'/>"/>
-    <input type="hidden" name="searchText" value="<c:out value='${searchVO.searchText}'/>"/>
-    <input type="hidden" name="pageIndex" value="<c:out value='${searchVO.pageIndex}'/>"/> 
-	
 	<script type="text/javaScript" language="javascript" defer="defer">
+	var entprChecked = new Array();
+	
 		$(document).ready(function () {
-			//기업찾기 > 전체 선택
-			$("#allCheck").click(function(){
-				if($(this).is(':checked')){
-					$("#entprListBody :checkbox").prop('checked',true);
-				}else{
-					$("#entprListBody :checkbox").prop('checked',false);
+			$("#cancelBtn").click(function(){
+				if(confirm("이 페이지에서 나가시겠습니까?")){
+					location.href = "/db/business/businessSupportBenefitList.do"
 				}
-			});
+			});				
+			
 
 		});
+		
+		// 기업찾기 - 전체 체크박스
+		function entprAllCheck(target){
+			if($(target).is(':checked')){
+				$("#entprListBody :checkbox").prop('checked',true);
+				$("#entprListBody :checkbox:checked").each(function(){
+					entprChecked.push($(this).val());
+					
+				});
+			}else{
+				$("#entprListBody :checkbox").prop('checked',false);
+				$("#entprListBody :checkbox").each(function(){
+					var thisValue = $(this).val();
+					if(entprChecked.indexOf(thisValue) > -1){
+						entprChecked.splice(thisValue,1);
+					};
+				});			
+			}
+			
+		}
+		
+		// 기업찾기 - 체크박스
+		function entprCheck(target){
+			var thisValue = $(target).val();
+			if($(target).is(':checked')){
+				$(target).prop('checked',true);
+					entprChecked.push(thisValue);
+			}else{
+				$(target).prop('checked',false);
+				if(entprChecked.indexOf(thisValue) > -1){
+					entprChecked.splice(thisValue,1);
+				};
+			}
+			
+		}		
 		
         function enterKey(type){
         	if(window.event.keyCode == 13){
@@ -286,29 +223,23 @@
         		window.event.preventDefault();
     		}		
         }
+        
         // 사업찾기 조회
-		function goBussSearch(){
-       
-        	//초기화
-        	$("#searchText").val("");
+		function goBussSearch(flag){
+        	var paramData = $("#bussSearchFrm").serialize();
         	
+        	if(flag === "Y"){
+        		paramData = $("#bussTypeForm").serialize();
+        		
+        	}
+       
 			 $.ajax({
 					type : 'post',
 					url:'/db/business/bussSearchList.do',
-					data: $("#bussSearchFrm").serialize(),
-					dataType: 'json',
+					data: paramData,
+					dataType: 'html',
 					success : function(data) {
-						var html = "";
-						$(data.resultList).each(function(){
-								html += "<tr>";
-							    html += "<td><a href='javascript:selectBussAnncemnt(\""+this.bussAnncemntNo+"\",\""+this.bussAnncemntNm+"\");'>"+this.bussAnncemntNm+"</a></td>";
-							    html += "<td>"+this.bussFrDt+" ~ "+this.bussToDt+"</td>";
-							    html += "<td>"+this.bussDeptNm+"</td>";
-								html += "</tr>";							
-							
-						});
-
-						$("#bussListBody").empty().append(html);
+						$("#bussResultBody").empty().append(data);
 						$("#bussModal").modal('show');
 						
 					},  
@@ -319,39 +250,56 @@
 			   		} 
 			 });  			
 			
-		}		
+		}		     
+        
+        // 사업찾기 조회- page
+		function goBussSearchPage(pageNo){
+        	
+        	$("#bussPageIndex").val(pageNo);
+        	
+			 $.ajax({
+					type : 'post',
+					url:'/db/business/bussSearchList.do',
+					data: $("#bussListForm").serialize(),
+					dataType: 'html',
+					success : function(data) {
+						$("#bussResultBody").empty().append(data);
+						$("#bussModal").modal('show');
+						
+					},  
+				    error:function(request,status,error){ //ajax 오류인경우  
+			            alert("작업중 에러가 발생했습니다.");      
+			            window.event.preventDefault();
+			            
+			   		} 
+			 });  			
+			
+		}		        
+        
 		//기업찾기 조회
-		function goEntprSearch(){
+		function goEntprSearch(flag){
 			var bussAnncemntNo = $("#bussAnncemntNo").val();
 			if(bussAnncemntNo === ""){
 			     alert("사업을 선택하세요.");
 			     return;
 			}
-			//초기화
-			$("#searchText1").val("");
-			$("#allCheck").prop("checked",false);
+			
+			entprChecked = new Array();
+			if(flag === "Y"){
+				$("#searchText1").val("");
+				
+			}
 			
 			 $.ajax({
 					type : 'post',
-					url:'/db/business/entprSearchList.do',
+					url:'/db/business/benefitPerformEntprSearchList.do',
 					data: {"searchText1"  : $("#searchText1").val(),
 							  "bussAnncemntNo"	: bussAnncemntNo
 					},
-					dataType: 'json',
+					dataType: 'html',
 					success : function(data) {
-						var html = "";
-						var rData = data.resultList;
-						$.each(rData,function(i){
-								html += "<tr>";
-							    html += "<td><input type='checkbox' id='chk_"+i+"' name='chk_"+i+"' value='"+this.memberId+"'/></td>";
-							    html += "<td>"+this.bussAnncemntNm+"</td>";
-							    html += "<td>"+this.entprNm+"</td>";
-							    html += "<td>"+this.bussDeptNm+"</td>";
-								html += '</tr>';							
-							
-						});
 						
-						$("#entprListBody").empty().append(html);
+						$("#entprResultBody").empty().append(data);
 						$("#entprModal").modal('show');
 						
 					},  
@@ -361,14 +309,44 @@
 			   		} 
 			 });  			
 			
-		}			
+		}	
 		
-        /* pagination 페이지 링크 function */
-        function fn_egov_link_page(pageNo){
-        	document.listForm.pageIndex.value = pageNo;
-        	document.listForm.action = "<c:url value='/member/authList.do'/>";
-           	document.listForm.submit();
-        }		
+        // 기업찾기 조회- page
+		function goEntprSearchPage(pageNo){
+
+        	$("#entprPageIndex").val(pageNo);
+        	
+			 $.ajax({
+					type : 'post',
+					url:'/db/business/benefitPerformEntprSearchList.do',
+					data: $("#enptrListForm").serialize(),
+					dataType: 'html',
+					success : function(data) {
+						$("#entprResultBody").empty().append(data);
+						
+						$("#entprListBody :checkbox").each(function(){
+							 var checkValue = $(this).val();
+							 var entprCheckLength = entprChecked.length;
+							 for(var i=0;i<entprCheckLength;i++){
+								 if(entprChecked[i] ===checkValue ){
+										$(this).prop("checked",true);
+								 }
+								 
+							 }
+							
+						});
+						
+						$("#entprModal").modal('show');
+						
+					},  
+				    error:function(request,status,error){ //ajax 오류인경우  
+			            alert("작업중 에러가 발생했습니다.");      
+			            window.event.preventDefault();
+			            
+			   		} 
+			 });  			
+			
+		}				
 		
 		
 		function checkValue(){
@@ -416,21 +394,16 @@
 		
 		// 기업 선택
 		function selectEntpr(){
-			var entprList = new Array();
-			var entprCheck = $("#entprListBody :checkbox:checked");
 			
-			if(entprCheck.length === 0){
+			if(entprChecked.length === 0){
 				alert("기업을 선택하세요.");
 				return false;
 			}
 			
-			$(entprCheck).each(function(){
-				entprList.push($(this).val());
-			});
-			
 			var param = {
 					"bussAnncemntNo" : $("#bussAnncemntNo").val(),
-					"membersId"          : entprList
+					"membersId"          : entprChecked,
+					"gubun"				  : "S"
 			};
 			
 			 $.ajax({

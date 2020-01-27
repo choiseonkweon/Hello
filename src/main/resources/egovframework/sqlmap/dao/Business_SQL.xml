@@ -44,6 +44,13 @@
 					</when>
 				</choose>
 			</if> 
+			<if test="searchFromDate != null and searchFromDate != '' and searchToDate != null and searchToDate != ''">
+			       <![CDATA[
+		           AND ((b.buss_to_dt >= replace(#{searchFromDate},'-','') AND b.buss_to_dt <= replace(#{searchToDate},'-',''))
+						    OR (b.buss_fr_dt >= replace(#{searchFromDate},'-','') AND b.buss_fr_dt <= replace(#{searchToDate},'-',''))
+						    OR (b.buss_fr_dt <= replace(#{searchFromDate},'-','') AND b.buss_to_dt >= replace(#{searchToDate},'-','')))
+					]]>	     
+			</if> 					
 			ORDER BY a.buss_anncemnt_no DESC
 			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
 	</select>
@@ -112,53 +119,111 @@
 
 <!-- 사업관리 > 사업운영 실적관리 > 기업지원 > 콘텐츠개발 및 제작지원실적 -->
 	<select id="selectBusinessContentPerformList" parameterType="jcep.admin.model.BusinessVO" resultType="java.util.Map">
-			SELECT
-				resour_faci_id AS facilityId,
-				facility_nm AS facilityNm,
-				facility_loc AS facilityLoc,
-				facility_scale AS facilityScale,
-				facility_cost AS facilityCost,
-				facility_equip AS facilityEquip,
-				facility_img AS facilityImg,
-				facility_st_cd AS facilitySt
-			FROM tb_facility
+			SELECT 
+					a.buss_anncemnt_no 	AS bussAnncemntNo,
+					a.content_perform_nm 	AS contentPerformNm,
+				    b.buss_fr_dt 				AS bussFrDt,
+				    b.buss_to_dt 				AS bussToDt,
+				    b.buss_dept_cd 			AS bussDeptCd,
+				    b.buss_dept_nm 			AS bussDeptNm,
+				    a.reg_dt 					AS regDt
+			    
+			  FROM (
+						SELECT 
+						    		buss_anncemnt_no , 
+						    		member_id , 
+						    		content_perform_nm,
+						    		MIN(date_format(reg_dt,'%Y-%m-%d')) as reg_dt 
+						   FROM  tb_jcep_content_perform
+						GROUP BY buss_anncemnt_no
+			) a INNER JOIN  (SELECT 
+				 								buss_anncemnt_no,
+											    date_format(buss_fr_dt,'%Y-%m-%d') AS buss_fr_dt,
+											    date_format(buss_to_dt,'%Y-%m-%d') AS buss_to_dt,
+											    buss_dept_cd,		
+											    (SELECT common_nm FROM ta_common t WHERE t.group_cd = 'G00023' AND t.common_cd = t1.buss_dept_cd) AS buss_dept_nm	 								
+			 						 FROM	 tb_business_announcement t1		
+			) b
+			ON a.buss_anncemnt_no = b.buss_anncemnt_no
 			WHERE 1=1
 			<if test="searchText != null and searchText != ''">
 		        <choose>
 		        	<when test='searchType eq ""'>
-						AND	facility_nm LIKE CONCAT('%',#{searchText},'%') OR facility_loc LIKE CONCAT('%',#{searchText},'%') OR facility_scale LIKE CONCAT('%',#{searchText},'%') OR facility_equip LIKE CONCAT('%',#{searchText},'%')
+						AND	(a.content_perform_nm LIKE CONCAT('%',#{searchText},'%') OR b.buss_dept_nm LIKE CONCAT('%',#{searchText},'%') )
 					</when>
 		            <when test='searchType eq 1'>
-						AND	facility_nm LIKE CONCAT('%',#{searchText},'%')
+						AND	a.content_perform_nm LIKE CONCAT('%',#{searchText},'%')
 					</when>
 		            <when test='searchType eq 2'>
-						AND	facility_loc LIKE CONCAT('%',#{searchText},'%')
+						AND	b.buss_dept_nm LIKE CONCAT('%',#{searchText},'%')
 					</when>
 				</choose>
 			</if> 
-			ORDER BY resour_faci_id DESC
+			ORDER BY a.buss_anncemnt_no DESC
 			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
 	</select>
 	
 	<select id="selectBusinessContentPerformListTotCnt" parameterType="jcep.admin.model.BusinessVO" resultType="int">
-			SELECT COUNT(*) totcnt
-			FROM tb_facility
+			SELECT 
+					count(*) AS totCnt
+			    
+			  FROM (
+						SELECT 
+						    		buss_anncemnt_no , 
+						    		member_id , 
+						    		content_perform_nm,
+						    		MIN(date_format(reg_dt,'%Y-%m-%d')) as reg_dt 
+						   FROM  tb_jcep_content_perform
+						GROUP BY buss_anncemnt_no
+			) a INNER JOIN  (SELECT 
+				 								buss_anncemnt_no,
+											    date_format(buss_fr_dt,'%Y-%m-%d') AS buss_fr_dt,
+											    date_format(buss_to_dt,'%Y-%m-%d') AS buss_to_dt,
+											    buss_dept_cd,		
+											    (SELECT common_nm FROM ta_common t WHERE t.group_cd = 'G00023' AND t.common_cd = t1.buss_dept_cd) AS buss_dept_nm	 								
+			 						 FROM	 tb_business_announcement t1		
+			) b
+			ON a.buss_anncemnt_no = b.buss_anncemnt_no
 			WHERE 1=1
 			<if test="searchText != null and searchText != ''">
 		        <choose>
 		        	<when test='searchType eq ""'>
-						AND	facility_nm LIKE CONCAT('%',#{searchText},'%') OR facility_loc LIKE CONCAT('%',#{searchText},'%') OR facility_scale LIKE CONCAT('%',#{searchText},'%') OR facility_equip LIKE CONCAT('%',#{searchText},'%')
+						AND	(a.benefit_perform_nm LIKE CONCAT('%',#{searchText},'%') OR b.buss_dept_nm LIKE CONCAT('%',#{searchText},'%') )
 					</when>
 		            <when test='searchType eq 1'>
-						AND	facility_nm LIKE CONCAT('%',#{searchText},'%')
+						AND	a.benefit_perform_nm LIKE CONCAT('%',#{searchText},'%')
 					</when>
 		            <when test='searchType eq 2'>
-						AND	facility_loc LIKE CONCAT('%',#{searchText},'%')
+						AND	b.buss_dept_nm LIKE CONCAT('%',#{searchText},'%')
 					</when>
 				</choose>
-			</if> 
+			</if>
+			<if test="searchFromDate != null and searchFromDate != '' and searchToDate != null and searchToDate != ''">
+			       <![CDATA[
+		           AND ((b.buss_to_dt >= replace(#{searchFromDate},'-','') AND b.buss_to_dt <= replace(#{searchToDate},'-',''))
+						    OR (b.buss_fr_dt >= replace(#{searchFromDate},'-','') AND b.buss_fr_dt <= replace(#{searchToDate},'-',''))
+						    OR (b.buss_fr_dt <= replace(#{searchFromDate},'-','') AND b.buss_to_dt >= replace(#{searchToDate},'-','')))
+					]]>	     
+			</if> 	
 	</select>
 	
+<!-- 사업관리 > 사업운영 실적관리 > 기업지원 > 콘텐츠개발 및 제작지원실적 상세 -->
+	<select id="selectBusinessContentPerformDetailList" parameterType="java.util.Map" resultType="java.util.Map">
+			SELECT 
+			    		a.buss_anncemnt_no 	AS bussAnncemntNo , 
+			    		a.member_id 				AS memberId, 
+			    		a.content_perform_nm 	AS contentPerformNm,
+			    		a.buss_cont 				AS bussCont,
+			    		a.entpr_nm 				AS entprNm,
+			    		a.content_divi_cd 		AS contentDiviCd,
+			    		a.content_nm		 		AS contentNm,
+			    		a.remark 					AS remark,
+			    		b.buss_anncemnt_nm 	AS bussAnncemntNm
+			   FROM tb_jcep_content_perform a 
+			   INNER JOIN tb_business_announcement b
+			      ON a.buss_anncemnt_no =  b.buss_anncemnt_no
+  			 WHERE a.buss_anncemnt_no = #{bussAnncemntNo}
+	</select>		
 	
 	
 	
@@ -358,7 +423,7 @@
 			</if> 
 	</select>		
 
-<!-- 사업찾기 -->		
+<!-- 사업찾기 - 지원사업수혜실적, 콘텐츠 -->		
 	<select id="selectBussSearchList" parameterType="jcep.admin.model.BusinessVO" resultType="java.util.Map">
 			SELECT
 				A.buss_anncemnt_no AS bussAnncemntNo,
@@ -376,19 +441,58 @@
 				A.reg_id AS regId
 			FROM tb_business_announcement A
 			WHERE 1=1
-			  AND A.buss_divi_cd = 'Y'
-			  AND NOT EXISTS(SELECT 'N' FROM tb_jcep_benefit_perform B where B.buss_anncemnt_no = A.buss_anncemnt_no ) 
+			  	AND A.buss_divi_cd = 'Y'
 			<if test="searchType != null and searchType != ''">
 		        AND A.buss_dept_cd = #{searchType}
 			</if> 
 			<if test="searchText != null and searchText != ''">
 		        AND A.buss_anncemnt_nm LIKE CONCAT('%',#{searchText},'%')
-			</if> 			
+			</if> 
+			<if test="bussSearchType != null and bussSearchType != ''">
+				<choose>
+					<when test='bussSearchType == "S" '>
+						AND NOT EXISTS(SELECT 'N' FROM tb_jcep_benefit_perform B where B.buss_anncemnt_no = A.buss_anncemnt_no ) 
+					</when>
+					
+					<when test='bussSearchType ==  "C" '>
+						AND NOT EXISTS(SELECT 'N' FROM tb_jcep_content_perform B where B.buss_anncemnt_no = A.buss_anncemnt_no ) 
+					</when>					
+				
+				</choose>
+			</if>			
 			ORDER BY A.buss_anncemnt_no DESC
+			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
 	</select>	
-		
-<!-- 기업찾기 -->		
-	<select id="selectEntprSearchList" parameterType="jcep.admin.model.BusinessVO" resultType="java.util.Map">
+	
+<!-- 사업찾기 - 지원사업수혜실적, 콘텐츠 -->		
+	<select id="selectBussSearchListCnt" parameterType="jcep.admin.model.BusinessVO" resultType="int">
+			SELECT
+				count(*) totcnt
+			FROM tb_business_announcement A
+			WHERE 1=1
+			  	AND A.buss_divi_cd = 'Y'
+			<if test="searchType != null and searchType != ''">
+		        AND A.buss_dept_cd = #{searchType}
+			</if> 
+			<if test="searchText != null and searchText != ''">
+		        AND A.buss_anncemnt_nm LIKE CONCAT('%',#{searchText},'%')
+			</if> 
+			<if test="bussSearchType != null and bussSearchType != ''">
+				<choose>
+					<when test='bussSearchType == "S" '>
+						AND NOT EXISTS(SELECT 'N' FROM tb_jcep_benefit_perform B where B.buss_anncemnt_no = A.buss_anncemnt_no ) 
+					</when>
+					
+					<when test='bussSearchType ==  "C" '>
+						AND NOT EXISTS(SELECT 'N' FROM tb_jcep_content_perform B where B.buss_anncemnt_no = A.buss_anncemnt_no ) 
+					</when>					
+				
+				</choose>
+			</if>			
+	</select>		
+
+<!-- 기업찾기-지원사업수혜실적  -->		
+	<select id="selectBenefitPerformEntprSearchList" parameterType="jcep.admin.model.BusinessVO" resultType="java.util.Map">
 	SELECT * 
 	   FROM (
 			SELECT
@@ -422,8 +526,120 @@
 			</if>
 			<if test="bussAnncemntNo != null and bussAnncemntNo != ''">
 		        AND T.bussAnncemntNo = #{bussAnncemntNo}
-			</if> 				
+			</if> 	
+			ORDER BY 	T.bussAnncemntNo	,T.memberId DESC
+			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+				
+	</select>	
+	
+<!-- 기업찾기-지원사업수혜실적  -->		
+	<select id="selectBenefitPerformEntprSelectList" parameterType="jcep.admin.model.BusinessVO" resultType="java.util.Map">
+	SELECT * 
+	   FROM (
+			SELECT
+					A.buss_anncemnt_no AS bussAnncemntNo,
+					A.buss_anncemnt_nm AS bussAnncemntNm,
+		            B.member_id AS memberId,
+					(SELECT entpr_nm FROM tb_enterprise WHERE member_id = B.member_id) AS  entprNm,
+		            A.buss_dept_cd AS bussDeptCd,
+		            (SELECT common_nm FROM ta_common t WHERE t.group_cd = 'G00023' AND common_cd = A.buss_dept_cd) AS bussDeptNm,
+		            C.entpr_creat_job_cnt AS entprCreatJobCnt
+			 FROM tb_business_announcement A
+            INNER JOIN tb_buss_anncemnt_appl B
+			    ON A.buss_anncemnt_no =  B.buss_anncemnt_no
+			INNER JOIN tb_enterprise_jcep_buss C
+			    ON B.buss_anncemnt_no = C.buss_anncemnt_no
+               AND B.member_id           = C.member_id
+			WHERE 1=1
+			    AND A.buss_divi_cd = 'Y'
+                AND B.applic_st_cd = '000004'
+                AND C.entpr_buss_yn = 'Y'
+			) T
+			 WHERE 1=1
+		        AND T.bussAnncemntNo = #{bussAnncemntNo}
+			<if test="membersId != null">
+			    AND T.memberId in 
+				<foreach collection="membersId" item="item" index="index" separator="," open="(" close=")">
+					#{item}
+				</foreach>
+			</if>
 	</select>		
+		
+<!-- 기업찾기-지원사업수혜실적  -->		
+	<select id="selectBenefitPerformEntprSearchListCnt" parameterType="jcep.admin.model.BusinessVO" resultType="int">
+	SELECT count(*) as totcnt 
+	   FROM (
+			SELECT
+					A.buss_anncemnt_no AS bussAnncemntNo,
+					A.buss_anncemnt_nm AS bussAnncemntNm,
+		            B.member_id AS memberId,
+					(SELECT entpr_nm FROM tb_enterprise WHERE member_id = B.member_id) AS  entprNm,
+		            A.buss_dept_cd AS bussDeptCd,
+		            (SELECT common_nm FROM ta_common t WHERE t.group_cd = 'G00023' AND common_cd = A.buss_dept_cd) AS bussDeptNm,
+		            C.entpr_creat_job_cnt AS entprCreatJobCnt
+			 FROM tb_business_announcement A
+            INNER JOIN tb_buss_anncemnt_appl B
+			    ON A.buss_anncemnt_no =  B.buss_anncemnt_no
+			INNER JOIN tb_enterprise_jcep_buss C
+			    ON B.buss_anncemnt_no = C.buss_anncemnt_no
+               AND B.member_id           = C.member_id
+			WHERE 1=1
+			    AND A.buss_divi_cd = 'Y'
+                AND B.applic_st_cd = '000004'
+                AND C.entpr_buss_yn = 'Y'
+			) T
+			 WHERE 1=1
+			<if test="searchText1 != null and searchText1 != ''">
+		        AND T.entprNm LIKE CONCAT('%',#{searchText1},'%')
+			</if> 		
+			<if test="membersId != null">
+			    AND T.memberId in 
+				<foreach collection="membersId" item="item" index="index" separator="," open="(" close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="bussAnncemntNo != null and bussAnncemntNo != ''">
+		        AND T.bussAnncemntNo = #{bussAnncemntNo}
+			</if> 	
+					
+	</select>		
+	
+	
+		
+	
+<!-- 기업찾기-콘텐츠  -->		
+	<select id="selectContentPerformEntprSearchList" parameterType="jcep.admin.model.BusinessVO" resultType="java.util.Map">
+	SELECT * 
+	   FROM (
+			SELECT
+					A.buss_anncemnt_no AS bussAnncemntNo,
+					A.buss_anncemnt_nm AS bussAnncemntNm,
+		            B.member_id AS memberId,
+					(SELECT entpr_nm FROM tb_enterprise WHERE member_id = B.member_id) AS  entprNm,
+		            A.buss_dept_cd AS bussDeptCd,
+		            (SELECT common_nm FROM ta_common t WHERE t.group_cd = 'G00023' AND common_cd = A.buss_dept_cd) AS bussDeptNm
+			 FROM tb_business_announcement A
+            INNER JOIN tb_buss_anncemnt_appl B
+			    ON A.buss_anncemnt_no =  B.buss_anncemnt_no
+			WHERE 1=1
+			    AND A.buss_divi_cd = 'Y'
+                AND B.applic_st_cd = '000004'
+			) T
+			 WHERE 1=1
+			<if test="searchText1 != null and searchText1 != ''">
+		        AND T.entprNm LIKE CONCAT('%',#{searchText1},'%')
+			</if> 		
+			<if test="membersId != null">
+			    AND T.memberId in 
+				<foreach collection="membersId" item="item" index="index" separator="," open="(" close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="bussAnncemntNo != null and bussAnncemntNo != ''">
+		        AND T.bussAnncemntNo = #{bussAnncemntNo}
+			</if> 				
+	</select>			
+	
 	
 <!-- 지원사업수혜실적정보 존재여부 조회 -->	
 	<select id="selectJcepBenefitPerformCnt" parameterType="java.util.Map" resultType="int">
@@ -481,6 +697,70 @@
 				<foreach collection="memberId" item="item" index="index" separator="," open="(" close=")">
 					#{item}
 				</foreach>		
-	</select>				
+	</select>		
+	
+	
+	
+<!-- 지원사업수혜실적정보 존재여부 조회 -->	
+	<select id="selectJcepContentPerformCnt" parameterType="java.util.Map" resultType="int">
+		SELECT count(*) cnt
+		  FROM tb_jcep_content_perform 
+		WHERE 1=1
+		    AND buss_anncemnt_no = #{bussAnncemntNo}
+		    AND member_id            = #{memberId}
+	</select>		
+	
+	
+<!-- 콘텐츠개발 및 제작지원실적 등록 -->	
+	<insert id="insertJcepContentPerform" parameterType="java.util.Map">
+		INSERT INTO  tb_jcep_content_perform(
+			buss_anncemnt_no,
+			member_id,
+			content_perform_nm,
+			buss_cont,
+			entpr_nm,
+			content_divi_cd,
+			content_nm,
+			remark,
+			reg_dt,
+			reg_id
+		)VALUES(
+			#{bussAnncemntNo},
+			#{memberId},
+			#{contentPerformNm},
+			#{bussCont},
+			#{entprNm},
+			#{contentDiviCd},
+			#{contentNm},
+			#{remark},
+			CURRENT_TIMESTAMP,
+			'admin'
+		)
+
+	</insert>	
+	
+<!-- 콘텐츠개발 및 제작지원실적 수정 -->	
+	<select id="updateJcepContentPerform" parameterType="java.util.Map" resultType="int">
+		UPDATE tb_jcep_content_perform
+		     SET content_perform_nm 	= #{contentPerformNm},
+		           buss_cont              	= #{bussCont},
+		           entpr_nm					= #{entprNm},
+		           content_divi_cd		= #{contentDiviCd},
+		           content_nm				= #{contentNm},
+		           remark						= #{remark}
+		 WHERE buss_anncemnt_no = #{bussAnncemntNo}
+		     AND member_id            = #{memberId}    
+	</select>	
+	
+<!-- 콘텐츠개발 및 제작지원실적 삭제 -->	
+	<select id="deleteJcepContentPerform" parameterType="java.util.Map" resultType="int">
+		DELETE FROM tb_jcep_content_perform 
+		WHERE buss_anncemnt_no = #{bussAnncemntNo}
+			AND member_id not in 
+				<foreach collection="memberId" item="item" index="index" separator="," open="(" close=")">
+					#{item}
+				</foreach>		
+	</select>		
+			
 </mapper>
 

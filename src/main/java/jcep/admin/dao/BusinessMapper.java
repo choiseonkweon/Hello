@@ -65,6 +65,14 @@ public interface BusinessMapper {
 	public int selectBusinessContentPerformListTotCnt(BusinessVO params) throws Exception;	
 	
 	/**
+	 * 시설 상세 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 시설 목록
+	 * @exception Exception
+	 */
+	public ArrayList<Map<String,Object>> selectBusinessContentPerformDetailList(Map<String, Object> params) throws Exception;		
+	
+	/**
 	 * 사업관리 > 사업운영 실적관리 > 기업지원 > 지적재산권현황 목록을 조회한다.
 	 * @param params - 조회할 정보가 담긴 VO
 	 * @return 지원사업수혜실적 목록
@@ -136,13 +144,34 @@ public interface BusinessMapper {
 	 */
 	public ArrayList<Map<String,Object>> selectBussSearchList(BusinessVO params) throws Exception;
 	
+	public int selectBussSearchListCnt(BusinessVO params) throws Exception;
+	
 	/**
-	 * 기업찾기
+	 * 기업찾기 - 지원사업수혜실적
 	 * @param params - 조회할 정보가 담긴 VO
 	 * @return 
 	 * @exception
 	 */
-	public ArrayList<Map<String,Object>> selectEntprSearchList(BusinessVO params) throws Exception;		
+	public ArrayList<Map<String,Object>> selectBenefitPerformEntprSearchList(BusinessVO params) throws Exception;		
+
+	
+	public int selectBenefitPerformEntprSearchListCnt(BusinessVO params) throws Exception;	
+	
+	/**
+	 * 기업찾기 - 기업선택
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 
+	 * @exception
+	 */	
+	public ArrayList<Map<String,Object>> selectBenefitPerformEntprSelectList(BusinessVO params) throws Exception;	
+	
+	/**
+	 * 기업찾기 - 콘텐츠
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 
+	 * @exception
+	 */
+	public ArrayList<Map<String,Object>> selectContentPerformEntprSearchList(BusinessVO params) throws Exception;			
 	
 	/**
 	 * 지원사업수혜실적정보 존재여부 조회한다.
@@ -175,6 +204,42 @@ public interface BusinessMapper {
 	 * @return Integer형
 	 * @exception Exception
 	 */
-	public Integer deleteJcepBenefitPerform(Map<String, Object> params) throws Exception;		
+	public Integer deleteJcepBenefitPerform(Map<String, Object> params) throws Exception;	
+	
+	
+	/**
+	 * 콘텐츠개발 및 제작지원실적 존재여부 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 지원사업수혜실적정보 총 갯수
+	 * @exception
+	 */
+	public int selectJcepContentPerformCnt(Map<String,Object> params) throws Exception;		
+	
+	
+	/**
+	 * 콘텐츠개발 및 제작지원실적 등록한다.
+	 * @param params - 등록정보
+	 * @return Integer형
+	 * @exception Exception
+	 */
+	public Integer insertJcepContentPerform(Map<String, Object> params) throws Exception;		
+	
+	/**
+	 * 콘텐츠개발 및 제작지원실적 수정한다.
+	 * @param params - 수정정보
+	 * @return Integer형
+	 * @exception Exception
+	 */
+	public Integer updateJcepContentPerform(Map<String, Object> params) throws Exception;		
+
+	/**
+	 * 콘텐츠개발 및 제작지원실적 삭제한다.
+	 * @param params - 삭제정보
+	 * @return Integer형
+	 * @exception Exception
+	 */
+	public Integer deleteJcepContentPerform(Map<String, Object> params) throws Exception;		
+	
+	
 	
 }
