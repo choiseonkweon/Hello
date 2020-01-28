@@ -1212,7 +1212,7 @@ LEFT OUTER JOIN	tb_buss_anncemnt_attch_file c 	ON		a.buss_anncemnt_no = c.buss_a
 			ORDER BY rand()
 			Limit #{aa}
 		]]>
-	</select>
+	</select> 
 	
 	
 </mapper>
