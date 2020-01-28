@@ -39,6 +39,8 @@
 	<script type="text/javaScript" >
 
 		$(document).ready(function () {
+			betweenPicker("useFrDt","useToDt","front");
+			
 			// calendar 호출
 			setReservMonth(new Date(),'F'); // F: 시설 , R : 자원
 			
@@ -513,7 +515,7 @@
 					<th>사용시간</th>
 					<td>
 						<div class="set">
-							<input type="text" class="date" data-dateformat="yyyy-mm-dd" id="useFrDt" name="useFrDt" value="" style="width: 110px; margin-right: 4px;" />
+							<input type="text" data-dateformat="yyyy-mm-dd" id="useFrDt" name="useFrDt" value="" style="width: 110px; margin-right: 4px;" />
 							<select name="useFrTm" id="useFrTm" style="width: 100px;">
 								<option value="0900">9시</option>
 								<option value="1000">10시</option>
@@ -527,7 +529,7 @@
 							</select>
 						</div>
 						<div class="set">
-							<input type="text" class="date" data-dateformat="yyyy-mm-dd" id="useToDt" name="useToDt" style="width: 110px; margin-right: 4px;" />
+							<input type="text" data-dateformat="yyyy-mm-dd" id="useToDt" name="useToDt" style="width: 110px; margin-right: 4px;" />
 							<select name="useToTm" id="useToTm" style="width: 100px;">
 								<option value="1000">10시</option>
 								<option value="1100">11시</option>

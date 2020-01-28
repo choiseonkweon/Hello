@@ -34,7 +34,7 @@
     <link rel="stylesheet" type="text/css"  href="../assets/jqGrid/css/ui.jqgrid.css" />
  해당 위치에서 파일을 찾을 수 없음-->
     	
-	<link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<!-- 	<link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"> -->
 	
 	<link rel="stylesheet" type="text/css" media="screen" href="../css/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" media="screen" href="../css/font-awesome.min.css">

@@ -19,17 +19,26 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import egovframework.rte.fdl.property.EgovPropertyService;
 import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
+import jcep.admin.model.BusinessVO;
 import jcep.admin.common.UploadFileUtils;
 import jcep.admin.model.EnterpriseBuyerExpertVO;
+import jcep.admin.model.FacilityResourceVO;
 import jcep.admin.model.MemberVO;
+import jcep.admin.model.BusinessVO;
+import jcep.admin.service.BusinessService;
 import jcep.admin.service.EnterpriseBuyerExpertService;
 import jcep.admin.service.MemberService;
+import net.sf.json.JSONArray;
 
 /**
  * @Class Name : BusinessController.java
@@ -59,6 +68,9 @@ public class BusinessController {
 
 	@Resource(name = "memberService")
 	protected MemberService memberService;
+	
+	@Resource(name = "businessService")
+	protected BusinessService businessService;	
 	
 
 	/**
@@ -481,6 +493,407 @@ public class BusinessController {
 		return mav;
 	}
 	
+	/**
+	 * 사업관리 > 사업운영 실적관리 > 기업지원 > 지원사업수혜실적  목록을 조회한다. (pageing)
+	 * @param searchVO - 조회할 정보가 담긴 EnterpriseBuyerExpertVO
+	 * @param model
+	 * @return "businessOrderStatusList"
+	 * @exception Exception
+	 */
+	@RequestMapping(value = "/business/businessSupportBenefitList.do")
+	public ModelAndView businessSupportBenfiteList(@ModelAttribute("searchVO") BusinessVO searchVO, ModelAndView mv, Model model) throws Exception {
+		searchVO.setPageUnit(propertiesService.getInt("pageUnit"));
+		searchVO.setPageSize(propertiesService.getInt("pageSize"));
+
+		PaginationInfo paginationInfo = new PaginationInfo();
+		paginationInfo.setCurrentPageNo(searchVO.getPageIndex());
+		paginationInfo.setRecordCountPerPage(searchVO.getPageUnit());
+		paginationInfo.setPageSize(searchVO.getPageSize());
+
+		searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
+		searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
+		searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
+
+		ArrayList<Map<String,Object>> supportList = businessService.selectBusinessSupportBenefitList(searchVO);
+		model.addAttribute("resultList", supportList);
+		
+		int totCnt = businessService.selectBusinessSupportBenefitListTotCnt(searchVO);
+		paginationInfo.setTotalRecordCount(totCnt);
+		model.addAttribute("paginationInfo", paginationInfo);
+		mv.setViewName("/view/businessSupportBenefitList");
+		
+		return mv;
+	}	
+	
+	/**
+	 * 사업관리 > 사업운영 실적관리 > 기업지원 > 지원사업수혜실적  등록 및 수정 화면 이동 (pageing)
+	 * @param FacilityResourceFrontVO - 등록할 정보가 담긴 VO
+	 * @param searchVO -  조회조건 정보가 담긴 VO
+	 * @param status
+	 * @return "facilityRegistrationManagementReg"
+	 * @exception Exception
+	 */
+	@RequestMapping("/business/businessSupportBenefitReg.do")
+	public ModelAndView businessSupportBenefitReg(@RequestParam(required=false) Map<String, Object> paramMap, Model model, ModelAndView mv, HttpServletRequest request) throws Exception {
+		//수정 
+		if(!("".equals(paramMap.get("bussAnncemntNo")) || null == paramMap.get("bussAnncemntNo"))) {
+		  	model.addAttribute("resultList", businessService.selectBusinessSupportBenefitDetailList(paramMap));  
+		  	
+		}
+		
+		mv.setViewName("/view/businessSupportBenefitReg");
+		
+		return mv;
+	}	
+	
+	/**
+	 * 사업관리 > 사업운영 실적관리 > 기업지원 > 지원사업수혜실적  등록 및 수정 화면 이동 (pageing)
+	 * @param FacilityResourceFrontVO - 등록할 정보가 담긴 VO
+	 * @param searchVO -  조회조건 정보가 담긴 VO
+	 * @param status
+	 * @return "facilityRegistrationManagementReg"
+	 * @exception Exception
+	 */
+	@RequestMapping("/business/benefitPerformSave.do")
+	public String benefitPerformSave(@RequestParam(required=false) Map<String,List<Map<String,Object>>> paramList, Model model, ModelAndView mv) throws Exception {
+        ObjectMapper om = new ObjectMapper();
+        List<Map<String,Object>> list =  om.readValue(om.writeValueAsString(JSONArray.fromObject(paramList.get("params"))), List.class);
+        String bussAnncemntNo =  om.readValue(om.writeValueAsString(paramList.get("bussAnncemntNo")),String.class);
+
+        businessService.benefitPerformSave(list, bussAnncemntNo);
+        
+		return "jsonView";
+	}		
+	
+	
+	/**
+	 * 사업관리 > 사업운영 실적관리 > 기업지원 > 콘텐츠개발 및 제작지원실적  목록을 조회한다. (pageing)
+	 * @param searchVO - 조회할 정보가 담긴 EnterpriseBuyerExpertVO
+	 * @param model
+	 * @return "businessOrderStatusList"
+	 * @exception Exception
+	 */
+	@RequestMapping(value = "/business/businessContentPerformList.do")
+	public ModelAndView businessContentPerformList(@ModelAttribute("searchVO") BusinessVO searchVO, ModelAndView mv, Model model) throws Exception {
+		searchVO.setPageUnit(propertiesService.getInt("pageUnit"));
+		searchVO.setPageSize(propertiesService.getInt("pageSize"));
+
+		PaginationInfo paginationInfo = new PaginationInfo();
+		paginationInfo.setCurrentPageNo(searchVO.getPageIndex());
+		paginationInfo.setRecordCountPerPage(searchVO.getPageUnit());
+		paginationInfo.setPageSize(searchVO.getPageSize());
+
+		searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
+		searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
+		searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
+
+		ArrayList<Map<String,Object>> supportList = businessService.selectBusinessContentPerformList(searchVO);
+		model.addAttribute("resultList", supportList);
+		
+		int totCnt = businessService.selectBusinessContentPerformListTotCnt(searchVO);
+		paginationInfo.setTotalRecordCount(totCnt);
+		model.addAttribute("paginationInfo", paginationInfo);
+		mv.setViewName("/view/businessContentPerformList");
+		
+		return mv;
+	}	
+	
+	/**
+	 * 사업관리 > 사업운영 실적관리 > 기업지원 > 콘텐츠개발 및 제작지원실적  등록 및 수정 화면 이동 (pageing)
+	 * @param FacilityResourceFrontVO - 등록할 정보가 담긴 VO
+	 * @param searchVO -  조회조건 정보가 담긴 VO
+	 * @param status
+	 * @return "facilityRegistrationManagementReg"
+	 * @exception Exception
+	 */
+	@RequestMapping("/business/businessContentPerformReg.do")
+	public ModelAndView businessContentPerformReg(@RequestParam(required=false) Map<String, Object> paramMap, Model model, ModelAndView mv, HttpServletRequest request) throws Exception {
+		//수정 
+		if(!("".equals(paramMap.get("bussAnncemntNo")) || null == paramMap.get("bussAnncemntNo"))) {
+		  	model.addAttribute("resultList", businessService.selectBusinessContentPerformDetailList(paramMap));  
+		  	MemberVO commonsVo = new MemberVO();
+		  	
+			//content 구분
+			commonsVo.setGroupCd("G00025");
+			List<MemberVO> gubunList = memberService.selectCommonsList(commonsVo);		
+			model.addAttribute("gubunList", gubunList);		
+		  	
+		}
+		
+		mv.setViewName("/view/businessContentPerformReg");
+		
+		return mv;
+	}		
+	
+	/**
+	 * 사업관리 > 사업운영 실적관리 > 기업지원 > 콘텐츠개발 및 제작지원실적  등록 및 수정 화면 이동 (pageing)
+	 * @param FacilityResourceFrontVO - 등록할 정보가 담긴 VO
+	 * @param searchVO -  조회조건 정보가 담긴 VO
+	 * @param status
+	 * @return "facilityRegistrationManagementReg"
+	 * @exception Exception
+	 */
+	@RequestMapping("/business/contentPerformSave.do")
+	public String contentPerformSave(@RequestParam(required=false) Map<String,List<Map<String,Object>>> paramList, Model model, ModelAndView mv) throws Exception {
+        ObjectMapper om = new ObjectMapper();
+        List<Map<String,Object>> list =  om.readValue(om.writeValueAsString(JSONArray.fromObject(paramList.get("params"))), List.class);
+        String bussAnncemntNo =  om.readValue(om.writeValueAsString(paramList.get("bussAnncemntNo")),String.class);
+
+        businessService.contentPerformSave(list, bussAnncemntNo);
+        
+		return "jsonView";
+	}			
+	
+	
+	/**
+	 * 사업관리 > 사업운영 실적관리 > 기업지원 > 지적재산권현황  목록을 조회한다. (pageing)
+	 * @param searchVO - 조회할 정보가 담긴 EnterpriseBuyerExpertVO
+	 * @param model
+	 * @return "businessOrderStatusList"
+	 * @exception Exception
+	 */
+	@RequestMapping(value = "/business/businessIntltProptyList.do")
+	public ModelAndView businessIntltProptyList(@ModelAttribute("searchVO") BusinessVO searchVO, ModelAndView mv, Model model) throws Exception {
+		searchVO.setPageUnit(propertiesService.getInt("pageUnit"));
+		searchVO.setPageSize(propertiesService.getInt("pageSize"));
+
+		PaginationInfo paginationInfo = new PaginationInfo();
+		paginationInfo.setCurrentPageNo(searchVO.getPageIndex());
+		paginationInfo.setRecordCountPerPage(searchVO.getPageUnit());
+		paginationInfo.setPageSize(searchVO.getPageSize());
+
+		searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
+		searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
+		searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
+
+		ArrayList<Map<String,Object>> supportList = businessService.selectBusinessIntltProptyList(searchVO);
+		model.addAttribute("resultList", supportList);
+		
+		int totCnt = businessService.selectBusinessIntltProptyListTotCnt(searchVO);
+		paginationInfo.setTotalRecordCount(totCnt);
+		model.addAttribute("paginationInfo", paginationInfo);
+		mv.setViewName("/view/businessIntltProptyList");
+		
+		return mv;
+	}	
+	
+	/**
+	 * 사업관리 > 사업운영 실적관리 > 기업지원 > 지원사업수혜실적  목록을 조회한다. (pageing)
+	 * @param searchVO - 조회할 정보가 담긴 EnterpriseBuyerExpertVO
+	 * @param model
+	 * @return "businessOrderStatusList"
+	 * @exception Exception
+	 */
+	@RequestMapping(value = "/business/businessAttractList.do")
+	public ModelAndView businessAttractList(@ModelAttribute("searchVO") BusinessVO searchVO, ModelAndView mv, Model model) throws Exception {
+		searchVO.setPageUnit(propertiesService.getInt("pageUnit"));
+		searchVO.setPageSize(propertiesService.getInt("pageSize"));
+
+		PaginationInfo paginationInfo = new PaginationInfo();
+		paginationInfo.setCurrentPageNo(searchVO.getPageIndex());
+		paginationInfo.setRecordCountPerPage(searchVO.getPageUnit());
+		paginationInfo.setPageSize(searchVO.getPageSize());
+
+		searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
+		searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
+		searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
+
+		ArrayList<Map<String,Object>> supportList = businessService.selectBusinessAttractList(searchVO);
+		model.addAttribute("resultList", supportList);
+		
+		int totCnt = businessService.selectBusinessAttractListTotCnt(searchVO);
+		paginationInfo.setTotalRecordCount(totCnt);
+		model.addAttribute("paginationInfo", paginationInfo);
+		mv.setViewName("/view/businessAttractList");
+		
+		return mv;
+	}
+	
+	/**
+	 * 사업관리 > 사업운영 실적관리 > 인프라지원 > 지적재산권현황  목록을 조회한다. (pageing)
+	 * @param searchVO - 조회할 정보가 담긴 EnterpriseBuyerExpertVO
+	 * @param model
+	 * @return "businessOrderStatusList"
+	 * @exception Exception
+	 */
+	@RequestMapping(value = "/business/businessInfraResourFaciUseResultList.do")
+	public ModelAndView businessInfraResourFaciUseResultList(@ModelAttribute("searchVO") BusinessVO searchVO, ModelAndView mv, Model model) throws Exception {
+		searchVO.setPageUnit(propertiesService.getInt("pageUnit"));
+		searchVO.setPageSize(propertiesService.getInt("pageSize"));
+
+		PaginationInfo paginationInfo = new PaginationInfo();
+		paginationInfo.setCurrentPageNo(searchVO.getPageIndex());
+		paginationInfo.setRecordCountPerPage(searchVO.getPageUnit());
+		paginationInfo.setPageSize(searchVO.getPageSize());
+
+		searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
+		searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
+		searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
+
+		ArrayList<Map<String,Object>> supportList = businessService.selectBusinessInfraResourFaciUseResultList(searchVO);
+		model.addAttribute("resultList", supportList);
+		
+		int totCnt = businessService.selectBusinessInfraResourFaciUseResultListTotCnt(searchVO);
+		paginationInfo.setTotalRecordCount(totCnt);
+		model.addAttribute("paginationInfo", paginationInfo);
+		mv.setViewName("/view/businessInfraResourFaciUseResultList");
+		
+		return mv;
+	}		
+	/**
+	 * 사업관리 > 사업운영 실적관리 > 인프라지원 > 지적재산권현황  목록을 조회한다. (pageing)
+	 * @param searchVO - 조회할 정보가 담긴 EnterpriseBuyerExpertVO
+	 * @param model
+	 * @return "businessOrderStatusList"
+	 * @exception Exception
+	 */
+	@RequestMapping(value = "/business/businessInfraEnterpriseList.do")
+	public ModelAndView businessInfraEnterpriseList(@ModelAttribute("searchVO") BusinessVO searchVO, ModelAndView mv, Model model) throws Exception {
+		searchVO.setPageUnit(propertiesService.getInt("pageUnit"));
+		searchVO.setPageSize(propertiesService.getInt("pageSize"));
+		
+		PaginationInfo paginationInfo = new PaginationInfo();
+		paginationInfo.setCurrentPageNo(searchVO.getPageIndex());
+		paginationInfo.setRecordCountPerPage(searchVO.getPageUnit());
+		paginationInfo.setPageSize(searchVO.getPageSize());
+		
+		searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
+		searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
+		searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
+		
+		ArrayList<Map<String,Object>> supportList = businessService.selectBusinessInfraEnterpriseList(searchVO);
+		model.addAttribute("resultList", supportList);
+		
+		int totCnt = businessService.selectBusinessInfraEnterpriseListTotCnt(searchVO);
+		paginationInfo.setTotalRecordCount(totCnt);
+		model.addAttribute("paginationInfo", paginationInfo);
+		mv.setViewName("/view/businessInfraEnterpriseList");
+		
+		return mv;
+	}	
+	
+	/**
+	 * 사업찾기 
+	 * @param searchVO - 조회할 정보가 담긴 EnterpriseBuyerExpertVO
+	 * @param model
+	 * @return "businessOrderStatusList"
+	 * @exception Exception
+	 */
+	@RequestMapping(value = "/business/bussSearchList.do")
+	public ModelAndView bussSearchList(@ModelAttribute("searchVO") BusinessVO searchVO, ModelAndView mv, Model model) throws Exception {	
+		
+		searchVO.setPageUnit(propertiesService.getInt("pageUnit"));
+		searchVO.setPageSize(propertiesService.getInt("pageSize"));
+		
+		PaginationInfo paginationInfo = new PaginationInfo();
+		paginationInfo.setCurrentPageNo(searchVO.getPageIndex());
+		paginationInfo.setRecordCountPerPage(searchVO.getPageUnit());
+		paginationInfo.setPageSize(searchVO.getPageSize());
+		
+		searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
+		searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
+		searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
+		
+		ArrayList<Map<String,Object>> bussAnncemntList = businessService.selectBussSearchList(searchVO);
+		model.addAttribute("resultList", bussAnncemntList);
+		
+		int totCnt = businessService.selectBussSearchListCnt(searchVO);
+		paginationInfo.setTotalRecordCount(totCnt);
+		model.addAttribute("paginationInfo", paginationInfo);
+		
+		mv.setViewName("/html/businessSearchPop");
+		
+    	return mv;
+	}		
+	
+	
+	/**
+	 * 기업찾기 - 지원사업수혜실적 (pageing)
+	 * @param searchVO - 조회할 정보가 담긴 EnterpriseBuyerExpertVO
+	 * @param model
+	 * @return "businessOrderStatusList"
+	 * @exception Exception
+	 */
+	@RequestMapping(value = "/business/benefitPerformEntprSearchList.do")
+	public ModelAndView benefitPerformEntprSearchList(@ModelAttribute("searchVO") BusinessVO searchVO, ModelAndView mv, Model model) throws Exception {
+		
+		searchVO.setPageUnit(propertiesService.getInt("pageUnit"));
+		searchVO.setPageSize(propertiesService.getInt("pageSize"));
+		
+		PaginationInfo paginationInfo = new PaginationInfo();
+		paginationInfo.setCurrentPageNo(searchVO.getPageIndex());
+		paginationInfo.setRecordCountPerPage(searchVO.getPageUnit());
+		paginationInfo.setPageSize(searchVO.getPageSize());
+		
+		searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
+		searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
+		searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
+		
+		ArrayList<Map<String,Object>> bussAnncemntList = businessService.selectBenefitPerformEntprSearchList(searchVO);
+		model.addAttribute("resultList", bussAnncemntList);
+		
+		int totCnt = businessService.selectBenefitPerformEntprSearchListCnt(searchVO);
+		paginationInfo.setTotalRecordCount(totCnt);
+		model.addAttribute("paginationInfo", paginationInfo);		
+
+		mv.setViewName("/html/benefitEntprSearchPop");
+		
+    	return mv;
+	}		
+	
+	/**
+	 * 기업찾기 - 콘텐츠 (pageing)
+	 * @param searchVO - 조회할 정보가 담긴 EnterpriseBuyerExpertVO
+	 * @param model
+	 * @return "businessOrderStatusList"
+	 * @exception Exception
+	 */
+	@RequestMapping(value = "/business/contentPerformEntprSearchList.do")
+	public String contentPerformEntprSearchList(@ModelAttribute("searchVO") BusinessVO searchVO, ModelAndView mv, Model model) throws Exception {
+		ArrayList<Map<String,Object>> bussAnncemntList = businessService.selectContentPerformEntprSearchList(searchVO);
+		model.addAttribute("resultList", bussAnncemntList);
+
+    	return "jsonView";
+	}			
+	
+	/**
+	 * 기업찾기 > 선택한 기업 조회 (pageing)
+	 * @param searchVO - 조회할 정보가 담긴 EnterpriseBuyerExpertVO
+	 * @param model
+	 * @return "businessOrderStatusList"
+	 * @exception Exception
+	 */
+	@RequestMapping(value = "/business/entprSelectList.do")
+	public String entprSelectList(@RequestParam(value="membersId[]",required=false) List<String> membersId,@RequestParam(required=false) Map<String,Object> paramMap, ModelAndView mv, Model model) throws Exception {
+		if(!membersId.isEmpty() && !("".equals(paramMap.get("bussAnncemntNo")) && paramMap.get("bussAnncemntNo") == null)) {
+			BusinessVO searchVO = new BusinessVO();
+			
+			searchVO.setMembersId(membersId);
+			searchVO.setBussAnncemntNo(paramMap.get("bussAnncemntNo").toString());
+			
+			if("S".equals(paramMap.get("gubun"))){ // 지원사업수혜실적
+				ArrayList<Map<String,Object>> bussAnncemntList = businessService.selectBenefitPerformEntprSelectList(searchVO);
+				model.addAttribute("resultList", bussAnncemntList);
+				
+				
+			}else if("C".equals(paramMap.get("gubun"))){ //콘텐츠
+				ArrayList<Map<String,Object>> bussAnncemntList = businessService.selectContentPerformEntprSearchList(searchVO);
+				model.addAttribute("resultList", bussAnncemntList);				
+				
+				MemberVO commonsVo = new MemberVO();
+				//content 구분
+				commonsVo.setGroupCd("G00025");
+				List<MemberVO> gubunList = memberService.selectCommonsList(commonsVo);		
+				model.addAttribute("gubunList", gubunList);				
+				
+				
+			}
+			
+		}
+		
+    	return "jsonView";
+	}	
+	
 	@ResponseBody
 	@RequestMapping(value="/bussAnncemntApplDelete.do", produces="text/plain;charset=utf-8")
 	public ModelAndView bussAnncemntApplDelete(@RequestParam(required=false) Map<String, String> map) throws Exception {
@@ -598,16 +1011,3 @@ public class BusinessController {
 		  }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
