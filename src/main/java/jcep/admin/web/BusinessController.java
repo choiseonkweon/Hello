@@ -390,7 +390,12 @@ public class BusinessController {
     @RequestMapping("/business/businessManagementRegisterInsert.do")
 	public String businessManagementRegisterInsert(MemberVO searchVO,HttpServletRequest request, HttpSession session, MultipartHttpServletRequest multipartRequest) throws Exception {
     	System.out.println("businessManagementRegisterInsert_1***********************"+searchVO);
-    	int check = enterpriseBuyerExpertService.businessManagementRegisterInsert(searchVO);
+    	int check = 0;
+    	try {
+    		check = enterpriseBuyerExpertService.businessManagementRegisterInsert(searchVO);
+    	}catch (Exception e) {
+			// TODO: handle exception
+		}
     	if(check >0) {
         	//멀티파일 insert
         	String filePath = noticeFilePath;
@@ -504,6 +509,22 @@ public class BusinessController {
 		  	return null;
 	  }
 	  
+	  @RequestMapping(value = "/businessManagementfileDownload.do", produces="text/plain;charset=utf-8")
+	  public ModelAndView  businessManagementfileDownload(@RequestParam(required=false) Map<String, String> map, ModelAndView mv,  HttpServletRequest request, HttpServletResponse response) throws Exception {
+		  System.out.println(map.get("attchFileNo"));
+		  MemberVO memberVo = enterpriseBuyerExpertService.businessManagementfileDownload(map);
+		  //다운로드 할 파일 정보를 불러온다.
+		  mv.addObject("memberVo",memberVo);
+		  mv.addObject("response",response);
+		  try {
+			  UploadFileUtils.fileDownload(mv);
+		  } catch (Exception e) {
+			  // TODO Auto-generated catch block
+			  e.printStackTrace();
+		  }
+		  return null;
+	  }
+	  
 		@RequestMapping(value = "/business/businessManagementUpdate.do",  produces="text/plain;charset=utf-8")
 		public ModelAndView businessManagementUpdate(@RequestParam(required=false) Map<String, String> map) throws Exception {
 
@@ -522,7 +543,60 @@ public class BusinessController {
 			mav.setViewName("/view/businessManagementUpdate");
 			return mav;
 		}
-	
+		
+		//사업관리 -> 사업수정
+		@RequestMapping(value = "/business/businessManagementRegisterUpdateOk.do",  produces="text/plain;charset=utf-8")
+		public String businessManagementRegisterUpdateOk(@RequestParam(required=false) Map<String, String> map, MultipartHttpServletRequest multipartRequest) throws Exception {
+			int count = (Integer.parseInt(map.get("count")));	//삭제할 파일개수
+    		
+			for(int i =0; i<count; i++) { //삭제할 파일개수만큼 돌리기
+				String attchFileNo =  map.get("fileNumber"+i); // 해당 파일 가져오기
+				System.out.println("파일번호"+ attchFileNo);
+				int Delete = enterpriseBuyerExpertService.businessManagementRegisterFileDelete(attchFileNo); //파일 삭제 쿼리
+				System.out.println("삭제"+i+":" +Delete); 
+			}
+
+			int update =  enterpriseBuyerExpertService.businessManagementRegisterUpdateOk(map);//수정된 사항 업데이트
+			if(update>0) {//업데이트가 완료되면
+	        	String filePath = noticeFilePath;//파일경로 가져오기
+	        	List<Map<String, Object>> fileMap = UploadFileUtils.MultiFileUpload(multipartRequest, filePath);//파일 업로드 | 업로드된 파일이름과 파일경로 리스트로 반환
+	    		int filelength = enterpriseBuyerExpertService.businessManagementFileLength(map);//마지막 파일번호 +1된 값 가져오기
+	        	for(int i =0; i<fileMap.size(); i++) { //업로드된 파일 개수만큼 돌리기
+	        		HashMap<String,String> hMap = new HashMap<String,String>(); 	//객체 선언
+
+	        		hMap.put("bussAnncemntNo",map.get("bussAnncemntNo"));				//사업공고번호
+       				hMap.put("attchFileNo",map.get("bussAnncemntNo")+filelength);		//첨부파일번호
+       				hMap.put("fileCourse",(String)fileMap.get(i).get("fileCourse"));			//파일경로
+	        		hMap.put("orgFileNm",(String)fileMap.get(i).get("orgFileNm"));			//파일명
+
+	        		int fileInsertcheck = enterpriseBuyerExpertService.businessManagementRegisterInsertFile(hMap); //파일 테이블에 인서트
+	        		System.out.println(fileInsertcheck);
+	        		System.out.println("======= "+i+"번째 파일 인서트 완료 =======");
+	        		System.out.println("파일경로:"+(String)fileMap.get(i).get("fileCourse"));
+	        		System.out.println("파일명:"+(String)fileMap.get(i).get("orgFileNm"));
+	        		System.out.println("===============================");
+	        		filelength++;	//파일번호 증가
+				}
+			}
+			return "jsonView";
+		}
+
+			//유효성 검사
+		  @RequestMapping(value = "/NomberValidateCheck.do", produces="text/plain;charset=utf-8")
+		  public ModelAndView  NomberValidateCheck(@RequestParam(required=false) Map<String, String> map, ModelAndView mv,  HttpServletRequest request, HttpServletResponse response) throws Exception {
+				ModelAndView mav = new ModelAndView("jsonView");
+			  Integer returnCode = 0;
+			  try {
+				  returnCode = enterpriseBuyerExpertService.NomberValidateCheck(map);
+			  } catch (Exception e) {
+				  // TODO Auto-generated catch block
+				  e.printStackTrace();
+			  }
+			  mav.addObject("returnCode",returnCode);
+			  System.out.println("returnCode::" + returnCode);
+				return mav;
+		  }
+
 }
 
 

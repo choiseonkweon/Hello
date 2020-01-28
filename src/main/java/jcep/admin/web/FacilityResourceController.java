@@ -474,4 +474,5 @@ public class FacilityResourceController {
 		
     	return "jsonView";
     }	        
+
 }

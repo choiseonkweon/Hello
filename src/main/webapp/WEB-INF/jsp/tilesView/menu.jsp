@@ -39,11 +39,20 @@
 							<a href="/db/enterprise/enterpriseInformationManagementList.do" title="기업/바이어/전문가정보 관리"><span class="menu-item-parent">기업정보 관리</span></a>
 						</li>
 						<li class="">
-							<a href="/db/expert/expertInformationManagementList.do" title="기업/바이어/전문가정보 관리"><span class="menu-item-parent">전문가정보 관리</span></a>
-						</li>
-						<li class="">
 							<a href="/db/buyer/buyerInformationManagementList.do" title="기업/바이어/전문가정보 관리"><span class="menu-item-parent">바이어정보 관리</span></a>
 						</li>
+						<li>
+							<a href="#" title="기업/바이어/전문가정보 관리"><span class="menu-item-parent">전문가 관리</span></a>
+							<ul>
+								<li class="">
+									<a href="/db/expert/expertInformationManagementList.do" title="기업/바이어/전문가정보 관리"><span class="menu-item-parent">전문가정보 관리</span></a>
+								</li>
+								<li class="">	
+									<a href="/db/evalu/evaluInformationManagementList.do" title="기업/바이어/전문가정보 관리"><span class="menu-item-parent">평가위원 추출</span></a>
+								</li>
+							</ul>
+						</li>
+
 					</ul>	
 				</li>
 				<li class="">

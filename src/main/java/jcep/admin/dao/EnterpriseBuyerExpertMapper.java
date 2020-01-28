@@ -355,4 +355,18 @@ public interface EnterpriseBuyerExpertMapper {
 	public int bussAnncemntApplDelete(Map<String,String> params)throws Exception;
 
 	public MemberVO businessManagementDetailFileDownload(Map<String,String> params)throws Exception;
+
+	public MemberVO businessManagementfileDownload(Map<String,String> params)throws Exception;
+	
+	public int businessManagementRegisterFileDelete(String params)throws Exception;
+	
+	public int businessManagementRegisterUpdateOk(Map<String,String> hMap)throws Exception;
+
+	public int businessManagementFileLength(Map<String,String> hMap)throws Exception;
+
+	public int NomberValidateCheck(Map<String,String> hMap)throws Exception;
+
+	public List<Map<String,String>> selectEvaluList(MemberVO params)throws Exception;
+
+	public int selectEvaluListTotCnt(MemberVO params)throws Exception;
 }

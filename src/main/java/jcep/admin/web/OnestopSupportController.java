@@ -463,4 +463,37 @@ public class OnestopSupportController {
 		  	return null;
 	  }
 	
+	  //등록
+	  
+	  @RequestMapping(value = "/oneStop/adviceOnlineStatusManagementInsert.do")
+	  public ModelAndView  adviceOnlineStatusManagementInsert(@ModelAttribute("searchVO") MemberVO searchVO, ModelAndView mav) throws Exception {
+		  
+			MemberVO commonsVo = new MemberVO();
+
+			commonsVo.setGroupCd("G00047");//구분
+			List<MemberVO> onoffDiviCd = memberService.selectCommonsList(commonsVo);
+			commonsVo.setGroupCd("G00002");//사업분야
+			List<MemberVO> largeBussAreaCd = memberService.selectCommonsList(commonsVo);
+			commonsVo.setGroupCd("G00003");//사업분야 상세
+			List<MemberVO> mediumBussAreaCd = memberService.selectCommonsList(commonsVo);
+			commonsVo.setGroupCd("G00029");//희망장소
+			List<MemberVO> advicePlaceCd = memberService.selectCommonsList(commonsVo);
+			commonsVo.setGroupCd("G00030");//자문 신청분야
+			List<MemberVO> adviceAreaCd = memberService.selectCommonsList(commonsVo);
+
+			int joinTypeCd = 00002;
+			List<MemberVO> proMemberId = memberService.proMemberId(joinTypeCd);
+			
+			mav.addObject("onoffDiviCd",onoffDiviCd);
+			mav.addObject("largeBussAreaCd",largeBussAreaCd);
+			mav.addObject("mediumBussAreaCd",mediumBussAreaCd);
+			mav.addObject("advicePlaceCd",advicePlaceCd);
+			mav.addObject("adviceAreaCd",adviceAreaCd);
+			mav.addObject("proMemberId",proMemberId);
+			mav.setViewName("/view/adviceOnlineStatusManagementInsert");
+			return mav;
+		}
+		
+
+	  
 }

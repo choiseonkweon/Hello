@@ -97,6 +97,9 @@
         	$('#memberDetailFrm').attr('action', "/db/oneStop/adviceOnlineStatusManagementDetail.do").submit();
         }
         
+        function fn_create(){
+        	$('#memberDetailFrm').attr('action', "/db/oneStop/adviceOnlineStatusManagementInsert.do").submit();        	
+        }
     </script>
 <head>
 	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
@@ -256,10 +259,14 @@
 				        	</c:if> 							
 						</div>					
 					</div>
+					<div class="btnList alignRight">
+						<button  type="button" id="createBtn"class="btn btn-primary btn-sm" onclick="fn_create()">등록</button>
+					</div>
 			</section> 
 			<!-- end widget grid -->
 		</div>
 		<!-- END MAIN CONTENT -->		
+		
 	</div>
 	<!-- END MAIN PANEL -->	
 	<form role="form" id="memberDetailFrm" action="#" class="form-horizontal" method="post">	 
