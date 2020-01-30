@@ -1,6 +1,7 @@
 package jcep.front.service;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,6 +41,17 @@ public class FacilityResourceFrontService {
 
 	
 	/**
+	 * 시설 상세을 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 시설 목록
+	 * @exception Exception
+	 */
+	public ArrayList<Map<String,Object>> selectFacilityUseDetailList(FacilityResourceFrontVO params) throws Exception {
+		return facilityResourceFrontMapper.selectFacilityUseDetailList(params);
+    }	
+
+	
+	/**
 	 * 시설신청
 	 * @param params - 조회할 정보가 담긴 VO
 	 * @return 시설 목록
@@ -70,6 +82,17 @@ public class FacilityResourceFrontService {
     }
 	
 	/**
+	 * 시설 상세을 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 시설 목록
+	 * @exception Exception
+	 */
+	public ArrayList<Map<String,Object>> selectResourceUseDetailList(FacilityResourceFrontVO params) throws Exception {
+		return facilityResourceFrontMapper.selectResourceUseDetailList(params);
+    }	
+	
+	
+	/**
 	 * 자원 목록 총 갯수를 조회한다.
 	 * @param params - 조회할 정보가 담긴 VO
 	 * @return 자원 목록 총 갯수
@@ -89,6 +112,16 @@ public class FacilityResourceFrontService {
 	public ArrayList<FacilityResourceFrontVO> selectResourceFacilityCalendarList(FacilityResourceFrontVO params) throws Exception {
 		return facilityResourceFrontMapper.selectResourceFacilityCalendarList(params);
     }	
+
+	/**
+	 * 시설신청 & 자원신청 목록을 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 시설 목록
+	 * @exception Exception
+	 */
+	public ArrayList<FacilityResourceFrontVO> selectResourceFacilityCalendarList2(FacilityResourceFrontVO params) throws Exception {
+		return facilityResourceFrontMapper.selectResourceFacilityCalendarList2(params);
+	}	
 	
 	/**
 	 * 온라인지원 신청하기 정보를 등록한다.
