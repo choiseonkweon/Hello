@@ -10,6 +10,7 @@
 
 <script type="text/javaScript" >
 	$(document).ready(function () {
+		betweenPicker("searchFromDate","searchToDate");
 	});
 	
       /* pagination 페이지 링크 function */
@@ -19,9 +20,20 @@
         document.listForm.submit();
       }
       
-      function goPopView(){
-      	$('#myModal').modal('show');
+      function enterKey(){
+      	if(window.event.keyCode == 13){
+      		goSearch();
+  		}
       }
+      
+       function goSearch(){
+  			$('#searchFrm').attr('action', "/db/business/businessIntltProptyList.do").submit();
+       }    
+       
+       function moveDetailView(enterpriseIdx){        
+	       	$('#enterpriseIdx').val(enterpriseIdx);
+	       	$('#detailFrm').attr('action', "/db/business/businessIntltProptyReg.do").submit();
+       }         
       
 </script>
 <body>
@@ -47,7 +59,7 @@
 			</div>
 			<div class="table-responsive">
 				<ul class="tab01_4 clearfix">
-					<li><a href="/db/business/businessSupportBenefitList.do">지원사업수혜실적</a></li>
+					<li ><a href="/db/business/businessSupportBenefitList.do">지원사업수혜실적</a></li>
 					<li><a href="/db/business/businessContentPerformList.do">콘텐츠개발 및 제작지원실적</a></li>					
 					<li class="on"><a href="/db/business/businessIntltProptyList.do">지적재산권현황</a></li>					
 					<li><a href="/db/business/businessAttractList.do">기업유치·창업현황</a></li>					
@@ -71,8 +83,9 @@
 											<td>
 												<select name="searchType" id="searchType" class="select" style="width:150px; height: 31.5px;">
 													<option value="">전체</option>
-													<option value="1" ${searchVO.searchType eq 1 ? 'selected="selected"' : '' }>제목</option>
-													<option value="2" ${searchVO.searchType eq 2 ? 'selected="selected"' : '' }>사업부서</option>														
+													<option value="1" ${searchVO.searchType eq 1 ? 'selected="selected"' : '' }>구분</option>
+													<option value="2" ${searchVO.searchType eq 2 ? 'selected="selected"' : '' }>제목</option>														
+													<option value="3" ${searchVO.searchType eq 3 ? 'selected="selected"' : '' }>사업명</option>														
 												</select>
 												<input type="text" name=searchText id="searchText" class="input-sm not-kor" style="width:250px;" value="${searchVO.searchText}" onkeydown="javascript:enterKey();">
 											</td>
@@ -90,9 +103,6 @@
 										</tr>
 									</tbody>
 								</table>
-								<div style="padding-top:5px;padding-bottom:5px;text-align:center;width:99%">
-									<a href="javascript:goSearch();" class="btn btn-primary" ><b>검색</b></a>
-								</div>
 							</form>
 						</div>
 					</div>
@@ -100,7 +110,7 @@
 					<div class="well well-sm">
 						<div class="table-responsive">
 							<div class="col-xs-12">
-								<h6 class="page-title txt-color-blueDark"><b>총 : <fmt:formatNumber value="3" pattern="#,###" /> 건</b></h6>
+								<h6 class="page-title txt-color-blueDark"><b>총 : <fmt:formatNumber value="${paginationInfo.totalRecordCount}" pattern="#,###" /> 건</b></h6>
 							</div>
 							<form role="form" id="authFrm" name="authFrm" action="#" class="form-horizontal" method="post">
 								<table class="table table-hover">
@@ -108,8 +118,8 @@
 										<tr>
 											<th>No.</th>
 											<th>제목</th>
-											<th>사업기간</th>
-											<th>사업부서</th>
+											<th>사업명</th>
+											<th>구분</th>
 											<th>등록일</th>
 										</tr>
 									</thead>
@@ -124,14 +134,14 @@
 												<tr>
 													<td style="vertical-align: middle;"><c:out value="${paginationInfo.totalRecordCount+1 - ((searchVO.pageIndex-1) * searchVO.pageSize + status.count)}"/></td>
 													<td style="vertical-align: middle;">
-														<a href="javascript:moveDetailView('${result.facilityId}');">
-															<c:out value="${result.facilityNm}"/>
+														<a href="javascript:moveDetailView('${result.enterpriseIdx}');">
+															<c:out value="${result.intltPerformNm}"/>
 													   </a>
 													</td>
 													
-													<td style="vertical-align: middle;"><c:out value="${result.facilityLoc}"/></td>
-													<td style="vertical-align: middle;"><c:out value="${result.facilityScale}"/></td>
-													<td style="vertical-align: middle;"><c:out value="${result.facilityEquip}"/></td>
+													<td style="vertical-align: middle;"><c:out value="${result.bussAnncemntNm}"/></td>
+													<td style="vertical-align: middle;"><c:out value="${result.intltProptyCdNm}"/></td>
+													<td style="vertical-align: middle;"><c:out value="${result.regDt}"/></td>
 												</tr>
 											</c:forEach>
 										</c:if>
@@ -149,14 +159,16 @@
 			</section>
 			<!-- end widget grid -->
 			<div style="padding-bottom:5px;text-align:right;">
-				<a href="/db/business/businessOrderStatusDetail.do" class="btn btn-primary" id="insertBtn" ><b>등록</b></a>
+				<a href="/db/business/businessIntltProptyReg.do" class="btn btn-primary" id="insertBtn" ><b>등록</b></a>
 			</div>
 		</div>
 		<!-- END MAIN CONTENT -->
 		
 	</div>
 	<!-- END MAIN PANEL -->
-	
+	<form role="form" id="detailFrm" action="#" class="form-horizontal" method="post">	 
+	   <input type="hidden" name="enterpriseIdx" id="enterpriseIdx" value="">
+    </form>		
 	
 </body>
 </html>

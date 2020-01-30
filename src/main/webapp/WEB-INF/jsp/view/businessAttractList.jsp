@@ -10,6 +10,7 @@
 
 <script type="text/javaScript" >
 	$(document).ready(function () {
+		betweenPicker("searchFromDate","searchToDate");
 	});
 	
       /* pagination 페이지 링크 function */
@@ -19,9 +20,20 @@
         document.listForm.submit();
       }
       
-      function goPopView(){
-      	$('#myModal').modal('show');
+      function enterKey(){
+      	if(window.event.keyCode == 13){
+      		goSearch();
+  		}
       }
+      
+       function goSearch(){
+  			$('#searchFrm').attr('action', "/db/business/businessAttractList.do").submit();
+       }    
+       
+       function moveDetailView(enterpriseIdx){        
+	       	$('#enterpriseIdx').val(enterpriseIdx);
+	       	$('#detailFrm').attr('action', "/db/business/businessAttractReg.do").submit();
+       }         
       
 </script>
 <body>
@@ -71,7 +83,7 @@
 											<td>
 												<input type="text" name=searchText id="searchText" class="input-sm not-kor" style="width:250px;" value="${searchVO.searchText}" onkeydown="javascript:enterKey();">
 											</td>
-											<th style="text-align:center;background:#eee;vertical-align:middle;">사업기간</th>
+											<th style="text-align:center;background:#eee;vertical-align:middle;">등록일</th>
 											<td>
 												<label class="input"> 
 													<input class="input-sm" type="text" name="searchFromDate" id="searchFromDate" placeholder=""  value="${searchVO.searchFromDate}" data-dateformat="yy-mm-dd"  />
@@ -85,9 +97,6 @@
 										</tr>
 									</tbody>
 								</table>
-								<div style="padding-top:5px;padding-bottom:5px;text-align:center;width:99%">
-									<a href="javascript:goSearch();" class="btn btn-primary" ><b>검색</b></a>
-								</div>
 							</form>
 						</div>
 					</div>
@@ -95,16 +104,19 @@
 					<div class="well well-sm">
 						<div class="table-responsive">
 							<div class="col-xs-12">
-								<h6 class="page-title txt-color-blueDark"><b>총 : <fmt:formatNumber value="3" pattern="#,###" /> 건</b></h6>
+								<h6 class="page-title txt-color-blueDark"><b>총 : <fmt:formatNumber value="${paginationInfo.totalRecordCount}" pattern="#,###" /> 건</b></h6>
 							</div>
 							<form role="form" id="authFrm" name="authFrm" action="#" class="form-horizontal" method="post">
 								<table class="table table-hover">
+									<colgroup>
+										<col width="10%">
+										<col width="45%">
+										<col width="35%">
+									</colgroup>								
 									<thead>
 										<tr>
 											<th>No.</th>
 											<th>제목</th>
-											<th>사업기간</th>
-											<th>사업부서</th>
 											<th>등록일</th>
 										</tr>
 									</thead>
@@ -119,14 +131,11 @@
 												<tr>
 													<td style="vertical-align: middle;"><c:out value="${paginationInfo.totalRecordCount+1 - ((searchVO.pageIndex-1) * searchVO.pageSize + status.count)}"/></td>
 													<td style="vertical-align: middle;">
-														<a href="javascript:moveDetailView('${result.facilityId}');">
-															<c:out value="${result.facilityNm}"/>
+														<a href="javascript:moveDetailView('${result.enterpriseIdx}');">
+															<c:out value="${result.attractPerformNm}"/>
 													   </a>
 													</td>
-													
-													<td style="vertical-align: middle;"><c:out value="${result.facilityLoc}"/></td>
-													<td style="vertical-align: middle;"><c:out value="${result.facilityScale}"/></td>
-													<td style="vertical-align: middle;"><c:out value="${result.facilityEquip}"/></td>
+													<td style="vertical-align: middle;"><c:out value="${result.regDt}"/></td>
 												</tr>
 											</c:forEach>
 										</c:if>
@@ -144,14 +153,16 @@
 			</section>
 			<!-- end widget grid -->
 			<div style="padding-bottom:5px;text-align:right;">
-				<a href="/db/business/businessOrderStatusDetail.do" class="btn btn-primary" id="insertBtn" ><b>등록</b></a>
+				<a href="/db/business/businessAttractReg.do" class="btn btn-primary" id="insertBtn" ><b>등록</b></a>
 			</div>
 		</div>
 		<!-- END MAIN CONTENT -->
 		
 	</div>
 	<!-- END MAIN PANEL -->
-	
+	<form role="form" id="detailFrm" action="#" class="form-horizontal" method="post">	 
+	   <input type="hidden" name="enterpriseIdx" id="enterpriseIdx" value="">
+    </form>		
 	
 </body>
 </html>

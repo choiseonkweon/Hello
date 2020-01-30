@@ -27,8 +27,9 @@
 											<td>
 												<select name="searchType" id="searchType" class="select" style="width:150px; height: 31.5px;">
 													<option value="">전체</option>
-													<option value="1" ${searchVO.searchType eq 1 ? 'selected="selected"' : '' }>시설명</option>
-													<option value="2" ${searchVO.searchType eq 2 ? 'selected="selected"' : '' }>업체명</option>													
+													<c:forEach var="mngDeptCd" items="${mngDeptList}" varStatus="status">
+														<option value="${mngDeptCd.commonCd}" ${searchVO.searchType eq mngDeptCd.commonCd  ? 'selected="selected"' : '' }><c:out value="${mngDeptCd.commonNm}"/></option>
+													</c:forEach>													
 												</select>
 											</td>										
 											<th style="text-align:center;background:#eee;vertical-align:middle;">사업명</th>

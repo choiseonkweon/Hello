@@ -30,8 +30,8 @@
   			$('#searchFrm').attr('action', "/db/business/businessSupportBenefitList.do").submit();
        }    
        
-       function moveDetailView(bussAnncemntNo){        
-	       	$('#bussAnncemntNo').val(bussAnncemntNo);
+       function moveDetailView(enterpriseIdx){        
+	       	$('#enterpriseIdx').val(enterpriseIdx);
 	       	$('#detailFrm').attr('action', "/db/business/businessSupportBenefitReg.do").submit();
        }         
       
@@ -133,7 +133,7 @@
 												<tr>
 													<td style="vertical-align: middle;"><c:out value="${paginationInfo.totalRecordCount+1 - ((searchVO.pageIndex-1) * searchVO.pageSize + status.count)}"/></td>
 													<td style="vertical-align: middle;">
-														<a href="javascript:moveDetailView('${result.bussAnncemntNo}');">
+														<a href="javascript:moveDetailView('${result.enterpriseIdx}');">
 															<c:out value="${result.benefitPerformNm}"/>
 													   </a>
 													</td>
@@ -166,7 +166,7 @@
 	</div>
 	<!-- END MAIN PANEL -->
 	<form role="form" id="detailFrm" action="#" class="form-horizontal" method="post">	 
-	   <input type="hidden" name="bussAnncemntNo" id="bussAnncemntNo" value="">
+	   <input type="hidden" name="enterpriseIdx" id="enterpriseIdx" value="">
     </form>		
 	
 </body>

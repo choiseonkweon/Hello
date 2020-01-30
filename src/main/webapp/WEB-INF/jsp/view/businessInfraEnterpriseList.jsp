@@ -20,11 +20,24 @@
         document.listForm.submit();
       }
       
-      function goPopView(){
-      	$('#myModal').modal('show');
+      function enterKey(){
+      	if(window.event.keyCode == 13){
+      		goSearch();
+  		}
       }
       
+       function goSearch(){
+  			$('#searchFrm').attr('action', "/db/business/businessInfraEnterpriseList.do").submit();
+       }    
+       
+       function moveDetailView(enterpriseIdx){        
+	       	$('#enterpriseIdx').val(enterpriseIdx);
+	       	$('#detailFrm').attr('action', "/db/business/businessInfraEnterpriseReg.do").submit();
+       }         
+      
 </script>
+
+
 <body>
 	<!-- MAIN PANEL -->
 	<div id="main" role="main" class="content">
@@ -71,14 +84,14 @@
 												<select name="searchType" id="searchType" class="select" style="width:150px; height: 31.5px;">
 													<option value="">전체</option>
 													<option value="1" ${searchVO.searchType eq 1 ? 'selected="selected"' : '' }>제목</option>
-													<option value="2" ${searchVO.searchType eq 2 ? 'selected="selected"' : '' }>사업부서</option>														
-												</select>
+													<option value="2" ${searchVO.searchType eq 2 ? 'selected="selected"' : '' }>장비명(시설명)</option>
+												</select>												
 												<input type="text" name=searchText id="searchText" class="input-sm not-kor" style="width:250px;" value="${searchVO.searchText}" onkeydown="javascript:enterKey();">
 											</td>
-											<th style="text-align:center;background:#eee;vertical-align:middle;">사업기간</th>
+											<th style="text-align:center;background:#eee;vertical-align:middle;">등록일</th>
 											<td>
 												<label class="input"> 
-													<input class="input-sm" type="text" name="searchFromDate" id="searchFromDate" placeholder=""  value="${searchVO.searchFromDate}" data-dateformat="yy-mm-dd"  />
+													<input class="input-sm" type="text" name="searchFromDate" id="searchFromDate" placeholder="" readonly="readonly"  value="${searchVO.searchFromDate}" data-dateformat="yy-mm-dd"  />
 													&nbsp;~&nbsp;
 												</label>
 												<label class="input"> 
@@ -100,12 +113,17 @@
 							</div>
 							<form role="form" id="authFrm" name="authFrm" action="#" class="form-horizontal" method="post">
 								<table class="table table-hover">
+									<colgroup>
+										<col width="10%">
+										<col width="25%">
+										<col width="25%">
+										<col width="15%">
+									</colgroup>								
 									<thead>
 										<tr>
 											<th>No.</th>
 											<th>제목</th>
-											<th>사업기간</th>
-											<th>사업부서</th>
+											<th>장비명(시설명)</th>
 											<th>등록일</th>
 										</tr>
 									</thead>
@@ -120,14 +138,12 @@
 												<tr>
 													<td style="vertical-align: middle;"><c:out value="${paginationInfo.totalRecordCount+1 - ((searchVO.pageIndex-1) * searchVO.pageSize + status.count)}"/></td>
 													<td style="vertical-align: middle;">
-														<a href="javascript:moveDetailView('${result.facilityId}');">
-															<c:out value="${result.facilityNm}"/>
+														<a href="javascript:moveDetailView('${result.enterpriseIdx}');">
+															<c:out value="${result.entprPerformNm}"/>
 													   </a>
 													</td>
-													
-													<td style="vertical-align: middle;"><c:out value="${result.facilityLoc}"/></td>
-													<td style="vertical-align: middle;"><c:out value="${result.facilityScale}"/></td>
-													<td style="vertical-align: middle;"><c:out value="${result.facilityEquip}"/></td>
+													<td style="vertical-align: middle;"><c:out value="${result.resourFaciNm}"/></td>
+													<td style="vertical-align: middle;"><c:out value="${result.regDt}"/></td>
 												</tr>
 											</c:forEach>
 										</c:if>
@@ -145,14 +161,16 @@
 			</section>
 			<!-- end widget grid -->
 			<div style="padding-bottom:5px;text-align:right;">
-				<a href="/db/business/businessOrderStatusDetail.do" class="btn btn-primary" id="insertBtn" ><b>등록</b></a>
+				<a href="/db/business/businessInfraEnterpriseReg.do" class="btn btn-primary" id="insertBtn" ><b>등록</b></a>
 			</div>
 		</div>
 		<!-- END MAIN CONTENT -->
 		
 	</div>
 	<!-- END MAIN PANEL -->
-	
+	<form role="form" id="detailFrm" action="#" class="form-horizontal" method="post">	 
+	   <input type="hidden" name="enterpriseIdx" id="enterpriseIdx" value="">
+    </form>			
 	
 </body>
 </html>

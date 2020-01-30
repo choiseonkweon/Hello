@@ -33,6 +33,7 @@
 				<div class="well well-sm">
 						<div class="table-responsive">
 						<form id="insertFrm" name="insertFrm" action="#" method="POST">
+						    <input type="hidden" id="enterpriseIdx" name="enterpriseIdx"  value="<c:out value='${resultList[0].enterpriseIdx}'/>"/> 
 						    <input type="hidden" id="bussAnncemntNo" name="bussAnncemntNo"  value="<c:out value='${resultList[0].bussAnncemntNo}'/>"/> 
 							<table class="table table-bordered table-striped" style="margin-bottom:0px;width:98%;margin-left:1%;margin-top:10px;">
 									<colgroup>
@@ -44,7 +45,7 @@
 											<th style="text-align:center;background:#eee;vertical-align:middle;">제목 * </th>
 											<td>
 												<label class="input" style="width:100%;">
-													<input type="text" id="benefitPerformNm" name="benefitPerformNm" class="input-sm" value="<c:out value="${resultList[0].benefitPerformNm}"/>" style="width:100%;" maxlength="30">
+													<input type="text" id="benefitPerformNm" name="benefitPerformNm" class="input-sm" value="<c:out value="${resultList[0].benefitPerformNm}"/>" style="width:100%;" maxlength="70">
 												</label>
 											</td>
 										</tr>
@@ -52,9 +53,7 @@
 											<th style="text-align:center;background:#eee;vertical-align:middle;">사업명 * </th>
 											<td>
 												<span id="bussAnncemntNm"><c:out value="${resultList[0].bussAnncemntNm}"/></span>
-												<c:if test="${empty resultList[0].bussAnncemntNo}">
-													<button type="button" class="btn btn-default btn-sm" onclick="goBussSearch('Y');">찾기</button>
-												</c:if>
+												<button type="button" class="btn btn-default btn-sm" onclick="goBussSearch('Y');">찾기</button>
 											</td>
 										</tr>
 										<tr>
@@ -91,7 +90,7 @@
 														<tr value="<c:out value='${result.memberId}'/>">
 															<td><c:out value='${result.entprNm}'/></td>
 															<td><c:out value='${result.empCreateStaff}'/></td>
-															<td><input type='text' value='<c:out value='${result.remark}'/>'/></td>
+															<td><input type='text' value='<c:out value='${result.remark}'/>' maxlength="200"/></td>
 															<td><button type='button' class='txtbtn floatR delBtn' onclick='entprDel(this);'>삭제</button></td>
 														</tr>															
 													</c:forEach>												
@@ -402,13 +401,12 @@
 			
 			var param = {
 					"bussAnncemntNo" : $("#bussAnncemntNo").val(),
-					"membersId"          : entprChecked,
-					"gubun"				  : "S"
+					"membersId"          : entprChecked
 			};
 			
 			 $.ajax({
 					type : 'post',
-					url:'/db/business/entprSelectList.do',
+					url:'/db/business/bussBenefitEntprSelectList.do',
 					data: param,
 					dataType: 'json',
 					success : function(data) {
@@ -430,7 +428,7 @@
 								html += "<tr value='"+iData.memberId+"'>";
 							    html += "<td>"+iData.entprNm+"</td>";
 							    html += "<td>"+iData.entprCreatJobCnt+"</td>";
-							    html += "<td><input type='text' value=''/></td>";
+							    html += "<td><input type='text' value='' maxlength='200'/></td>";
 							    html += "<td><button type='button' class='txtbtn floatR delBtn' onclick='entprDel(this);'>삭제</button></td>";
 								html += '</tr>';										
 							}
@@ -461,13 +459,15 @@
 
 				var listData = new Array();
 				
+				var enterpriseIdx 	  =  $('#enterpriseIdx').val(); // 제목
 				var benefitPerformNm =  $('#benefitPerformNm').val(); // 제목
 				var bussAnncemntNo =  $('#bussAnncemntNo').val(); // 공고번호
 				var bussAnncemntNm =  $('#bussAnncemntNm').text(); // 사업명
-				var bussCont =  $('#bussCont').val(); // 사업내용
+				var bussCont 			  =  $('#bussCont').val(); // 사업내용
 				
 				$("#resultTbody tr").each(function(i){
 					var mapData = {
+							"enterpriseIdx"			: enterpriseIdx,
 							"benefitPerformNm"	: benefitPerformNm,
 							"bussAnncemntNo"	: bussAnncemntNo,
 							"bussAnncemntNm"	: bussAnncemntNm,
@@ -499,7 +499,6 @@
 				            window.event.preventDefault();
 				   		} 
 				 }); 								
-				
 			}
 		}		
 		
