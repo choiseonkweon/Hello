@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="jcep.admin.dao.BusinessMapper">
-<!-- 사업관리 > 사업운영 실적관리 > 기업지원 -->
+<!-- 사업관리 > 사업운영 실적관리 > 기업지원  -->
 	<select id="selectBenefitEnterpriseIdx" parameterType="jcep.admin.model.BusinessVO" resultType="java.lang.String">
 		SELECT concat('B',IFNULL(LPAD(MAX(SUBSTRING(enterprise_idx,2,LENGTH(enterprise_idx))) + 1,9,'0'),'000000000')) AS enterpriseIdx 
 		  FROM tb_jcep_benefit_perform
