@@ -15,7 +15,7 @@
 		<div id="ribbon">
 			<!-- breadcrumb -->
 			<ol class="breadcrumb">
-				<li>Home</li><li>사업 관리</li><li><b>사업운영 실적관리</b></li><li><b>인프라지원</b></li>
+				<li>Home</li><li>사업 관리</li><li><b>사업운영 실적관리</b></li><li><b>인프라지원 </b></li>
 			</ol>
 			<!-- end breadcrumb -->
 		</div>

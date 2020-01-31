@@ -64,21 +64,11 @@
       <put-attribute name="body" value="/WEB-INF/jsp/main/{1}.jsp" />
     </definition> 
     
-    <!-- (5) -->    
+    <!-- (5)  -->    
 
     <definition name="/view/login/*" extends=".login">
       <put-attribute name="body" value="/WEB-INF/jsp/login/{1}.jsp" />
     </definition> 
-    
-    <definition name="html" template="/WEB-INF/jsp/tilesLayout/mainLayout.jsp">
-        <put-attribute name="title" value="" />
-        <put-attribute name="header" value="" />
-        <put-attribute name="footer" value="" />
-    </definition>
-
-    <definition name="/html/*" extends="html">
-      <put-attribute name="body" value="/WEB-INF/jsp/view/{1}.jsp" />
-    </definition>     
     
 
 </tiles-definitions>

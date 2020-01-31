@@ -531,6 +531,23 @@ br.mo {display:none;}
 .mobile .login_info {margin-top:10px;}
 .mobile .login_info > div ul li {font-size:12px; letter-spacing:-1px;}
 
+
+/* 시설예약 */
+.reserveCalendar {position: relative;}
+.reserveCalendar .daylist .dcal td > div {width: 100%; height: 120px; overflow: hidden;}
+.reserveCalendar table.table01 th,
+.reserveCalendar table.table01 td {padding: 0;}
+.reserveCalendar table.table01 td {vertical-align: top;}
+.reserveCalendar .reserveLayer {display: none; position: absolute; left: 0; top: 0; border: 2px solid #ddd; background-color: #fff; z-index: 5;}
+.reserveCalendar .reserveLayer .top {position: relative; min-width: 220px; height: 50px; line-height: 50px; padding: 0 15px; background-color: #ddd;}
+.reserveCalendar .reserveLayer .top .title {font-size: 14px;}
+.reserveCalendar .reserveLayer .top .btn_close {position: absolute; right: 15px; top: 17px; width: 16px; height: 16px; background: url(img/btn_close.png) no-repeat 0 0; background-size: 100%;}
+.reserveCalendar .reserveLayer .con {padding: 15px;}
+.reserveCalendar .reserveLayer .con .reserveList li {margin: 5px 0;}
+.reserveCalendar .reserveLayer .con .reserveList li a {font-size: 12px; text-decoration: underline; color: #3285bf;}
+
+
+
 /* 본고딕 웹폰트 가져오기 180124 morenvy.com */ 
 /* Noto Sans KR (korean) http://www.google.com/fonts/earlyaccess */ 
 @font-face { 

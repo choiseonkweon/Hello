@@ -364,7 +364,7 @@
 							return false;							
 							
 						},  
-					    error:function(request,status,error){ //ajax 오류인경우  
+					    error:function(request,status,error){ //ajax 오류인경우   
 				            alert("작업중 에러가 발생했습니다.");      
 				            window.event.preventDefault();
 				   		} 

@@ -7,7 +7,7 @@
 <%@ taglib prefix="spring"	uri="http://www.springframework.org/tags"%>    
 <!DOCTYPE html>
 <html>
-<script type="text/javaScript" >
+<script type="text/javaScript">
 	$(document).ready(function () {
 		betweenPicker("searchFromDate","searchToDate");
 	});

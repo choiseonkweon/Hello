@@ -23,7 +23,7 @@
 								</colgroup>
 								<tbody>
 									<tr>
-										<th style="text-align:center;background:#eee;vertical-align:middle;">분류</th>
+										<th style="text-align:center;background:#eee;vertical-align:middle;">분류 </th>
 										<td>
 											<select name="searchType1" id="searchType1" class="select" style="width:150px; height: 31.5px;">
 												<option value="">전체</option>

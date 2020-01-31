@@ -21,7 +21,7 @@
 								</colgroup>
 								<tbody>
 									<tr>
-										<th style="text-align:center;background:#eee;vertical-align:middle;">기업명</th>
+										<th style="text-align:center;background:#eee;vertical-align:middle;">기업명 </th>
 										<td>
 											<input type="text" name=searchText1 id="searchText1" class="input-sm not-kor" style="width:200px;" value="${searchVO.searchText1}" onkeydown="javascript:enterKey('E');">
 											<a href="javascript:goEntprSearch();" class="btn btn-primary" style="margin-left: 120px;"><b>검색</b></a>
