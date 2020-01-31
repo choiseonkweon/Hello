@@ -6,7 +6,6 @@ import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
@@ -113,23 +112,6 @@ public class FacilityResourceFrontController {
 	
 	
 	/**
-	 * 시설 상세정보 목록을 조회한다. (pageing)
-	 * @param searchVO - 조회할 정보가 담긴 FacilityResourceFrontVO
-	 * @param model
-	 * @return "facilityUseList"
-	 * @exception Exception
-	 */
-	@RequestMapping(value = "/front/facilityUseDetailList.do")
-	public String facilityUseDetailList(@ModelAttribute("searchVO") FacilityResourceFrontVO searchVO, ModelAndView mv, Model model) throws Exception {
-		
-		ArrayList<Map<String,Object>> facilityUseList = facilityResourceFrontService.selectFacilityUseDetailList(searchVO);
-		model.addAttribute("resultList", facilityUseList);
-		
-		return "jsonView";
-	}		
-	
-
-	/**
 	 * 시설정보 목록을 조회한다. (pageing)
 	 * @param searchVO - 조회할 정보가 담긴 FacilityResourceFrontVO
 	 * @param model
@@ -197,22 +179,6 @@ public class FacilityResourceFrontController {
 		
 		return "jsonView";
 	}	
-	
-	/**
-	 * 시설정보 목록을 조회한다. (pageing)
-	 * @param searchVO - 조회할 정보가 담긴 FacilityResourceFrontVO
-	 * @param model
-	 * @return "facilityUseList"
-	 * @exception Exception
-	 */
-	@RequestMapping(value = "/front/resourceFacilityCalendarList2.do")
-	public String resourceFacilityCalendarList2(@ModelAttribute("searchVO") FacilityResourceFrontVO searchVO, ModelAndView mv, Model model) throws Exception {
-		
-		ArrayList<FacilityResourceFrontVO> calendarList = facilityResourceFrontService.selectResourceFacilityCalendarList2(searchVO);
-		model.addAttribute("resultList", calendarList);
-		
-		return "jsonView";
-	}		
 
 	/**
 	 * 시설신청 & 자원신청 목록을 조회한다.
@@ -230,22 +196,6 @@ public class FacilityResourceFrontController {
 		return "jsonView";
 	}		
 	
-	
-	/**
-	 * 시설 상세정보 목록을 조회한다. (pageing)
-	 * @param searchVO - 조회할 정보가 담긴 FacilityResourceFrontVO
-	 * @param model
-	 * @return "facilityUseList"
-	 * @exception Exception
-	 */
-	@RequestMapping(value = "/front/resourceUseDetailList.do")
-	public String resourceUseDetailList(@ModelAttribute("searchVO") FacilityResourceFrontVO searchVO, ModelAndView mv, Model model) throws Exception {
-		
-		ArrayList<Map<String,Object>> facilityUseList = facilityResourceFrontService.selectResourceUseDetailList(searchVO);
-		model.addAttribute("resultList", facilityUseList);
-		
-		return "jsonView";
-	}			
 	
 	/**
 	 * 시설관리 지침을 다운로드 한다.

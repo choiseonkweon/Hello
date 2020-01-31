@@ -74,11 +74,11 @@
 		});
 		
         /* pagination 페이지 링크 function */
-        function fn_egov_link_page(pageNo){
-        	document.listForm.pageIndex.value = pageNo;
-        	document.listForm.action = "<c:url value='/member/authList.do'/>";
-           	document.listForm.submit();
-        }
+       function fn_egov_link_page(pageNo){
+       	document.listForm.pageIndex.value = pageNo;
+       	document.listForm.action = "<c:url value='/oneStop/adviceOnlineStatusManagementList.do'/>";
+        document.listForm.submit();
+       }
         
        //엔터키 입력시
         function enterKey(){
@@ -97,6 +97,9 @@
         	$('#memberDetailFrm').attr('action', "/db/oneStop/adviceOnlineStatusManagementDetail.do").submit();
         }
         
+        function fn_create(){
+        	$('#memberDetailFrm').attr('action', "/db/oneStop/adviceOnlineStatusManagementInsert.do").submit();        	
+        }
     </script>
 <head>
 	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
@@ -253,13 +256,18 @@
 						        	</form:form>	
 					        	</div>
 					        	</center>
-				        	</c:if> 							
+				        	</c:if> 
 						</div>					
 					</div>
 			</section> 
 			<!-- end widget grid -->
+			<div class="btnList alignRight">
+				<button  type="button" id="createBtn"class="btn btn-primary btn-sm" onclick="fn_create()">등록</button>
+			</div>
+
 		</div>
 		<!-- END MAIN CONTENT -->		
+		
 	</div>
 	<!-- END MAIN PANEL -->	
 	<form role="form" id="memberDetailFrm" action="#" class="form-horizontal" method="post">	 

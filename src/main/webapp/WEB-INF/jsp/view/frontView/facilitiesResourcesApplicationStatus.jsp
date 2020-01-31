@@ -9,95 +9,7 @@
 <html>
 <body>
 <div id="wrap" class="sub s5">
-<<<<<<< HEAD
 	<jsp:include page="menu.jsp"></jsp:include>
-=======
-<div class="headerWrap">
-		<header id="header" class="subheader clearfix">
-			<div id="gnbWrapper" class="gnbWrapper">
-				<div id="gnbWrap" class="gnbWrap">
-					<div class="layout01">
-						<h1><a href="/db/main.do"><img src="../db/css/img/logo.png" alt="jcap 전남콘텐츠기업육성센터"></a></h1>
-
-						<!-- Mobile Burger Menu -->
-						<button class="btnBurgerMenu">
-							<span class="menu-global menu-top"></span>
-							<span class="menu-global menu-middle"></span>
-							<span class="menu-global menu-bottom"></span>
-						</button>
-						<!-- EOD : Mobile Burger Menu -->
-
-						<nav id="gnb">
-							<ul class="depth1">
-								<li>
-									<a href="#none">사업공고</a>
-									<ul class="depth2">
-										<li><a href="/db/businessList.do">사업공고</a></li>
-										<li><a href="/db/companyInformationList.do">기업 정보</a></li>
-										<li><a href="/db/buyerInformationList.do">바이어 정보</a></li>
-										<li><a href="/db/expertInformationList.do">전문가 정보</a></li>
-									</ul>
-								</li>
-								<li>
-									<a href="#none">시설 및 자원 신청</a>
-									<ul class="depth2">
-										<li class="menu2"><a href="/db/facilityUseList.do">시설 사용신청</a></li>
-										<li class="menu2"><a href="/db/resourceUseList.do">자원 사용신청</a></li>
-									</ul>
-								</li>
-								<li>
-									<a href="#none">원스톱 지원실</a>
-									<ul class="depth2">
-										<li><a href="/db/onlineApply.do">온라인 상담신청</a></li>
-									</ul>
-								</li>
-								<li>
-									<a href="#none">고객광장</a>
-									<ul class="depth2">
-										<li><a href="/db/noticeList.do">공지사항</a></li>
-										<li><a href="/db/faqList.do">FAQ</a></li>
-										<li><a href="/db/contactUsList.do">문의하기</a></li>
-									</ul>
-								</li>
-								<li>
-									<a href="#none">마이페이지</a>
-									<ul class="depth2">
-										<li><a href="/db/myCompanyInformation.do">내 기업 정보</a></li>
-										<li><a href="/db/facilitiesResourcesApplicationStatus.do">시설 사용신청 현황</a></li>
-										<li><a href="/db/onlineCounselingStatus.do">온라인 상담신청 현황</a></li>
-									</ul>
-								</li>
-							</ul>
-						</nav>
-
-						<!-- 로그인 후 -->
-						<div class="loginInfo" style="display:none;">
-							<a href="#none">회원정보수정</a>
-							<span class="bar"></span>
-							<a href="#none">로그아웃</a>
-							<span class="bar"></span>
-							<button type="button" class="btnSearch01">검색</button>
-						</div>
-						<!-- EOD : 로그인 후 -->
-
-						<!-- 로그인 전 -->
-						<div class="loginInfo">
-							<a href="#none">회원가입</a>
-							<span class="bar"></span>
-							<a href="/db/frontLogin.do">로그인</a>
-							<span class="bar"></span>
-							<button type="button" class="btnSearch01">검색</button>
-						</div>
-						<!-- EOD : 로그인 전 -->
-					</div>
-					<!-- EOD : layout01 -->
-				</div>
-				<!-- EOD : gnbWrap -->
-			</div>
-			<!-- EOD : gnbWrapper -->
-		</header>
-	</div>
->>>>>>> branch 'master' of http://kbsys.synology.me:30000/maintenance-group/JCEP_SYSTEM.git
 	<div id="contents">
 		<div id="location">
 			<div class="layout01 clearfix">
@@ -133,13 +45,12 @@
 							</tr>
 							<tr>
 								<td class="mdel">
-									000
 								</td>
 								<td>
-									지식나눔터
+								
 								</td>
 								<td>
-									2019-07-05 00시 - 2019-07-05 00시
+									 - 
 								</td>
 								<td>
 									사용

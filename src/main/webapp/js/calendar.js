@@ -95,15 +95,11 @@
   		var param = {};
   		param.useDate = useDate;
   		param.resourFaciDiviCd = resrvType;
-  		var url = "/db/front/resourceFacilityCalendarList.do";
-  		if(resrvType === "R"){
-  			url = "/db/front/resourceFacilityCalendarList2.do";
-  			
-  		}
+  		
 
   		$.ajax({
 			type:"POST",
-			url :url,
+			url :"/db/front/resourceFacilityCalendarList.do",
 			data:param,
 			dataType:"json",
 			success: function (data) {
@@ -138,13 +134,13 @@
 									obj.find('.num2').remove();
 								}
 									
-								var btnHtml = '<p class="num2"><a href="javascirpt:void(0);">+' + moreCnt +  '</a></p>';
+								var btnHtml = '<p class="num2"><a href="openReservMore(this);">+' + moreCnt +  '</a></p>';
 								obj.append(btnHtml);
 								
 							}
 							
-							var html = '<li class="schedule reserve_info"' + dispStyle +' style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><a href="javascript:void(0);"  value="' + row.appliNo + '">- ' + row.compNm + '/' + row.facilityNm + '</a></li>';
-							obj.find(".reg").append(html);
+							var html = '<li class="schedule reserve_info"' + dispStyle +' style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><a href="selectReservDetail(' + row.appliNo + ');"  value="' + row.appliNo + '">- ' + row.compNm + '/' + row.facilityNm + '</a></li>';
+							obj.append(html);
 						}
 					}
 				}
@@ -159,6 +155,7 @@
  	
   	
  	function openReservMore(obj) {
+  		
   		var parent = $(obj).parent();
   		
 		var weekend = new Array('일', '월', '화', '수', '목', '금', '토');
@@ -170,12 +167,18 @@
 		
 		parent.find('.reserve_info').each(function() {
 			var info = $(this).text().substring(2, $(this).text().length);
-			html = '<li class="reserve_info" onclick="selectReservDetail(' + $(this).attr('value') + ');">' + info + '</li>'
-			$('#layer_popup_info').empty().append(html);
+			html = '<li class="reserve_info" onClick="selectReservDetail(' + $(this).attr('value') + ');">' + info + '</li>'
+			$('#layer_popup_info').append(html);
 		});
-
-		$('#reserveinfolistPop').show();		
-
+		
+		var $this = $(obj);
+		var currentTd = $this.parents('td');
+		var tdIndex = currentTd.index();
+		var trIndex = currentTd.parent().index();
+		controlLayerPostion(tdIndex, trIndex, currentTd);
+			
+  		$('.layer_popup').show(0);
+		$('body').bind('touchmove', function(e){e.preventDefault()});
   	}
   	
   	function closeReservMore(obj) {
@@ -183,13 +186,13 @@
         $('body').unbind('touchmove');
   	}  	
  	//월 변경 
-  	function changeReservMonth(month,resrvType) {
+  	function changeReservMonth(month) {
   		var reservMonth = $('#reservMonth').text().split('.');
   		
   		var date = new Date(reservMonth[0], reservMonth[1]-1, 1);
   	    date.setMonth(date.getMonth() + month);
   	    
-  	  	setReservMonth(date,resrvType);
+  	  	setReservMonth(date);
   	} 	
 
   	function selectReservDetail(instSeq) {

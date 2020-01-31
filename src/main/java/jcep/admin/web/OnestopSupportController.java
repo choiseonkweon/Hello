@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
@@ -23,6 +24,7 @@ import org.springframework.web.servlet.ModelAndView;
 import egovframework.rte.fdl.property.EgovPropertyService;
 import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 import jcep.admin.common.UploadFileUtils;
+import jcep.admin.model.BusinessVO;
 import jcep.admin.model.MemberVO;
 import jcep.admin.service.MemberService;
 import jcep.front.web.JeonnamCommonsController;
@@ -462,5 +464,146 @@ public class OnestopSupportController {
 			}
 		  	return null;
 	  }
+	  @RequestMapping(value = "/adviceOnlineStatusManagementDetailfileDownload.do")
+	  public ModelAndView  adviceOnlineStatusManagementDetailfileDownload(@ModelAttribute("searchVO") MemberVO searchVO, ModelAndView mv,  HttpServletRequest request, HttpServletResponse response) throws Exception {
+		  String onestopSupportNo = request.getParameter("fileNum");
+		  
+		  MemberVO memberVo = memberService.adviceOnlineStatusManagementDetailfileDownload(onestopSupportNo);
+		  //다운로드 할 파일 정보를 불러온다.
+		  mv.addObject("memberVo",memberVo);
+		  mv.addObject("response",response);
+		  try {
+			  UploadFileUtils.fileDownload(mv);
+		  } catch (Exception e) {
+			  // TODO Auto-generated catch block
+			  e.printStackTrace();
+		  }
+		  return null;
+	  }
 	
+	  //등록
+	  
+	  @RequestMapping(value = "/oneStop/adviceOnlineStatusManagementInsert.do")
+	  public ModelAndView  adviceOnlineStatusManagementInsert(@ModelAttribute("searchVO") MemberVO searchVO, ModelAndView mav) throws Exception {
+		  
+			MemberVO commonsVo = new MemberVO();
+
+			commonsVo.setGroupCd("G00047");//구분
+			List<MemberVO> onoffDiviCd = memberService.selectCommonsList(commonsVo);
+			commonsVo.setGroupCd("G00002");//사업분야
+			List<MemberVO> largeBussAreaCd = memberService.selectCommonsList(commonsVo);
+			commonsVo.setGroupCd("G00003");//사업분야 상세
+			List<MemberVO> mediumBussAreaCd = memberService.selectCommonsList(commonsVo);
+			commonsVo.setGroupCd("G00029");//희망장소
+			List<MemberVO> advicePlaceCd = memberService.selectCommonsList(commonsVo);
+			commonsVo.setGroupCd("G00030");//자문 신청분야
+			List<MemberVO> adviceAreaCd = memberService.selectCommonsList(commonsVo);
+
+			int joinTypeCd = 00002;
+			List<MemberVO> proMemberId = memberService.proMemberId(joinTypeCd);
+			
+			mav.addObject("onoffDiviCd",onoffDiviCd);
+			mav.addObject("largeBussAreaCd",largeBussAreaCd);
+			mav.addObject("mediumBussAreaCd",mediumBussAreaCd);
+			mav.addObject("advicePlaceCd",advicePlaceCd);
+			mav.addObject("adviceAreaCd",adviceAreaCd);
+			mav.addObject("proMemberId",proMemberId);
+			mav.setViewName("/view/adviceOnlineStatusManagementInsert");
+			return mav;
+		}
+		
+		/**
+		 * 기업찾기 - 지원사업수혜실적 (pageing)
+		 * @param searchVO - 조회할 정보가 담긴 EnterpriseBuyerExpertVO
+		 * @param model
+		 * @return "businessOrderStatusList"
+		 * @exception Exception
+		 */
+		@RequestMapping(value = "/oneStop/adviceOnlineStatusEntprList.do")
+		public ModelAndView benefitPerformEntprSearchList(@ModelAttribute("searchVO") MemberVO searchVO, ModelAndView mv, Model model) throws Exception {
+			
+			searchVO.setPageUnit(propertiesService.getInt("pageUnit"));
+			searchVO.setPageSize(propertiesService.getInt("pageSize"));
+			
+			PaginationInfo paginationInfo = new PaginationInfo();
+			paginationInfo.setCurrentPageNo(searchVO.getPageIndex());
+			paginationInfo.setRecordCountPerPage(searchVO.getPageUnit());
+			paginationInfo.setPageSize(searchVO.getPageSize());
+			
+			searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
+			searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
+			searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
+			
+			ArrayList<Map<String,Object>> EntprList = memberService.selectadviceOnlineStatusEntprList(searchVO);
+			model.addAttribute("resultList", EntprList);
+			
+			int totCnt = memberService.selectadviceOnlineStatusEntprListCnt(searchVO);
+			paginationInfo.setTotalRecordCount(totCnt);
+			model.addAttribute("paginationInfo", paginationInfo);		
+
+			mv.setViewName("/html/adviceOnlineStatusEntprSearchListPop");
+			
+	    	return mv;
+		}		
+	  
+		//원스톱지원정보 ->관리자페이지 등록
+		@RequestMapping(value = "/oneStop/adviceOnlineStatusMagagementInsertOk.do",  produces="text/plain;charset=utf-8")
+		public String adviceOnlineStatusMagagementInsertOk(@RequestParam(required=false) Map<String, String> map, MultipartHttpServletRequest multipartRequest) throws Exception {
+			String filePath = noticeFilePath;//파일경로 가져오기
+			String attchFileNo = null;
+			if(multipartRequest.getFile("orgFileNm") != null) { //파일이 있으면 
+				MultipartFile orgFileNm = multipartRequest.getFile("orgFileNm");
+				HashMap<String, String> fileMap = UploadFileUtils.OnefileUpload(orgFileNm,filePath);
+				map.put("fileCourse",fileMap.get("fileCourse"));
+				map.put("orgFileNm",fileMap.get("orgFileNm"));
+			}
+			String onestopSupportNo = memberService.onestopSupportNoSelect(map);
+			map.put("onestopSupportNo", onestopSupportNo);
+			int insert = memberService.adviceOnlineStatusMagagementInsertOk(map);
+			if(insert > 0) {
+			    	if(!multipartRequest.getFile("fileName1").isEmpty()) { //파일이 있으면 
+						MultipartFile orgFileNm = multipartRequest.getFile("fileName1");
+						HashMap<String, String> fileMap = UploadFileUtils.OnefileUpload(orgFileNm,filePath);
+		    			attchFileNo = map.get("memberId")+"_"+onestopSupportNo+"_"+1+"_"+1;
+			    		map.put("attchFileNo",attchFileNo);
+			    		map.put("fileCourse",fileMap.get("fileCourse"));
+						map.put("orgFileNm",fileMap.get("orgFileNm"));
+						map.put("attchFileDiviCd","000001");//코드
+						int bussLog = memberService.onestopBussLogInsertOk(map);
+			    	}
+			    	if(!multipartRequest.getFile("fileName2").isEmpty()) { //파일이 있으면 
+			    		MultipartFile orgFileNm = multipartRequest.getFile("fileName2");
+			    		HashMap<String, String> fileMap = UploadFileUtils.OnefileUpload(orgFileNm,filePath);
+		    			attchFileNo = map.get("memberId")+"_"+onestopSupportNo+"_"+2+"_"+1;
+			    		map.put("attchFileNo",attchFileNo);
+			    		map.put("fileCourse",fileMap.get("fileCourse"));
+			    		map.put("orgFileNm",fileMap.get("orgFileNm"));
+			    		map.put("attchFileDiviCd","000002");//코드
+			    		int bussLog = memberService.onestopBussLogInsertOk(map);
+			    	}
+			    	if(!multipartRequest.getFile("fileName3").isEmpty()) { //파일이 있으면 
+			    		MultipartFile orgFileNm = multipartRequest.getFile("fileName3");
+			    		HashMap<String, String> fileMap = UploadFileUtils.OnefileUpload(orgFileNm,filePath);
+		    			attchFileNo = map.get("memberId")+"_"+onestopSupportNo+"_"+3+"_"+1;
+			    		map.put("attchFileNo",attchFileNo);
+			    		map.put("fileCourse",fileMap.get("fileCourse"));
+			    		map.put("orgFileNm",fileMap.get("orgFileNm"));
+			    		map.put("attchFileDiviCd","000003");//코드
+			    		int bussLog = memberService.onestopBussLogInsertOk(map);
+			    	}
+			    	if(!multipartRequest.getFile("fileName4").isEmpty()) { //파일이 있으면 
+			    		MultipartFile orgFileNm = multipartRequest.getFile("fileName4");
+			    		HashMap<String, String> fileMap = UploadFileUtils.OnefileUpload(orgFileNm,filePath);
+		    			attchFileNo = map.get("memberId")+"_"+onestopSupportNo+"_"+4+"_"+1;
+			    		map.put("attchFileNo",attchFileNo);
+			    		map.put("fileCourse",fileMap.get("fileCourse"));
+			    		map.put("orgFileNm",fileMap.get("orgFileNm"));
+			    		map.put("attchFileDiviCd","000004");//코드
+			    		int bussLog = memberService.onestopBussLogInsertOk(map);
+			    	}
+			}
+
+			return "jsonView";
+		}
+		
 }

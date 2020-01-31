@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.web.bind.annotation.RequestParam;
+
 import egovframework.rte.psl.dataaccess.mapper.Mapper;
 import jcep.admin.model.MemberVO;
 import jcep.admin.model.SiteVO;
@@ -749,4 +751,27 @@ public interface MemberMapper {
 	public MemberVO selectAdviceOnlineStatusBusinessFile(HashMap<String,String> hMap)throws Exception;
 
 	public MemberVO adviceOnlineStatusBusinessfileDownload(String attchFileNo)throws Exception;
+
+	public MemberVO adviceOnlineStatusManagementDetailfileDownload(String onestopSupportNo)throws Exception;
+
+	public ArrayList<Map<String,Object>> selectadviceOnlineStatusEntprList(MemberVO params)throws Exception;
+
+	public int selectadviceOnlineStatusEntprListCnt(MemberVO params)throws Exception;
+
+	public String onestopSupportNoSelect(Map<String,String> params)throws Exception;
+	
+	public int adviceOnlineStatusMagagementInsertOk(Map<String,String> params)throws Exception;
+	
+	public int onestopBussLogInsertOk(Map<String,String> params)throws Exception;
+	
+	public List<Map<String,Object>> SelectExpertList(HashMap<String,Object> hMap)throws Exception;
+
+	public int insertEvalu(HashMap<String,Object> hMap)throws Exception;
+
+	public int insertEvaluDtl(HashMap<String,Object> hMap)throws Exception;
+
+	public int SelectSlectEvaluInsert(HashMap<String,Object> hMap)throws Exception;
+	
+	public int SelectSelectClassCdInsert(HashMap<String,Object> hMap)throws Exception;
+	public String SelectSearchSelectNo(int result)throws Exception;
 }

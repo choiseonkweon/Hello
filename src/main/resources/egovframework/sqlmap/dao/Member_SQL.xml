@@ -2363,6 +2363,7 @@ x	</select>
 				                ,(select common_nm from ta_common where group_cd ='G00030' and common_cd = b.advice_area_cd) as adviceAreaCd
 				                ,b.advice_applic_cont as adviceApplicCont
 				                ,date_format(b.reg_dt, '%Y-%m-%d') as regDt 
+				                ,SUBSTRING_INDEX(org_file_nm, '_', -1)		as orgFileNm
 				  FROM       tb_enterprise a
 				               ,tb_onestop_support b
 				 WHERE      a.member_id = b.member_id
@@ -3494,4 +3495,251 @@ x	</select>
                      AND use_flag					= 'Y'
    			]]>
 	</select>
+
+	<select id="adviceOnlineStatusManagementDetailfileDownload" parameterType="String" resultType="jcep.admin.model.MemberVO">
+				<![CDATA[
+				SELECT  file_course				AS fileCourse
+                           ,org_file_nm 			AS orgFileNm
+                           ,upload_file_nm			AS uploadFileNm
+                           ,onestop_support_no AS onestopSupportNo
+                           ,member_id 				AS memberId
+                   FROM  tb_onestop_support
+                 WHERE 1 = 1
+                     AND onestop_support_no 			= #{onestopSupportNo}
+   			]]>
+	</select>
+	<select id="selectadviceOnlineStatusEntprList" parameterType="jcep.admin.model.MemberVO" resultType="java.util.Map">
+		/*selectadviceOnlineStatusEntprList*/
+		<![CDATA[
+			SELECT 	member_id 						AS memberId
+						,entpr_nm 						AS entprNm
+				        ,entpr_ceo 						AS entprCeo
+				        ,a.large_buss_area_cd 		AS largeBussAreaCd
+				        ,a.medium_buss_area_cd 	AS mediumBussAreaCd
+				        ,a.entpr_head_addr 			AS entprHeadAddr
+				        ,a.entpr_head_detail_addr AS entprHeadDetailAddr
+				        ,a.entpr_head_tel 			AS entprHeadTel
+				        ,(SELECT	entpr_result_emp_cnt 
+							 FROM	tb_enterprise_result
+						   WHERE	1=1
+						       AND	member_id = a.member_id
+					   ORDER BY	entpr_result_year_cd DESC
+					                   ,entpr_result_qta_cd	 DESC
+				             LIMIT	1
+						 ) 									AS entprResultEmpCnt
+	  		  FROM	tb_enterprise a
+	  		WHERE	1=1
+				AND	a.entpr_nm LIKE CONCAT('%',#{searchText},'%') OR a.entpr_ceo LIKE CONCAT('%',#{searchText},'%')
+			  LIMIT	#{recordCountPerPage} OFFSET #{firstIndex}		
+		]]>
+
+	</select>
+
+	<select id="selectadviceOnlineStatusEntprListCnt" parameterType="jcep.admin.model.MemberVO" resultType="int">
+		/*selectadviceOnlineStatusEntprListCnt*/
+		<![CDATA[
+			SELECT 	count(*) AS totCnt
+	  		  FROM	tb_enterprise
+	  		WHERE	1=1
+				AND	entpr_nm LIKE CONCAT('%',#{searchText},'%') OR entpr_ceo LIKE CONCAT('%',#{searchText},'%')
+		]]>
+	</select>
+	
+	<insert id="adviceOnlineStatusMagagementInsertOk" parameterType="java.util.Map">
+		/*adviceOnlineStatusMagagementInsertOk*/
+		<![CDATA[
+			INSERT	INTO	tb_onestop_support	(onestop_support_no
+															,member_id					
+															,applicat_dt					
+															,pro_member_id					
+															,supp_buss_area_cd					
+															,buss_area_others					
+															,comp_empl_cnt					
+															,comp_appl_nm					
+															,comp_posit					
+															,comp_tel_no					
+															,comp_fax_no					
+															,comp_hp_no					
+															,comp_mail					
+															,advice_hope_dt					
+															,advice_place_cd					
+															,advice_area_cd					
+															,advice_applic_cont					
+															,file_course					
+															,org_file_nm					
+															,upload_file_nm					
+															,applic_st_cd					
+															,reg_dt					
+															,reg_id					
+															)
+												VALUES	(#{onestopSupportNo}
+															,#{memberId}					
+															,#{applicatDt}					
+															,#{proMemberId}					
+															,#{suppBussAreaCd}					
+															,#{bussAreaOthers}					
+															,#{compEmplCnt}					
+															,#{compApplNm}					
+															,#{compPosit}					
+															,concat(#{compTelNo1},#{compTelNo2},#{compTelNo3})
+															,concat(#{compFaxNo1},#{compFaxNo2},#{compFaxNo3})
+															,concat(#{compHpNo1},#{compHpNo2},#{compHpNo3})
+															,concat(#{compMail1},	"@",#{compMail2})
+															,#{adviceHopeDt}					
+															,#{advicePlaceCd}					
+															,#{adviceAreaCd}					
+															,#{adviceApplicCont}					
+															,#{fileCourse}					
+															,#{orgFileNm}					
+															,#{uploadFileNm}					
+															,"000001"
+															,sysdate()			
+															,"admin"
+															)
+		]]>
+	</insert>	
+	
+	<insert id="onestopBussLogInsertOk" parameterType="java.util.Map">
+		/*onestopBussLogInsertOk*/
+		<![CDATA[
+			INSERT	INTO	tb_onestop_buss_log	(	onestop_support_no		
+																	,member_id		
+																	,attch_file_no		
+																	,attch_file_divi_cd		
+																	,file_course		
+																	,org_file_nm		
+																	,upload_file_nm		
+																	,use_flag		
+																	,reg_dt		
+																	,reg_id		
+																	)
+												VALUES		(	#{onestopSupportNo}
+																	,#{memberId}
+																	,#{attchFileNo}
+																	,#{attchFileDiviCd}
+																	,#{fileCourse}
+																	,#{orgFileNm}
+																	,#{uploadFileNm}
+																	,"Y"	
+																	,sysdate()	
+																	,"admin"	
+																)			
+			
+		]]>
+	</insert>
+	<select id="onestopSupportNoSelect" parameterType="java.util.Map" resultType="String">
+			/*onestopSupportNoSelect*/
+		<![CDATA[
+		SELECT concat('S',IFNULL(LPAD(MAX(SUBSTRING(onestop_support_no,2,LENGTH(onestop_support_no))) + 1,4,'0'),'0000')) 
+		  FROM tb_onestop_support a
+		]]>
+	</select>
+	
+		<select id="SelectExpertList" parameterType="java.util.HashMap" resultType="java.util.Map">
+		/*SelectExpertList*/
+		<![CDATA[
+   			SELECT 	expert_nm AS expertNm
+   						,member_id as memberId
+						,large_special_area_cd as largeSpecialAreaCd
+			  FROM	tb_expert
+		    WHERE	1=1
+		]]>
+		<choose>
+            <when test="selectClassCd.size != 0">
+                and large_special_area_cd in 
+                <foreach collection="selectClassCd" item="selectClassCd" index="index" separator="," open="(" close=")">
+                    #{selectClassCd}
+                </foreach>
+            </when>
+        </choose>	
+        <![CDATA[
+        ORDER BY	rand()
+			  LIMIT #{evaluationCnt}
+		]]>
+	</select> 
+	<insert id="insertEvalu" parameterType="java.util.HashMap">
+		/*insertEvalu*/
+		<![CDATA[
+			INSERT INTO tb_expert_deliberate( 	member_id
+															,expert_hist_idx
+						                                    ,expert_delibr_dt
+						                                    ,expert_delibr_title
+						                                    ,remark
+						                                    ,reg_dt
+						                                    ,reg_id
+														  )
+									  			VALUES(	#{memberId}
+															,(select concat('Q',IFNULL(LPAD(MAX(SUBSTRING(expert_hist_idx,2,LENGTH(expert_hist_idx))) + 1,4,'0'),'0000')) from tb_expert_deliberate a)
+			                                    			,#{evaluationDt}
+						                                    ,#{selectTitle}
+						                                    ,#{remark}
+						                                    ,sysdate()
+						                                    ,'admin'
+			                                )
+		]]>
+	</insert>
+	<insert id="insertEvaluDtl" parameterType="java.util.HashMap">
+		/*insertEvaluDtl*/
+		<![CDATA[
+			INSERT INTO tb_slect_evalu_dtl	(select_no
+														,member_id
+						                                ,expert_nm
+						                                ,attend_yn
+						                                ,remark
+						                                ,reg_dt
+						                                ,reg_id
+														)
+											  VALUES(#{selectNo}
+														,#{memberId}
+					                                    ,#{expertNm}
+					                                    ,#{attendYn}
+					                                    ,#{remark}
+					                                    ,sysdate()
+					                                    ,'admin'
+					                                )
+		]]>
+	</insert>
+	<select id="SelectSearchSelectNo" parameterType="int" resultType="String">
+		/*SelectSearchSelectNo*/
+		<![CDATA[
+			SELECT concat('i',IFNULL(LPAD(MAX(SUBSTRING(select_no,2,LENGTH(select_no)))+1,4,'0'),'0000')) 
+			  FROM tb_slect_evalu
+		]]>
+	</select>
+	<insert id="SelectSlectEvaluInsert" parameterType="java.util.HashMap">
+		/*SelectSlectEvaluInsert*/
+		<![CDATA[
+			insert into tb_slect_evalu(select_no
+												,select_title
+												,select_dt
+												,evaluation_dt
+												,evaluation_cnt
+												,reg_dt
+												,reg_id
+												)
+										values(#{selectNo}
+												,#{selectTitle}
+												,date_format(now(), '%Y.%m.%d')
+												,#{evaluationDt}
+												,#{evaluationCnt}
+												,sysdate()
+												,'admin'
+												)
+		]]>
+	</insert>
+	<insert id="SelectSelectClassCdInsert" parameterType="java.util.HashMap">
+		/*SelectSelectClassCdInsert*/
+		<![CDATA[
+			INSERT INTO tb_slect_class(	select_no
+													,select_class_cd
+													,reg_dt
+													,reg_id
+						                          )
+									   VALUES(	#{selectNo}
+												  	,#{selectClassCd}
+													,sysdate()
+													,'admin'
+												  )
+		]]>
+	</insert>
   </mapper>

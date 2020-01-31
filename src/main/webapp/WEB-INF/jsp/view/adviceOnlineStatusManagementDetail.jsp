@@ -262,7 +262,7 @@
 									</tr>
 									<tr>
 										<th style="text-align:center;background:#eee;vertical-align:middle;">사업자등록증</th>
-										<td colspan="3"><c:out value="${detail.orgFileNm}"/></td>
+										<td colspan="3"><a href="/db/adviceOnlineStatusManagementDetailfileDownload.do?fileNum=${detail.onestopSupportNo}">${detail.orgFileNm}</a>
 									</tr>
 								</tbody>
 							</table>	

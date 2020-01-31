@@ -676,54 +676,31 @@ SELECT  count(b.memberId) 									AS totcnt
 	<select id="selectBusinessManagementListTotCnt" parameterType="jcep.admin.model.MemberVO" resultType="int">
 			/*selectBusinessManagementListTotCnt*/
 				<![CDATA[
-				SELECT count(a.bussAnncemntNo)
-                FROM (SELECT buss_anncemnt_no	AS	bussAnncemntNo
-						    ,buss_anncemnt_nm	AS	bussAnncemntNm
-						    ,(CASE WHEN DATE_FORMAT(now(),'%Y-%m-%d') BETWEEN buss_fr_dt AND buss_to_dt THEN '000002'
-			                          WHEN DATE_FORMAT(now(),'%Y-%m-%d') > buss_to_dt THEN '000003'
-			                          ELSE '000001' END
-		                    ) 								AS anncemntStCd
-					 	    ,(SELECT common_nm
-						        FROM ta_common
-						      WHERE 1=1
-				                  AND use_flag = 'Y'
-							      AND group_cd = 'G00046'
-				                  AND common_cd = anncemntStCd
-				             ) 								AS result
-						     ,reg_id					AS	regId
-						     ,Date_format(reg_dt, '%Y-%m-%d') AS regDt
-				             ,buss_fr_dt as bussFrDt
-				             ,buss_to_dt as bussToDt
-				             ,(SELECT count(*)
-						         FROM tb_buss_anncemnt_appl b
-						       WHERE 1=1
-							       AND b.buss_anncemnt_no = bussAnncemntNo
-						           AND (b.applic_st_cd = '000001' or b.applic_st_cd = '000002')
-				              ) 							as applicStCd
-				   FROM  tb_business_announcement) a
+				SELECT count(*) AS totCnt
+				   FROM  tb_business_announcement
 				 WHERE	1=1
 				]]>
 				<if test='searchText != null and searchText != "" '>
 					<choose>
-						<when test='searchType eq ""'>AND (a.bussAnncemntNo LIKE CONCAT('%',#{searchText},'%') OR a.bussAnncemntNm LIKE CONCAT('%',#{searchText},'%')) </when>
-						<when test='searchType eq 1'>AND a.bussAnncemnNm LIKE CONCAT('%',#{searchText},'%') </when>
-						<when test='searchType eq 2'>AND a.bussAnncemntNo LIKE CONCAT('%',#{searchText},'%') </when>
+						<when test='searchType eq ""'>AND (buss_anncemnt_no LIKE CONCAT('%',#{searchText},'%') OR buss_anncemnt_nm LIKE CONCAT('%',#{searchText},'%')) </when>
+						<when test='searchType eq 1'>AND buss_anncemnt_nm LIKE CONCAT('%',#{searchText},'%') </when>
+						<when test='searchType eq 2'>AND buss_anncemnt_no LIKE CONCAT('%',#{searchText},'%') </when>
 					</choose>
 				</if>
 				 <if test='startDate != null and startDate != "" and endDate != null and endDate != ""'>
-				    AND  (a.bussFrDt BETWEEN date_format(#{startDate}, '%Y-%m-%d') AND date_format(#{endDate}, '%Y-%m-%d') OR
-				            a.bussToDt BETWEEN date_format(#{startDate}, '%Y-%m-%d') AND date_format(#{endDate}, '%Y-%m-%d')
+				    AND  (buss_fr_dt BETWEEN date_format(#{startDate}, '%Y-%m-%d') AND date_format(#{endDate}, '%Y-%m-%d') OR
+				            buss_to_dt BETWEEN date_format(#{startDate}, '%Y-%m-%d') AND date_format(#{endDate}, '%Y-%m-%d')
 				            )
 				</if>
 				<if test='searchSelect != null and searchSelect != ""'>
 					<choose>
-						<when test='searchSelect eq 1'>AND a.anncemntStCd = '000001' </when>
-						<when test='searchSelect eq 2'>AND a.anncemntStCd = '000002' </when>
-						<when test='searchSelect eq 3'>AND a.anncemntStCd = '000003' </when>
+						<when test='searchSelect eq 1'>AND anncemnt_st_cd = '000001' </when>
+						<when test='searchSelect eq 2'>AND anncemnt_st_cd = '000002' </when>
+						<when test='searchSelect eq 3'>AND anncemnt_st_cd = '000003' </when>
 					</choose>
 				</if>
 				<![CDATA[
-					ORDER BY a.regDt DESC
+					ORDER BY reg_dt DESC
 				]]>
 	</select>
 	
@@ -1079,6 +1056,121 @@ LEFT OUTER JOIN	tb_buss_anncemnt_attch_file c 	ON		a.buss_anncemnt_no = c.buss_a
 		    AND attch_file_no	=#{attchFileNo}
 		]]>
 	</select>
+
+	<select id="businessManagementfileDownload" parameterType="java.util.Map" resultType="jcep.admin.model.MemberVO">
+		/*businessManagementfileDownload*/
+		<![CDATA[
+		SELECT buss_anncemnt_no	AS bussAnncemntNo
+				   ,attch_file_no			AS attchFileNo
+				   ,file_course				AS fileCourse
+				   ,org_file_nm				AS	orgFileNm
+				   ,upload_file_nm			AS uploadFileNm
+		  FROM tb_buss_attch_file
+		WHERE 1=1
+		    AND attch_file_no	=#{attchFileNo}
+		]]>
+	</select>
+	<delete id="businessManagementRegisterFileDelete" parameterType="String">
+		/*businessManagementRegisterFileDelete*/
+		<![CDATA[
+		  DELETE
+		    FROM tb_buss_attch_file
+		  WHERE 1=1
+		      AND attch_file_no	=#{attchFileNo}
+		]]>
+	</delete>
+
+	<update id="businessManagementRegisterUpdateOk" parameterType="java.util.Map">
+		/*businessManagementRegisterUpdateOk*/
+		<![CDATA[
+			UPDATE	tb_business_announcement
+				 SET		buss_anncemnt_nm	=	#{bussAnncemntNm}
+							,buss_fr_dt				=	#{bussFrDt}
+							,buss_to_dt				=	#{bussToDt}
+							,buss_cost_amt		=	#{bussCostAmt}
+							,buss_dept_cd			=	#{bussDeptCd}
+							,original_url				=	#{originalUrl}
+							,buss_cont				=	#{bussCont}
+							,buss_divi_cd			=	#{bussDiviCd}
+							,reg_id					=	#{regId}
+		    WHERE		buss_anncemnt_no	= #{bussAnncemntNo}
+		]]>
+	</update>	
+
+
+	<select id="businessManagementFileLength" parameterType="java.util.Map" resultType="int">
+		/*businessManagementFileLength*/
+		<![CDATA[
+			SELECT MAX(RIGHT(attch_file_no,1))+1
+			  FROM tb_buss_attch_file
+			WHERE buss_anncemnt_no = #{bussAnncemntNo}
+		]]>
+	</select>
+
+	<select id="NomberValidateCheck" parameterType="java.util.Map" resultType="int">
+		/*NomberValidateCheck*/
+		<![CDATA[
+			SELECT count(*)
+			  FROM tb_business_announcement
+			WHERE 1=1
+			    AND buss_anncemnt_no = #{bussAnncemntNo}
+		]]>
+	</select>
+	
+	
+<!-- 	평가위원 추출 -->
+
+	<select id="selectEvaluList" parameterType="jcep.admin.model.MemberVO" resultType="java.util.Map">
+		/*NomberValidateCheck*/
+		<![CDATA[
+			SELECT	select_no			AS	selectNo
+						,select_title			AS	selectTitle
+						,select_dt			AS	selectDt
+						,evaluation_dt		AS	evaluationDt
+						,evaluation_cnt	AS	evaluationCnt
+						,reg_dt				AS	regDt
+						,reg_id				AS	regId
+			  FROM	tb_slect_evalu
+		    WHERE	1=1
+		]]>
+		<if test='searchText != null and searchText != "" '>
+			<choose>
+				<when test='searchType eq ""'>AND (select_no LIKE CONCAT('%',#{searchText},'%') OR select_title LIKE CONCAT('%',#{searchText},'%')) </when>
+				<when test='searchType eq 1'> AND select_no LIKE CONCAT('%',#{searchText},'%') </when>
+				<when test='searchType eq 2'> AND select_title LIKE CONCAT('%',#{searchText},'%') </when>
+			</choose>
+		</if>
+		 <if test='startDate != null and startDate != "" and endDate != null and endDate != ""'>
+		    AND  select_dt BETWEEN date_format(#{startDate}, '%Y-%m-%d') AND date_format(#{endDate}, '%Y-%m-%d')
+		</if>
+		<![CDATA[
+			ORDER BY reg_dt DESC
+		]]>
+	</select>
+
+	<select id="selectEvaluListTotCnt" parameterType="jcep.admin.model.MemberVO" resultType="int">
+		/*NomberValidateCheck*/
+		<![CDATA[
+			SELECT	count(*) totCnt
+			  FROM	tb_slect_evalu
+		    WHERE	1=1
+		]]>
+		<if test='searchText != null and searchText != "" '>
+			<choose>
+				<when test='searchType eq ""'>AND (select_no LIKE CONCAT('%',#{searchText},'%') OR select_title LIKE CONCAT('%',#{searchText},'%')) </when>
+				<when test='searchType eq 1'> AND select_no LIKE CONCAT('%',#{searchText},'%') </when>
+				<when test='searchType eq 2'> AND select_title LIKE CONCAT('%',#{searchText},'%') </when>
+			</choose>
+		</if>
+		 <if test='startDate != null and startDate != "" and endDate != null and endDate != ""'>
+		    AND  select_dt BETWEEN date_format(#{startDate}, '%Y-%m-%d') AND date_format(#{endDate}, '%Y-%m-%d')
+		</if>
+		<![CDATA[
+			ORDER BY reg_dt DESC
+		]]>
+	</select>
+	
+	
 </mapper>
 
 

@@ -82,83 +82,7 @@
 			 $(".closeBtn").click(function(){
 					$("#facilityPop").hide();
 			 });
-			 
-			 
-				//예약정보 상세 레이어 팝업 호출
-				$(document).on('click', '.reg a', function(){
-					facilityUseDetailList($(this).attr("value"));				
-				});			 
-			 
-				//예약정보 목록 레이어 팝업 호출
-				$(document).on('click', '.num2 a', function(){
-					var currentTd = $(this).parents('td');
-					var tdIndex = currentTd.index();
-					var trIndex = currentTd.parent().index();
-
-					if (tdIndex >= 3) {
-						var popupTop = currentTd.position().top;
-						var popupRight = currentTd.outerWidth()  * (7 - tdIndex);
-						$('#reserveinfolistPop').css({ top: popupTop, left: 'auto', right: popupRight });
-					} else {
-						var popupTop = currentTd.position().top;
-						var popupLeft = currentTd.outerWidth() * (tdIndex + 1);
-						$('#reserveinfolistPop').css({ top: popupTop, left: popupLeft, right: 'auto' });
-					}
-					
-			  		var parent = $(this).closest('div');
-			  		
-					var weekend = new Array('일', '월', '화', '수', '목', '금', '토');
-					var date = $('#reservMonth').text() + '.' + parent.find('.day').attr('value') + ' ' + weekend[parent.find('.day').attr('day')];
-					var html="";
-					$('#layer_popup_date').text(date);
-					parent.find('.reserve_info').each(function() {
-						var info = $(this).text().substring(2, $(this).text().length);
-						var appliNo = $(this).find('a').attr('value');
-						html += '<li class="reserve_info"><a href="javascript:facilityUseDetailList(\'' + appliNo +'\');">' + info + '</a></li>';
-					});
-					$('#layer_popup_info').empty().append(html);
-					$('#reserveinfolistPop').show();							
-
-					
-				});	
-				
-				//예약정보 목록 레이어 팝업에서 상세 레이어 팝업 호출
-				$(document).on('click', '#reserveinfolistPop a', function(){
-					facilityUseDetailList($(this).attr("value"));
-				});
-
-				//예약정보 상세 레이어 팝업 닫기
-				$(document).on('click', '#reserveinfolistPop .btn_close', function(){
-					$("#reserveinfolistPop").hide();
-				});
-
-				//예약정보 목록 레이어 팝업 닫기
-				$(document).on('click', '#reserveinfodetailPop .ok, #reserveinfodetailPop .btn_close', function(){
-					$("#reserveinfodetailPop").hide();
-				});				
 	});
-		
-		//예약신청 상세팝업호출 
-		function facilityUseDetailList(appliNo){
-			 $.ajax({
-					type : 'post',
-					url:'/db/front/facilityUseDetailList.do',
-					dataType: 'json',
-					data : {"appliNo" : appliNo},
-					success : function(data) {
-						$("#detailCompNm").empty().text(data.resultList[0].compNm);
-						$("#detailFacilityNm").empty().text(data.resultList[0].facilityNm);
-						$("#detailUseDate").empty().text(data.resultList[0].useFrDt+" "+data.resultList[0].useFrTm+"시 ~"+data.resultList[0].useToDt+" "+data.resultList[0].useToTm+"시" );
-						$("#detailUseObj").empty().text(data.resultList[0].useObj);
-						
-						$('#reserveinfodetailPop').show();
-					},  
-				    error:function(request,status,error){ //ajax 오류인경우  
-			            alert("작업중 에러가 발생했습니다.");      
-			   		} 
-			 });				
-			
-		}
 		
 		function enterKey(){
         	if(window.event.keyCode == 13){
@@ -468,26 +392,12 @@
 							</div>
 						</div>
 					</div>
-					
-					<div class="reserveCalendar">
-						<!-- 예약정보 목록 레이어 팝업 -->
-						<div class="reserveLayer" id="reserveinfolistPop">
-							<div class="top">
-								<strong class="title" id="layer_popup_date">2020.01.27 월</strong>
-								<button type="button" class="btn_close">X</button>
-							</div>
-							<div class="con">
-								<ul class="reserveList" id="layer_popup_info">
-								</ul>
-							</div>
-						</div>
-						<!-- // 예약정보 목록 레이어 팝업 -->	
-					
+		
 					<div class="daylist tabBtn hidden">
 						<div class="yearw">
-							<button type="button" class="prev" onclick="changeReservMonth(-1,'F')">이전</button>
+							<button type="button" class="prev" onclick="changeReservMonth(-1)">이전</button>
 							<span class="current" id="reservMonth">2019.08</span>
-							<button type="button" class="next" onclick="changeReservMonth(1,'F')">다음</button>
+							<button type="button" class="next" onclick="changeReservMonth(1)">다음</button>
 						</div>
 						
 					<div class="dcal">
@@ -517,7 +427,6 @@
 				</div>
 			</div>
 		</div>
-	</div>
 	</div>
 </div>
 
@@ -647,39 +556,6 @@
 	</div>
 </div>
 
-<!-- 예약 정보 레이어 팝업 -->
-<div class="layer" id="reserveinfodetailPop" style="display:none;">
-	<div class="box boxw600" style="height:418px; margin-top:-209px;">
-		<div class="ti">예약정보</div>
-		<table class="table01 mgt30">
-			<colgroup>
-				<col style="width:30%;">
-				<col style="width:70%;">
-			</colgroup>
-			<tr>
-				<th>행사주관</th>
-				<td id="detailCompNm">전남정보문화산업진흥원</td>
-			</tr>
-			<tr>
-				<th>장소</th>
-				<td id="detailFacilityNm">지식나눔터</td>
-			</tr>
-			<tr>
-				<th>일자</th>
-				<td id="detailUseDate">2020-01-14 09시 ~ 18시</td>
-			</tr>
-			<tr>
-				<th>일정내용</th>
-				<td id="detailUseObj">유통활동가 사전직무교육</td>
-			</tr>
-		</table>
-		<div class="submitbtn">
-			<button type="button" class="ok">확인</button>	
-		</div>
-		<button type="button" class="btn_close">X</button>
-	</div>
-</div>
-<!-- // 예약 정보 레이어 팝업 -->
         
 </body>
 </html>

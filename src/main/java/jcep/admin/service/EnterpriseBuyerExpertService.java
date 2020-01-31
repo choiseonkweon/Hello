@@ -1375,8 +1375,35 @@ public class EnterpriseBuyerExpertService {
 		return enterpriseBuyerExpertMapper.businessManagementDetailFileDownload(params);
 	}
 	
+	public MemberVO businessManagementfileDownload(Map<String,String> params)throws Exception{
+		return enterpriseBuyerExpertMapper.businessManagementfileDownload(params);
+	}
+	
+	public int businessManagementRegisterFileDelete(String params)throws Exception{
+		return enterpriseBuyerExpertMapper.businessManagementRegisterFileDelete(params);
+	}
+
+	public int businessManagementRegisterUpdateOk(Map<String,String> hMap)throws Exception{
+		return enterpriseBuyerExpertMapper.businessManagementRegisterUpdateOk(hMap);
+	}
+
+	public int businessManagementFileLength(Map<String,String> hMap)throws Exception{
+		return enterpriseBuyerExpertMapper.businessManagementFileLength(hMap);
+	}
+	
+	public int NomberValidateCheck(Map<String,String> hMap)throws Exception{
+		return enterpriseBuyerExpertMapper.NomberValidateCheck(hMap);
+	}
 	
 	
+	
+	/*평가위원 추출*/
+	public List<Map<String,String>> selectEvaluList(MemberVO params)throws Exception{
+		return enterpriseBuyerExpertMapper.selectEvaluList(params);
+	}
+	public int selectEvaluListTotCnt(MemberVO params)throws Exception{
+		return enterpriseBuyerExpertMapper.selectEvaluListTotCnt(params);
+	}
 }
 
 

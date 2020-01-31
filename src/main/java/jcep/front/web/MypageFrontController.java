@@ -20,7 +20,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import egovframework.rte.fdl.property.EgovPropertyService;
 import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
+import jcep.admin.model.FacilityResourceVO;
 import jcep.admin.model.MemberVO;
+import jcep.admin.service.FacilityResourceService;
 import jcep.admin.service.MemberService;
 import jcep.front.service.LoginFrontService;
 /**
@@ -38,6 +40,9 @@ import jcep.front.service.LoginFrontService;
 
 @Controller
 public class MypageFrontController {
+
+	@Resource(name = "facilityResourceService")
+	protected FacilityResourceService facilityResourceService;
 
 	@Resource(name = "memberService")
 	protected MemberService memberService;
@@ -259,33 +264,31 @@ public class MypageFrontController {
 	 * @exception Exception
 	 */
 	@RequestMapping(value = "/facilitiesResourcesApplicationStatus.do")
-	public ModelAndView facilitiesResourcesApplicationStatus(@ModelAttribute("searchVO") MemberVO searchVO, ModelAndView mv, Model model, HttpServletRequest request, HttpSession session) throws Exception {
-		
-		System.out.println("facilitiesResourcesApplicationStatus_U1***********************"+searchVO);
-		
-		String memberId = (String)session.getAttribute("memberId");
-		String memberId1 = (String)session.getAttribute("memberId");
-		String memberIdx = (String)session.getAttribute("memberId");
-		String largeSpecialAreaCd = request.getParameter("largeSpecialAreaCd");
-		searchVO.setMemberId(memberId);
-		searchVO.setMemberId1(memberId1);
-		searchVO.setMemberIdx(memberIdx);
-		searchVO.setLargeSpecialAreaCd(largeSpecialAreaCd);
-		
-		System.out.println("memberId :: " + memberId);
-		System.out.println("memberId1 :: " + memberId1);
-		System.out.println("memberIdx :: " + memberIdx);
-		System.out.println("largeSpecialAreaCd :: " + largeSpecialAreaCd);
+	public ModelAndView facilityApplicationManagementList(@ModelAttribute("searchVO") FacilityResourceVO searchVO, ModelAndView mv, Model model) throws Exception {
+		System.out.println("searchVO_1***********************"+searchVO);
+		searchVO.setPageUnit(propertiesService.getInt("pageUnit"));
+		searchVO.setPageSize(propertiesService.getInt("pageSize"));
 
-		MemberVO detail = memberService.selectFacilitiesResourcesApplicationStatus(searchVO);
-		model.addAttribute("detail", detail);
-		model.addAttribute("viewType", "modify");
-		System.out.println("detail :: " + detail);
+		PaginationInfo paginationInfo = new PaginationInfo();
+		paginationInfo.setCurrentPageNo(searchVO.getPageIndex());
+		paginationInfo.setRecordCountPerPage(searchVO.getPageUnit());
+		paginationInfo.setPageSize(searchVO.getPageSize());
+
+		searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
+		searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
+		searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
+       
+		
+		
+		ArrayList<FacilityResourceVO> facilityApplicateList = facilityResourceService.selectFacilityApplicateList(searchVO);
+		model.addAttribute("resultList", facilityApplicateList);
+		
+		int totCnt = facilityResourceService.selectFacilityApplicateListTotCnt(searchVO);
+		paginationInfo.setTotalRecordCount(totCnt);
+		model.addAttribute("paginationInfo", paginationInfo);
+		System.out.println("searchVO_2***********************"+searchVO);
 		mv.setViewName("/view/frontView/facilitiesResourcesApplicationStatus");
-
-
-		System.out.println("facilitiesResourcesApplicationStatus_U2***********************"+searchVO);
-
+		
 		return mv;
 	}
 

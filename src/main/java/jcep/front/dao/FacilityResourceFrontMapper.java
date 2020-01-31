@@ -1,7 +1,6 @@
 package jcep.front.dao;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 import egovframework.rte.psl.dataaccess.mapper.Mapper;
 import jcep.admin.model.MemberVO;
@@ -33,14 +32,6 @@ public interface FacilityResourceFrontMapper {
 	public ArrayList<FacilityResourceFrontVO> selectFacilityUseList(FacilityResourceFrontVO params) throws Exception;
 
 	/**
-	 * 시설 목록을 조회한다.
-	 * @param params - 조회할 정보가 담긴 VO
-	 * @return 시설 목록
-	 * @exception Exception
-	 */
-	public ArrayList<Map<String,Object>> selectFacilityUseDetailList(FacilityResourceFrontVO params) throws Exception;	
-	
-	/**
 	 * 시설신청.
 	 * @param params - 조회할 정보가 담긴 VO
 	 * @return 시설 목록
@@ -63,14 +54,6 @@ public interface FacilityResourceFrontMapper {
 	 * @exception Exception
 	 */
 	public ArrayList<FacilityResourceFrontVO> selectResourceUseList(FacilityResourceFrontVO params) throws Exception;
-
-	/**
-	 * 시설 목록을 조회한다.
-	 * @param params - 조회할 정보가 담긴 VO
-	 * @return 시설 목록
-	 * @exception Exception
-	 */
-	public ArrayList<Map<String,Object>> selectResourceUseDetailList(FacilityResourceFrontVO params) throws Exception;		
 	
 	/**
 	 * 자원 목록 총 갯수를 조회한다.
@@ -87,14 +70,6 @@ public interface FacilityResourceFrontMapper {
 	 * @exception
 	 */
 	public ArrayList<FacilityResourceFrontVO> selectResourceFacilityCalendarList(FacilityResourceFrontVO params) throws Exception;	
-
-	/**
-	 * 시설신청 & 자원신청 목록 총 갯수를 조회한다.
-	 * @param params - 조회할 정보가 담긴 VO
-	 * @return 자원 목록 총 갯수
-	 * @exception
-	 */
-	public ArrayList<FacilityResourceFrontVO> selectResourceFacilityCalendarList2(FacilityResourceFrontVO params) throws Exception;	
 
 	/**
 	 * 온라인 지원 신청하기 한다.

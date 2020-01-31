@@ -3,22 +3,29 @@ package jcep.admin.web;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import egovframework.rte.fdl.property.EgovPropertyService;
 import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
+import jcep.admin.model.BusinessVO;
 import jcep.admin.model.EnterpriseBuyerExpertVO;
 import jcep.admin.model.MemberVO;
 import jcep.admin.service.EnterpriseBuyerExpertService;
 import jcep.admin.service.MemberService;
+import net.sf.json.JSONArray;
 
 /**
  * @Class Name : EnterpriseBuyerExpertController.java
@@ -482,6 +489,92 @@ public class EnterpriseBuyerExpertController {
 		
 		return mv;
 	}
+	
+	  /*
+    ┌**************************************┐
+	|**************평가위원 추출**************** |
+    └**************************************┘
+   */	
+  
+	@RequestMapping(value = "/evalu/evaluInformationManagementList.do")
+	public ModelAndView evaluInformationManagementList(@ModelAttribute("searchVO") MemberVO searchVO, ModelAndView mav) throws Exception {
+		
+		System.out.println("searchVO_1***********************"+searchVO);
+		searchVO.setPageUnit(propertiesService.getInt("pageUnit"));
+		searchVO.setPageSize(propertiesService.getInt("pageSize"));
 
-    
+		PaginationInfo paginationInfo = new PaginationInfo();
+		paginationInfo.setCurrentPageNo(searchVO.getPageIndex());
+		paginationInfo.setRecordCountPerPage(searchVO.getPageUnit());
+		paginationInfo.setPageSize(searchVO.getPageSize());
+
+		searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
+		searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
+		searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
+
+		
+		List<Map<String,String>> list = enterpriseBuyerExpertService.selectEvaluList(searchVO);
+		mav.addObject("list", list);
+		
+		int totCnt = enterpriseBuyerExpertService.selectEvaluListTotCnt(searchVO);
+		paginationInfo.setTotalRecordCount(totCnt);
+		mav.addObject("paginationInfo", paginationInfo);
+		System.out.println("searchVO_2***********************"+searchVO);
+		mav.setViewName("/view/evaluInformationManagementList");
+		
+		return mav;
+	}
+
+	  @RequestMapping(value = "/evalu/evaluInformationManagementInsert.do", produces="text/plain;charset=utf-8")
+	  public ModelAndView  evaluInformationManagementInsert(@RequestParam(required=false) Map<String, String> map) throws Exception {		
+		  ModelAndView mav = new ModelAndView();
+
+		  MemberVO commonsVo = new MemberVO();
+
+			/*20191219 최선권 공통코드 추가*/
+			commonsVo.setGroupCd("G00022");
+			List<MemberVO> selectClassCd = memberService.selectCommonsList(commonsVo);
+
+			mav.addObject("selectClassCd",selectClassCd);
+			mav.setViewName("/view/evaluInformationManagementInsert");
+		
+		return mav;
+	}
+	  @RequestMapping(value = "/evalu/selectExpertList.do", produces="text/plain;charset=utf-8")
+	  public ModelAndView  SelectExpertList(@RequestParam(value="selectClassCd[]") List<String> selectClassCd, @RequestParam(value="evaluationCnt") int evaluationCnt) throws Exception {
+		  ModelAndView mav = new ModelAndView();
+		  for(int i=0;i<selectClassCd.size();i++) {
+			  System.out.println(selectClassCd.get(i));
+			  String selectClassCd2 =selectClassCd.get(i);
+			  System.out.println(selectClassCd);
+		  }
+		  HashMap<String,Object> hMap = new HashMap<String,Object>();
+		  hMap.put("selectClassCd", selectClassCd);
+		  hMap.put("evaluationCnt", evaluationCnt);
+		  List<Map<String,Object>>expertList = memberService.SelectExpertList(hMap);
+
+		  mav.addObject("expert",expertList);
+		  mav.setViewName("/html/ExpertEvaluList");
+		  return mav;
+	  }
+
+		@RequestMapping("/evalu/ExpertEvaluInsertOk.do")
+		public String ExpertEvaluInsertOk(@RequestParam(required=false) Map<String,List<Map<String,Object>>> paramList) throws Exception {
+	        ObjectMapper om = new ObjectMapper();
+	        List<Map<String,Object>> list =  om.readValue(om.writeValueAsString(JSONArray.fromObject(paramList.get("params"))), List.class);
+	        String selectTitle =  om.readValue(om.writeValueAsString(paramList.get("selectTitle")),String.class);
+	        String evaluationDt =  om.readValue(om.writeValueAsString(paramList.get("evaluationDt")),String.class);
+	        String evaluationCnt =  om.readValue(om.writeValueAsString(paramList.get("evaluationCnt")),String.class);
+	        List<Map<String,Object>> selectClassCd =  om.readValue(om.writeValueAsString(JSONArray.fromObject(paramList.get("selectClassCd"))),List.class);
+	        HashMap<String,Object> map = new HashMap<String,Object>();
+	        map.put("list",list);	//list형식
+	        map.put("selectClassCd",selectClassCd);//list형식;
+	        map.put("selectTitle",selectTitle);
+	        map.put("evaluationDt",evaluationDt);
+	        map.put("evaluationCnt",evaluationCnt);
+	        
+	        memberService.ExpertEvaluInsertOk(map);
+	        
+			return "jsonView";
+		}	
 }

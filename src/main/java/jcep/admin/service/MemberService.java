@@ -15,6 +15,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import jcep.admin.dao.MemberMapper;
@@ -1085,5 +1086,80 @@ public class MemberService {
 	}
 	public MemberVO adviceOnlineStatusBusinessfileDownload(String attchFileNo)throws Exception{
 		return memberMapper.adviceOnlineStatusBusinessfileDownload(attchFileNo);		
+	}
+	
+	public MemberVO adviceOnlineStatusManagementDetailfileDownload(String onestopSupportNo)throws Exception{
+		return memberMapper.adviceOnlineStatusManagementDetailfileDownload(onestopSupportNo);		
+	}
+	
+	public ArrayList<Map<String,Object>> selectadviceOnlineStatusEntprList(MemberVO params)throws Exception{
+		return memberMapper.selectadviceOnlineStatusEntprList(params);		
+	}
+
+	public int selectadviceOnlineStatusEntprListCnt(MemberVO params)throws Exception{
+		return memberMapper.selectadviceOnlineStatusEntprListCnt(params);		
+	}
+	public int adviceOnlineStatusMagagementInsertOk(Map<String,String> params)throws Exception{
+		return memberMapper.adviceOnlineStatusMagagementInsertOk(params);		
+	}
+
+	public String onestopSupportNoSelect(Map<String,String> params)throws Exception{
+		return memberMapper.onestopSupportNoSelect(params);		
+	}
+	
+	public int onestopBussLogInsertOk(Map<String,String> params)throws Exception{
+		return memberMapper.onestopBussLogInsertOk(params);		
+	}
+	public List<Map<String,Object>> SelectExpertList(HashMap<String,Object> hMap)throws Exception{
+		return memberMapper.SelectExpertList(hMap);		
+	}
+public int ExpertEvaluInsertOk(HashMap<String,Object> hMap)throws Exception{
+		HashMap<String,Object> slectEvaluTable = new HashMap<String,Object>();
+		List<Map<String,Object>> slectClassTable = (List<Map<String, Object>>) hMap.get("selectClassCd");
+		List<Map<String,Object>> expertDeliberate =  (List<Map<String, Object>>) hMap.get("list");
+		HashMap<String,Object> addEvalu = new HashMap<String,Object>();
+		HashMap<String,Object> addEvalu2 = new HashMap<String,Object>();
+
+		
+
+		//추출번호(Pk)
+		int result =0;
+		int insertOk = 0;
+		String selectNo =memberMapper.SelectSearchSelectNo(result); //여기서 PK값을 조회해서 없으면 0번 있으면 1 실행완료.
+		//값은 i0000임
+		for(int i=0;i<expertDeliberate.size();i++) {//안에 들어있는 값을 꺼내와서 insert해야하는데
+			addEvalu.put("selectNo", selectNo);
+			addEvalu.put("evaluationDt", hMap.get("evaluationDt"));
+			addEvalu.put("selectTitle", hMap.get("selectTitle"));
+			addEvalu.put("memberId",expertDeliberate.get(i).get("memberId"));
+			addEvalu.put("expertNm",expertDeliberate.get(i).get("expertNm"));
+			addEvalu.put("attendYn",expertDeliberate.get(i).get("attendYn"));
+			addEvalu.put("remark",expertDeliberate.get(i).get("remark"));
+			
+			
+			//평가위원 추출 상세정보 저장
+			insertOk = memberMapper.insertEvaluDtl(addEvalu);
+			if(expertDeliberate.get(i).get("attendYn").equals("Y")){
+				//전문가 심의이력 정보 저장
+				insertOk = memberMapper.insertEvalu(addEvalu);
+			}
+		}
+		//평가원 추출정보 저장
+		slectEvaluTable.put("selectNo", selectNo);
+		slectEvaluTable.put("selectTitle", hMap.get("selectTitle"));
+		slectEvaluTable.put("evaluationDt", hMap.get("evaluationDt"));
+		slectEvaluTable.put("evaluationCnt", hMap.get("evaluationCnt"));
+
+		insertOk = memberMapper.SelectSlectEvaluInsert(slectEvaluTable);
+
+		//평가위원 분류정보 저장
+		for(int i=0;i<slectClassTable.size();i++) {
+			addEvalu2.put("selectNo", selectNo);
+			System.out.println("너의 이름은??: "+slectClassTable.get(i));
+			addEvalu2.put("selectClassCd", slectClassTable.get(i));
+			insertOk = memberMapper.SelectSelectClassCdInsert(addEvalu2);
+		}
+		System.out.println("완료되면 야하고 외쳐!!!!"); 
+		return result;
 	}
 }
