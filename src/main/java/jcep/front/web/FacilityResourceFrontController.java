@@ -42,7 +42,7 @@ import jcep.front.service.FacilityResourceFrontService;
  * @see
  *  Copyright (C) by MOPAS All right reserved.
  */
-/*공통함수 컨트롤러*/
+/*공통함수 컨트롤러 */
 @Controller
 public class FacilityResourceFrontController {
 

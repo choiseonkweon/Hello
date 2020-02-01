@@ -17,7 +17,7 @@ import jcep.admin.model.MemberVO;
 /**
  * @Class Name : BusinessService.java
  * @Description : BusinessService Class
- * @Modification Information
+ * @Modification Information 
  * @
  * @  수정일      수정자              수정내용
  * @ ---------   ---------   -------------------------------

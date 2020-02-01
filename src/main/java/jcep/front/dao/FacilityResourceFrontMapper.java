@@ -11,7 +11,7 @@ import jcep.front.model.FacilityResourceFrontVO;
 /**
  * @Class Name : FacilityResourceFrontMapper.java
  * @Description : 시설및자원관리에 대한 데이터처리 매퍼 클래스
- * @Modification Information
+ * @Modification Information 
  * @
  * @  수정일      수정자              수정내용
  * @ ---------   ---------   -------------------------------

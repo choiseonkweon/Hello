@@ -19,7 +19,7 @@ import jcep.admin.model.FacilityResourceVO;
 /**
  * @Class Name : FacilityResourceService.java
  * @Description : FacilityResourceService Class
- * @Modification Information
+ * @Modification Information 
  * @
  * @  수정일      수정자              수정내용
  * @ ---------   ---------   -------------------------------

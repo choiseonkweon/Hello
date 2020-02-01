@@ -123,6 +123,9 @@
 								<form:form commandName="searchVO" id="listForm" name="listForm" method="post">
 					        		<ui:pagination paginationInfo = "${paginationInfo}" type="image" jsFunction="fn_egov_link_page" />
 					        		<form:hidden path="pageIndex" />
+					        		<form:hidden path="searchType" />
+					        		<form:hidden path="searchText" />
+					        		<form:hidden path="mngDeptType" />
 					        	</form:form>	
 				        	</div>
 			        	</c:if>

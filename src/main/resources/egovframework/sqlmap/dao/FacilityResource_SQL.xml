@@ -359,8 +359,8 @@
 
 			<if test="searchFromDate != null and searchFromDate != '' and searchToDate != null and searchToDate != ''">
 			       <![CDATA[
-		           AND ((use_to_dt >= replace(#{searchToDate},'-','') AND use_to_dt <= replace(#{searchToDate},'-',''))
-						    OR (use_fr_dt >= replace(#{searchFromDate},'-','') AND use_fr_dt <= replace(#{searchFromDate},'-',''))
+		           AND ((use_to_dt >= replace(#{searchFromDate},'-','') AND use_to_dt <= replace(#{searchToDate},'-',''))
+						    OR (use_fr_dt >= replace(#{searchFromDate},'-','') AND use_fr_dt <= replace(#{searchToDate},'-',''))
 						    OR (use_fr_dt <= replace(#{searchFromDate},'-','') AND use_to_dt >= replace(#{searchToDate},'-','')))
 					]]>	     
 			</if> 	
@@ -421,8 +421,8 @@
 			</if>  
 			<if test="searchFromDate != null and searchFromDate != '' and searchToDate != null and searchToDate != ''">
 			       <![CDATA[
-		           AND ((use_to_dt >= replace(#{searchToDate},'-','') AND use_to_dt <= replace(#{searchToDate},'-',''))
-						    OR (use_fr_dt >= replace(#{searchFromDate},'-','') AND use_fr_dt <= replace(#{searchFromDate},'-',''))
+		           AND ((use_to_dt >= replace(#{searchFromDate},'-','') AND use_to_dt <= replace(#{searchToDate},'-',''))
+						    OR (use_fr_dt >= replace(#{searchFromDate},'-','') AND use_fr_dt <= replace(#{searchToDate},'-',''))
 						    OR (use_fr_dt <= replace(#{searchFromDate},'-','') AND use_to_dt >= replace(#{searchToDate},'-','')))
 					]]>	     
 			</if> 				
@@ -442,6 +442,9 @@
 			      </if>
 			      <if test="useToTm != null and useToTm != ''">
 			      	,use_to_tm = #{useToTm}
+			      </if>			      			      			      
+			      <if test="facilityNm != null and facilityNm != ''">
+			      	,resour_faci_id = #{facilityNm}
 			      </if>			      			      			      
 			WHERE appli_no = #{appliNo}
 	</update>		

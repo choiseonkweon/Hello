@@ -11,7 +11,7 @@ import jcep.admin.model.BusinessVO;
 /**
  * @Class Name : BusinessMapper.java
  * @Description : 사업관리에 대한 데이터처리 매퍼 클래스
- * @Modification Information 
+ * @Modification Information  
  * @
  * @  수정일      수정자              수정내용
  * @ ---------   ---------   -------------------------------

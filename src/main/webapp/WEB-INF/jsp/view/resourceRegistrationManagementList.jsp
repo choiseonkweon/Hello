@@ -111,6 +111,8 @@
 								<form:form commandName="searchVO" id="listForm" name="listForm" method="post">
 					        		<ui:pagination paginationInfo = "${paginationInfo}" type="image" jsFunction="fn_egov_link_page" />
 					        		<form:hidden path="pageIndex" />
+					        		<form:hidden path="searchType" />
+					        		<form:hidden path="searchText" />
 					        	</form:form>	
 				        	</div>
 			        	</c:if>
@@ -157,7 +159,7 @@
 													<th style="text-align:center;background:#eee;vertical-align:middle;">자원명 *</th>
 													<td>
 														<label class="input">
-															<input type="text" id="resourceNm" name="resourceNm" class="input-sm" value="" maxlength="20" style="width:250px;">
+															<input type="text" id="resourceNm" name="resourceNm" class="input-sm" value="" maxlength="30" style="width:250px;">
 														</label>
 													</td>
 												</tr>
@@ -268,7 +270,6 @@
 						$("#resourceMngDeptCd").val(resultData.resourceMngDeptCd);
 						$("#resourceSt").val(resultData.resourceSt);
 						
-						
 						$("#file").empty();
 						var resourceImgPath = $("#resourceImgPath").val();
 						
@@ -295,6 +296,8 @@
         
         function inputClear(){
         	$("#resourceId").val("");
+        	$("#fileName").empty();
+        	$("#image").find("img").attr("src","");
 			$("#resourceNm").val("");
 			$("#resourceMngDeptCd").val("");
 			$("#resourceSt option:eq(0)").prop("selected","true");

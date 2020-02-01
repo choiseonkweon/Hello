@@ -25,7 +25,7 @@
 		<div id="content">
 			<div class="row">
 				<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
-					<h1 class="page-title txt-color-blueDark"><i class="fa-fw fa fa-home"></i><b>장비,시설 활용실적 등록</b></h1>
+					<h1 class="page-title txt-color-blueDark"><i class="fa-fw fa fa-home"></i><b>장비,시설 활용실적</b></h1>
 				</div>
 			</div>
 			
@@ -44,7 +44,7 @@
 											<th style="text-align:center;background:#eee;vertical-align:middle;">제목 * </th>
 											<td>
 												<label class="input" style="width:100%;">
-													<input type="text" id="resourcePerformNm" name="resourcePerformNm" class="input-sm" value="<c:out value="${resultList[0].resourcePerformNm}"/>" style="width:100%;" maxlength="30">
+													<input type="text" id="resourcePerformNm" name="resourcePerformNm" class="input-sm" value="<c:out value="${resultList[0].resourcePerformNm}"/>" style="width:100%;" maxlength="100">
 												</label>
 											</td>
 										</tr>
@@ -76,7 +76,7 @@
 														<tr value="<c:out value='${result.resourFaciId}'/>" value2="<c:out value='${result.memberId}'/>" value3="<c:out value='${result.appliNo}'/>">
 															<td><c:out value='${result.useDt}'/></td>
 															<td><c:out value='${result.compNm}'/></td>
-															<td><input type='text' value='<c:out value='${result.incomeAmt}'/>' maxlength="12"/></td>
+															<td><input type='text' value='<c:out value='${result.incomeAmt}'/>' onkeydown="javascript:return onlyNumber(event)" maxlength="10"/></td>
 															<td><input type='text' value='<c:out value='${result.entprBussProStusNm}'/>' maxlength="40"/></td>
 															<td><button type='button' class='txtbtn floatR delBtn' onclick='resourFaciDel(this);'>삭제</button></td>
 														</tr>															
@@ -130,7 +130,7 @@
 		$(document).ready(function () {
 			$("#cancelBtn").click(function(){
 				if(confirm("이 페이지에서 나가시겠습니까?")){
-					location.href = "/db/business/businessInfraResourFaciUseResultList.do"
+					location.href = "/db/business/businessInfraResourFaciUseResultList.do";
 				}
 			});				
 			
@@ -251,9 +251,9 @@
 		function checkValue(){
 			var retValue = true;
 			
-			if($('#contentPerformNm').val() == ""){
+			if($('#resourcePerformNm').val() == ""){
 				alert("제목을 입력하세요.");
-				$('#contenterformNm').focus();
+				$('#resourcePerformNm').focus();
 				return;
 			}
 
@@ -303,7 +303,7 @@
 								html += "<tr value='"+iData.resourFaciId+"' value2='"+iData.memberId+"' value3='"+iData.appliNo+"'>";
 							    html += "<td>"+iData.useFrDt+"~"+iData.useToDt+"</td>";
 							    html += "<td>"+iData.compNm+"</td>";
-							    html += "<td><input type='text' value='' maxlength='10'/></td>";
+							    html += "<td><input type='text' value='' onkeydown='javascript:return onlyNumber(event)' maxlength='10'/></td>";
 							    html += "<td><input type='text' value='' maxlength='40'/></td>";
 							    html += "<td><button type='button' class='txtbtn floatR delBtn' onclick='resourFaciDel(this);'>삭제</button></td>";
 								html += '</tr>';									
@@ -358,7 +358,7 @@
 						dataType: 'json',
 						success : function(data) {
 	                		alert("저장이 완료 되었습니다.");
-	                		location.reload();
+	                		location.href = "/db/business/businessInfraResourFaciUseResultList.do";
 							return false;							
 							
 						},  

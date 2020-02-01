@@ -25,7 +25,7 @@
 		<div id="content">
 			<div class="row">
 				<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
-					<h1 class="page-title txt-color-blueDark"><i class="fa-fw fa fa-home"></i><b>기업유치·창업현황 등록</b></h1>
+					<h1 class="page-title txt-color-blueDark"><i class="fa-fw fa fa-home"></i><b>기업유치·창업현황</b></h1>
 				</div>
 			</div>
 			
@@ -44,7 +44,7 @@
 											<th style="text-align:center;background:#eee;vertical-align:middle;">제목 * </th>
 											<td>
 												<label class="input" style="width:100%;">
-													<input type="text" id="attractPerformNm" name="attractPerformNm" class="input-sm" value="<c:out value="${resultList[0].attractPerformNm}"/>" style="width:100%;" maxlength="30">
+													<input type="text" id="attractPerformNm" name="attractPerformNm" class="input-sm" value="<c:out value="${resultList[0].attractPerformNm}"/>" style="width:100%;" maxlength="100">
 												</label>
 											</td>
 										</tr>
@@ -132,7 +132,7 @@
 		$(document).ready(function () {
 			$("#cancelBtn").click(function(){
 				if(confirm("이 페이지에서 나가시겠습니까?")){
-					location.href = "/db/business/businessAttractList.do"
+					location.href = "/db/business/businessAttractList.do";
 				}
 			});				
 			
@@ -251,15 +251,15 @@
 		function checkValue(){
 			var retValue = true;
 			
-			if($('#contentPerformNm').val() == ""){
+			if($('#attractPerformNm').val() == ""){
 				alert("제목을 입력하세요.");
-				$('#contenterformNm').focus();
+				$('#attractPerformNm').focus();
 				return;
 			}
 
 			if($("#resultTbody tr").length === 0){
 				alert("기업을 선택하세요.");
-				goEntprSearch();
+				goEntprSearch('Y');
 				return;
 			}
 			
@@ -360,7 +360,7 @@
 						dataType: 'json',
 						success : function(data) {
 	                		alert("저장이 완료 되었습니다.");
-	                		location.reload();
+	                		location.href = "/db/business/businessAttractList.do";
 							return false;							
 							
 						},  

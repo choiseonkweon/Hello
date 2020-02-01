@@ -15,7 +15,7 @@
 		<div id="ribbon">
 			<!-- breadcrumb -->
 			<ol class="breadcrumb">
-				<li>Home</li><li>사업 관리</li><li><b>사업운영 실적관리</b></li><li><b>기업지원 </b></li>
+				<li>Home</li><li>사업 관리</li><li><b>사업운영 실적관리</b></li><li><b>기업지원</b></li>
 			</ol>
 			<!-- end breadcrumb -->
 		</div>
@@ -25,7 +25,7 @@
 		<div id="content">
 			<div class="row">
 				<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
-					<h1 class="page-title txt-color-blueDark"><i class="fa-fw fa fa-home"></i><b>지적재산권현황 등록</b></h1>
+					<h1 class="page-title txt-color-blueDark"><i class="fa-fw fa fa-home"></i><b>지적재산권현황</b></h1>
 				</div>
 			</div>
 			
@@ -45,7 +45,7 @@
 											<th style="text-align:center;background:#eee;vertical-align:middle;">제목 * </th>
 											<td>
 												<label class="input" style="width:100%;">
-													<input type="text" id="intltPerformNm" name="intltPerformNm" class="input-sm" value="<c:out value="${resultList[0].intltPerformNm}"/>" style="width:100%;" maxlength="30">
+													<input type="text" id="intltPerformNm" name="intltPerformNm" class="input-sm" value="<c:out value="${resultList[0].intltPerformNm}"/>" style="width:100%;" maxlength="100">
 												</label>
 											</td>
 										</tr>
@@ -170,7 +170,7 @@
 		$(document).ready(function () {
 			$("#cancelBtn").click(function(){
 				if(confirm("이 페이지에서 나가시겠습니까?")){
-					location.href = "/db/business/businessIntltProptyList.do"
+					location.href = "/db/business/businessIntltProptyList.do";
 				}
 			});				
 			
@@ -352,9 +352,9 @@
 		function checkValue(){
 			var retValue = true;
 			
-			if($('#intltProptyNm').val() == ""){
+			if($('#intltPerformNm').val() == ""){
 				alert("제목을 입력하세요.");
-				$('#intltProptyNm').focus();
+				$('#intltPerformNm').focus();
 				return;
 			}
 			
@@ -493,7 +493,7 @@
 						dataType: 'json',
 						success : function(data) {
 	                		alert("저장이 완료 되었습니다.");
-	                		location.reload();
+	                		location.href = "/db/business/businessIntltProptyList.do";
 							return false;							
 							
 						},  
