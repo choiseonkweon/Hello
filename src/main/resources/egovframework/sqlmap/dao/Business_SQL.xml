@@ -260,7 +260,7 @@
 			#{entprNm},
 			#{empCreateStaff},
 			#{remark},
-			CURRENT_TIMESTAMP,
+            date_format(CURRENT_TIMESTAMP,'%Y%m%d'),
 			'admin'
 		)
 
@@ -530,7 +530,7 @@
 			#{contentDiviCd},
 			#{contentNm},
 			#{remark},
-			CURRENT_TIMESTAMP,
+            date_format(CURRENT_TIMESTAMP,'%Y%m%d'),
 			'admin'
 		)
 
@@ -861,8 +861,7 @@
 			#{regNationCd},
 			#{intltProptRegNo},
 			#{remark},
-			CURRENT_TIMESTAMP,
-			'admin'
+            date_format(CURRENT_TIMESTAMP,'%Y%m%d'),			'admin'
 		)
 
 	</insert>	
@@ -909,10 +908,10 @@
 				AND	perform_nm LIKE CONCAT('%',#{searchText},'%')
 			</if> 
 			<if test="searchFromDate != null and searchFromDate != ''">
-		        AND date_format(reg_dt,'%Y-%m-%d') >= #{searchFromDate}
+                AND reg_dt >= replace(#{searchFromDate},'-','')
 			</if> 		
 			<if test="searchToDate != null and searchToDate != ''">
-		        AND date_format(reg_dt,'%Y-%m-%d') <![CDATA[<= ]]>#{searchToDate}
+                AND reg_dt <![CDATA[<= ]]> replace(#{searchToDate},'-','')
 			</if> 				
 			GROUP BY enterprise_idx
 			) T
@@ -931,10 +930,10 @@
 				AND	perform_nm LIKE CONCAT('%',#{searchText},'%')
 			</if> 
 			<if test="searchFromDate != null and searchFromDate != ''">
-		        AND date_format(reg_dt,'%Y-%m-%d') >= #{searchFromDate}
+                AND reg_dt >= replace(#{searchFromDate},'-','')
 			</if> 		
 			<if test="searchToDate != null and searchToDate != ''">
-		        AND date_format(reg_dt,'%Y-%m-%d') <![CDATA[<= ]]>#{searchToDate}
+                AND reg_dt <![CDATA[<= ]]> replace(#{searchToDate},'-','')
 			</if> 
 		) T		
 	</select>
@@ -1065,7 +1064,7 @@
 			#{entprType},
 			#{entprCapitalAmt},
 			#{remark},
-			CURRENT_TIMESTAMP,
+            date_format(CURRENT_TIMESTAMP,'%Y%m%d'),
 			'admin'
 		)
 
@@ -1185,10 +1184,10 @@
 				</choose>
 			</if>			 
 			<if test="searchFromDate != null and searchFromDate != ''">
-		        AND date_format(a.reg_dt,'%Y-%m-%d') >= #{searchFromDate}
+                AND a.reg_dt >= replace(#{searchFromDate},'-','')
 			</if> 		
 			<if test="searchToDate != null and searchToDate != ''">
-		        AND date_format(a.reg_dt,'%Y-%m-%d') <![CDATA[<= ]]>#{searchToDate}
+                AND a.reg_dt <![CDATA[<= ]]>replace(#{searchToDate},'-','')
 			</if> 					
 			ORDER BY a.enterprise_idx DESC
 			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
@@ -1233,12 +1232,13 @@
 				</choose>
 			</if>			 
 			<if test="searchFromDate != null and searchFromDate != ''">
-		        AND date_format(a.reg_dt,'%Y-%m-%d') >= #{searchFromDate}
+                AND a.reg_dt >= replace(#{searchFromDate},'-','')
 			</if> 		
 			<if test="searchToDate != null and searchToDate != ''">
-		        AND date_format(a.reg_dt,'%Y-%m-%d') <![CDATA[<= ]]>#{searchToDate}
+                AND a.reg_dt <![CDATA[<= ]]>replace(#{searchToDate},'-','')
 			</if>	
 	</select>
+	
 	
 <!-- 사업관리 > 사업운영 실적관리 > 인프라지원 > 장비시설 상세 -->
 	<select id="selectBusinessInfraResourFaciUseResultDetailList" parameterType="java.util.Map" resultType="java.util.Map">
@@ -1294,19 +1294,11 @@
 			<if test="searchType1 != null and searchType1 != ''">
 		        AND b.facility_func_cd = #{searchType1}
 			</if> 	
-			<if test="searchFromDate != null and searchFromDate != ''">
-       			AND a.use_to_dt >= replace(#{searchFromDate},'-','')
-			</if> 		
-			<if test="searchToDate != null and searchToDate != ''">
-		       <![CDATA[
-          			AND a.use_to_dt <= replace(#{searchToDate},'-','')
-				]]>
-			</if>		 			
 			<if test="searchFromDate != null and searchFromDate != '' and searchToDate != null and searchToDate != ''">
 			       <![CDATA[
-		           			AND ((a.use_to_dt >= replace(#{searchFromDate},'-','') AND replace(a.use_to_dt <= #{searchToDate},'-',''))
-						    OR (a.use_fr_dt >= replace(#{searchFromDate},'-','') AND replace(a.use_fr_dt <= #{searchToDate},'-',''))
-						    OR (a.use_fr_dt <= replace(#{searchFromDate},'-','') AND replace(a.use_to_dt >= #{searchToDate},'-','')))
+                               AND ((a.use_to_dt >= replace(#{searchFromDate},'-','') AND a.use_to_dt <= replace(#{searchToDate},'-',''))
+                            OR (a.use_fr_dt >= replace(#{searchFromDate},'-','') AND a.use_fr_dt <= replace(#{searchToDate},'-',''))
+                            OR (a.use_fr_dt <= replace(#{searchFromDate},'-','') AND a.use_to_dt >= replace(#{searchToDate},'-','')))
 					]]>	     
 			</if> 				
 			ORDER BY a.resour_faci_id DESC
@@ -1338,14 +1330,6 @@
 			</if> 	
 			<if test="searchType1 != null and searchType1 != ''">
 		        AND b.facility_func_cd = #{searchType1}
-			</if> 		
-			<if test="searchFromDate != null and searchFromDate != ''">
-       			AND a.use_to_dt >= replace(#{searchFromDate},'-','')
-			</if> 		
-			<if test="searchToDate != null and searchToDate != ''">
-		       <![CDATA[
-          			AND a.use_to_dt <= replace(#{searchToDate},'-','')
-				]]>	     
 			</if> 					
 			<if test="searchFromDate != null and searchFromDate != '' and searchToDate != null and searchToDate != ''">
 			       <![CDATA[
@@ -1428,7 +1412,7 @@
 			#{useDt},
 			#{incomeAmt},
 			#{entprBussProStusNm},
-			CURRENT_TIMESTAMP,
+            date_format(CURRENT_TIMESTAMP,'%Y%m%d'),
 			'admin'
 		)
 
@@ -1502,10 +1486,10 @@
 				</choose>
 			</if>			 
 			<if test="searchFromDate != null and searchFromDate != ''">
-		        AND date_format(a.reg_dt,'%Y-%m-%d') >= #{searchFromDate}
+                AND a.reg_dt >= replace(#{searchFromDate},'-','')
 			</if> 		
 			<if test="searchToDate != null and searchToDate != ''">
-		        AND date_format(a.reg_dt,'%Y-%m-%d') <![CDATA[<= ]]>#{searchToDate}
+                AND a.reg_dt <![CDATA[<= ]]>replace(#{searchToDate},'-','')
 			</if>						
 			ORDER BY a.enterprise_idx DESC
 			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
@@ -1550,10 +1534,10 @@
 				</choose>
 			</if>			 
 			<if test="searchFromDate != null and searchFromDate != ''">
-		        AND date_format(a.reg_dt,'%Y-%m-%d') >= #{searchFromDate}
+                AND a.reg_dt >= replace(#{searchFromDate},'-','')
 			</if> 		
 			<if test="searchToDate != null and searchToDate != ''">
-		        AND date_format(a.reg_dt,'%Y-%m-%d') <![CDATA[<= ]]>#{searchToDate}
+                AND a.reg_dt <![CDATA[<= ]]>replace(#{searchToDate},'-','')
 			</if>					
 
 	</select>	
@@ -1567,7 +1551,7 @@
 			       a.member_id AS memberId,
 			       a.perform_nm AS entprPerformNm,
 			       a.main_buss_cont AS mainBussCont,
-			       a.movein_dt AS moveInDt,
+                   date_format(a.movein_dt,'%Y-%m-%d') AS moveInDt,
 			       b.comp_nm AS compNm,
 			       (SELECT entpr_ceo FROM tb_enterprise t WHERE t.member_id = a.member_id) AS entprCeo
 			 FROM tb_movein_result  a
@@ -1743,8 +1727,8 @@
 			#{appliNo},
 			#{entprPerformNm},
 			#{mainBussCont},
-			#{moveInDt},
-			CURRENT_TIMESTAMP,
+            replace(#{moveInDt},'-',''),
+            date_format(CURRENT_TIMESTAMP,'%Y%m%d'),
 			'admin'
 		)
 
@@ -1755,7 +1739,7 @@
 		UPDATE tb_movein_result
 		     SET perform_nm 						= #{entprPerformNm},
 		           main_buss_cont	 			= #{mainBussCont},
-		           movein_dt           				= #{moveInDt}
+                   movein_dt                           = replace(#{moveInDt},'-','')
 		 WHERE enterprise_idx					= #{enterpriseIdx}
 		 	 AND resour_faci_id 					= #{resourFaciId}
 		     AND member_id          				= #{memberId}    

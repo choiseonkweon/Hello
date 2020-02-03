@@ -25,7 +25,7 @@
 		<div id="content">
 			<div class="row">
 				<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
-					<h1 class="page-title txt-color-blueDark"><i class="fa-fw fa fa-home"></i><b>콘텐츠개발 및 제작지원실적 등록</b></h1>
+                    <h1 class="page-title txt-color-blueDark"><i class="fa-fw fa fa-home"></i><b>콘텐츠개발 및 제작지원실적</b></h1>
 				</div>
 			</div>
 			
@@ -45,7 +45,7 @@
 											<th style="text-align:center;background:#eee;vertical-align:middle;">제목 * </th>
 											<td>
 												<label class="input" style="width:100%;">
-													<input type="text" id="contentPerformNm" name="contentPerformNm" class="input-sm" value="<c:out value="${resultList[0].contentPerformNm}"/>" style="width:100%;" maxlength="70">
+                                                    <input type="text" id="contentPerformNm" name="contentPerformNm" class="input-sm" value="<c:out value="${resultList[0].contentPerformNm}"/>" style="width:100%;" maxlength="100">
 												</label>
 											</td>
 										</tr>
@@ -178,7 +178,7 @@
 		$(document).ready(function () {
 			$("#cancelBtn").click(function(){
 				if(confirm("이 페이지에서 나가시겠습니까?")){
-					location.href = "/db/business/businessContentPerformList.do"
+                    location.href = "/db/business/businessContentPerformList.do";
 				}
 			});				
 			
@@ -361,19 +361,19 @@
 			
 			if($('#contentPerformNm').val() == ""){
 				alert("제목을 입력하세요.");
-				$('#contenterformNm').focus();
+                $('#contentPerformNm').focus();
 				return;
 			}
 			
 			if($('#bussAnncemntNm').text() == ""){
 				alert("사업을 입력하세요.");
-				goBussSearch();				
+                goBussSearch('Y');                
 				return;
 			}
 
 			if($("#resultTbody tr").length === 0){
 				alert("기업을 선택하세요.");
-				goEntprSearch();
+                goEntprSearch('Y');
 				return;
 			}
 			
@@ -507,7 +507,7 @@
 						dataType: 'json',
 						success : function(data) {
 	                		alert("저장이 완료 되었습니다.");
-	                		location.reload();
+                            location.href = "/db/business/businessContentPerformList.do";
 							return false;							
 							
 						},  

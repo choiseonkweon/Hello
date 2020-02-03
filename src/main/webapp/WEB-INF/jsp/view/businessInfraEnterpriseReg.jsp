@@ -25,7 +25,7 @@
 		<div id="content">
 			<div class="row">
 				<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
-					<h1 class="page-title txt-color-blueDark"><i class="fa-fw fa fa-home"></i><b>기업입주현황 등록</b></h1>
+                    <h1 class="page-title txt-color-blueDark"><i class="fa-fw fa fa-home"></i><b>기업입주현황</b></h1>
 				</div>
 			</div>
 			
@@ -77,7 +77,7 @@
 															<td><c:out value='${result.compNm}'/></td>
 															<td><c:out value='${result.entprCeo}'/></td>
 															<td><input type='text' value='<c:out value='${result.mainBussCont}'/>' maxlength="100"/></td>
-															<td><input class="date2" type='text' value='<c:out value='${result.moveInDt}'/>'/></td>
+                                                            <td><input class="date2" type='text' value='<c:out value='${result.moveInDt}'/>' readonly="readonly"/></td>
 															<td><button type='button' class='txtbtn floatR delBtn' onclick='resourFaciDel(this);'>삭제</button></td>
 														</tr>															
 													</c:forEach>												
@@ -130,7 +130,7 @@
 		$(document).ready(function () {
 			$("#cancelBtn").click(function(){
 				if(confirm("이 페이지에서 나가시겠습니까?")){
-					location.href = "/db/business/businessInfraEnterpriseList.do"
+                    location.href = "/db/business/businessInfraEnterpriseList.do";
 				}
 			});				
 			

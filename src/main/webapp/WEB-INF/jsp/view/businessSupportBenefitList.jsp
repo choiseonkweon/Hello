@@ -54,7 +54,7 @@
 		<div id="content">
 			<div class="row">
 				<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
-					<h1 class="page-title txt-color-blueDark"><i class="fa-fw fa fa-home"></i><b>지원사업수혜실적</b></h1>
+                    <h1 class="page-title txt-color-blueDark"><i class="fa-fw fa fa-home"></i><b>사업운영 실적관리_기업지원</b></h1>
 				</div>
 			</div>
 			<div class="table-responsive">
@@ -152,6 +152,10 @@
 							<form:form commandName="searchVO" id="listForm" name="listForm" method="post">
 				        		<ui:pagination paginationInfo = "${paginationInfo}" type="image" jsFunction="fn_egov_link_page" />
 				        		<form:hidden path="pageIndex" />
+                                <form:hidden path="searchType" />
+                                <form:hidden path="searchText" />
+                                <form:hidden path="searchFromDate" />
+                                <form:hidden path="searchToDate" />                                
 				        	</form:form>	
 			        	</div>
 					</div>

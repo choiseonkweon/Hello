@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import jcep.admin.model.FacilityResourceVO;
 import jcep.admin.model.MemberVO;
 import jcep.front.dao.FacilityResourceFrontMapper;
 import jcep.front.model.FacilityResourceFrontVO;
@@ -134,6 +135,13 @@ public class FacilityResourceFrontService {
 		return facilityResourceFrontMapper.onlineInsert(params);
 	}
 	
+	public  ArrayList<FacilityResourceFrontVO> selectFacilityApplicateList(FacilityResourceFrontVO params)throws Exception{
+		return facilityResourceFrontMapper.selectFacilityApplicateList(params);
+	}
+	
+	public  int selectFacilityApplicateListTotCnt(FacilityResourceFrontVO params)throws Exception{
+		return facilityResourceFrontMapper.selectFacilityApplicateListTotCnt(params);
+	}
 	
 	/*
 	*

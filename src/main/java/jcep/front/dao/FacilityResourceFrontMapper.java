@@ -104,6 +104,9 @@ public interface FacilityResourceFrontMapper {
 	 */
 	public Integer onlineInsert(MemberVO params) throws Exception;
 	
+	public  ArrayList<FacilityResourceFrontVO> selectFacilityApplicateList(FacilityResourceFrontVO params)throws Exception;
+
+	public  int selectFacilityApplicateListTotCnt(FacilityResourceFrontVO params)throws Exception;
 	/*
 	*//**
 	 * 시설정보를 등록한다.

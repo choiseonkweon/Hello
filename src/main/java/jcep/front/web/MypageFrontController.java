@@ -24,6 +24,8 @@ import jcep.admin.model.FacilityResourceVO;
 import jcep.admin.model.MemberVO;
 import jcep.admin.service.FacilityResourceService;
 import jcep.admin.service.MemberService;
+import jcep.front.model.FacilityResourceFrontVO;
+import jcep.front.service.FacilityResourceFrontService;
 import jcep.front.service.LoginFrontService;
 /**
  * @Class Name : MypageFrontController.java
@@ -41,9 +43,12 @@ import jcep.front.service.LoginFrontService;
 @Controller
 public class MypageFrontController {
 
+	@Resource(name = "facilityResourceFrontService")
+	protected FacilityResourceFrontService facilityResourceFrontService;
+
 	@Resource(name = "facilityResourceService")
 	protected FacilityResourceService facilityResourceService;
-
+	
 	@Resource(name = "memberService")
 	protected MemberService memberService;
 
@@ -234,7 +239,7 @@ public class MypageFrontController {
 	 * @exception Exception
 	 */
 	@RequestMapping(value = "/facilitiesResourcesApplicationStatus.do")
-	public ModelAndView facilityApplicationManagementList(@ModelAttribute("searchVO") FacilityResourceVO searchVO, ModelAndView mv, Model model) throws Exception {
+	public ModelAndView facilityApplicationManagementList(@ModelAttribute("searchVO") FacilityResourceFrontVO searchVO, ModelAndView mv, Model model) throws Exception {
 		System.out.println("searchVO_1***********************"+searchVO);
 		searchVO.setPageUnit(propertiesService.getInt("pageUnit"));
 		searchVO.setPageSize(propertiesService.getInt("pageSize"));
@@ -250,10 +255,10 @@ public class MypageFrontController {
        
 		
 		
-		ArrayList<FacilityResourceVO> facilityApplicateList = facilityResourceService.selectFacilityApplicateList(searchVO);
+		ArrayList<FacilityResourceFrontVO> facilityApplicateList = facilityResourceFrontService.selectFacilityApplicateList(searchVO);
 		model.addAttribute("resultList", facilityApplicateList);
 		
-		int totCnt = facilityResourceService.selectFacilityApplicateListTotCnt(searchVO);
+		int totCnt = facilityResourceFrontService.selectFacilityApplicateListTotCnt(searchVO);
 		paginationInfo.setTotalRecordCount(totCnt);
 		model.addAttribute("paginationInfo", paginationInfo);
 		System.out.println("searchVO_2***********************"+searchVO);

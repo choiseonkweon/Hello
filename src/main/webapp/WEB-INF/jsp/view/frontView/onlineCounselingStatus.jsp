@@ -120,7 +120,7 @@
 											<td>
 												<a href = "javascript:busPopTest('${list.memberId}','${list.onestopSupportNo}');">
 													<c:if test="${JoinType == 1}"><c:out value="${list.entprNm}"/></c:if>
-													<c:if test="${JoinType == 2}"><c:out value="${result.entprRespsibNm}"/></c:if>
+													<c:if test="${JoinType == 2}"><c:out value="${list.entprRespsibNm}"/></c:if>
 												</a>
 											</td>
 											<td>
