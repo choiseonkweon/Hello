@@ -25,7 +25,7 @@
 		<div id="content">
 			<div class="row">
 				<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
-					<h1 class="page-title txt-color-blueDark"><i class="fa-fw fa fa-home"></i><b>기업입주현황</b></h1>
+					<h1 class="page-title txt-color-blueDark"><i class="fa-fw fa fa-home"></i><b>기업입주현황 등록</b></h1>
 				</div>
 			</div>
 			
@@ -77,7 +77,7 @@
 															<td><c:out value='${result.compNm}'/></td>
 															<td><c:out value='${result.entprCeo}'/></td>
 															<td><input type='text' value='<c:out value='${result.mainBussCont}'/>' maxlength="100"/></td>
-															<td><input class="date2" type='text' value='<c:out value='${result.moveInDt}'/>' readonly="readonly"/></td>
+															<td><input class="date2" type='text' value='<c:out value='${result.moveInDt}'/>'/></td>
 															<td><button type='button' class='txtbtn floatR delBtn' onclick='resourFaciDel(this);'>삭제</button></td>
 														</tr>															
 													</c:forEach>												
@@ -130,7 +130,7 @@
 		$(document).ready(function () {
 			$("#cancelBtn").click(function(){
 				if(confirm("이 페이지에서 나가시겠습니까?")){
-					location.href = "/db/business/businessInfraEnterpriseList.do";
+					location.href = "/db/business/businessInfraEnterpriseList.do"
 				}
 			});				
 			
@@ -251,9 +251,9 @@
 		function checkValue(){
 			var retValue = true;
 			
-			if($('#entprPerformNm').val() == ""){
+			if($('#contentPerformNm').val() == ""){
 				alert("제목을 입력하세요.");
-				$('#entprPerformNm').focus();
+				$('#contenterformNm').focus();
 				return;
 			}
 
@@ -304,14 +304,13 @@
 							    html += "<td>"+iData.compNm+"</td>";
 							    html += "<td>"+iData.entprCeo+"</td>";
 							    html += "<td><input type='text' value='' maxlengt='100'/></td>";
-							    html += "<td><input class='date2' type='text' value='' readonly='readonly'/></td>";
+							    html += "<td><input class='date' type='text' value='' /></td>";
 							    html += "<td><button type='button' class='txtbtn floatR delBtn' onclick='resourFaciDel(this);'>삭제</button></td>";
 								html += '</tr>';									
 							}									
 						});
 						
 						$("#resultTbody").append(html);
-						oneDatepicker("date2");
 						$("#resourFaciModal").modal('hide');
 						
 						
@@ -358,7 +357,7 @@
 						dataType: 'json',
 						success : function(data) {
 	                		alert("저장이 완료 되었습니다.");
-	                		location.href = "/db/business/businessInfraEnterpriseList.do";
+	                		location.reload();
 							return false;							
 							
 						},  

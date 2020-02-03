@@ -209,83 +209,87 @@
 	
 <!-- 시설 및 자원 관리 > 시설신청정보 -->
 	<select id="selectFacilityApplicateList" parameterType="jcep.admin.model.FacilityResourceVO" resultType="jcep.admin.model.FacilityResourceVO">
-			SELECT
-				a.appli_no AS appliNo,
-				a.resour_faci_id AS resourFaciId,
-				a.member_id AS memberId,
-				a.resour_faci_divi_cd AS resourFaciDiviCd,
-                b.facility_nm as facilityNm,
-				a.comp_nm AS compNm,
-                a.use_fr_dt as useFrDt,
-                a.use_fr_tm as useFrTm,
-                a.use_to_dt as useToDt,
-                a.use_to_tm as useToTm,
-                a.applic_st_cd as applicStCd,
-                a.use_pers_num as usePersNum,
-                a.comp_tel_no as compTelNo,
-                a.comp_mail as compMail,
-                a.comp_appl_nm as compApplNm,
-                a.use_obj as useObj,
-                a.comp_addr1 as compAddr1,
-                a.comp_addr2 as compAddr2
-			FROM tb_resour_faci_applicate a 
-			   INNER JOIN tb_facility b
-			   ON a.resour_faci_id = b.resour_faci_id
-			   AND a.resour_faci_divi_cd = 'F'
-			WHERE 1=1
-			<if test="searchText != null and searchText != ''">
-		        <choose>
-		        	<when test='searchType eq ""'>
-						AND	(b.facility_nm LIKE CONCAT('%',#{searchText},'%') OR a.comp_nm LIKE CONCAT('%',#{searchText},'%')) 
-					</when>
-		            <when test='searchType eq 1'>
-						AND	b.facility_nm LIKE CONCAT('%',#{searchText},'%')
-					</when>
-		            <when test='searchType eq 2'>
-						AND	a.comp_nm LIKE CONCAT('%',#{searchText},'%')
-					</when>
-				</choose>
-			</if> 
-			
-			<if test="searchFromDate != null and searchFromDate != '' and searchToDate != null and searchToDate != ''">
-			       <![CDATA[
-		           AND ((use_to_dt >= replace(#{searchFromDate},'-','') AND use_to_dt <= replace(#{searchToDate},'-',''))
-						    OR (use_fr_dt >= replace(#{searchFromDate},'-','') AND use_fr_dt <= replace(#{searchToDate},'-',''))
-						    OR (use_fr_dt <= replace(#{searchFromDate},'-','') AND use_to_dt >= replace(#{searchToDate},'-','')))
-					]]>	     
-			</if> 			
-			ORDER BY a.appli_no DESC
-			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+		/*selectFacilityApplicateList*/
+       <![CDATA[
+		SELECT c.*
+		FROM(SELECT	(SELECT facility_nm
+					   FROM tb_facility b
+		             WHERE 1=1
+		                 AND b.resour_faci_id = a.resour_faci_id
+		            ) as facilityNm
+					,member_id as memberId
+					,date_format(use_fr_dt, '%Y-%m-%d') AS useFrDt
+					,time_format(use_fr_tm,'%i시') AS useFrTm
+					,date_format(use_to_dt, '%Y-%m-%d') AS useToDt
+					,time_format(use_to_tm,'%i시') AS useToTm
+					,use_pers_num AS usePersNum
+					,date_format(reg_dt , '%Y-%m-%d')AS regDt
+					,(SELECT common_nm as commonNm 
+		                FROM ta_common
+		              WHERE 1=1 AND group_cd = "G00027" AND use_flag = "Y" AND common_cd =applic_st_cd) AS applicStCd
+		FROM tb_resour_faci_applicate a) c
+		WHERE 1=1
+		]]>
+		<if test="searchType != null and searchType != ''">
+	        <choose>
+	        	<when test='searchType eq ""'>
+					AND	c.applicStCd LIKE CONCAT('%','','%')
+				</when>
+	            <when test='searchType eq 1'>
+					AND	c.applicStCd ='접수'
+				</when>
+	            <when test='searchType eq 2'>
+					AND	c.applicStCd ='진행중'
+				</when>
+	            <when test='searchType eq 3'>
+					AND	c.applicStCd ='반려'
+				</when>
+	            <when test='searchType eq 4'>
+					AND	c.applicStCd ='완료'
+				</when>
+			</choose>
+		</if> 	
+	ORDER BY c.regDt DESC
+		 LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
 	</select>	
 
 
 	<select id="selectFacilityApplicateListTotCnt" parameterType="jcep.admin.model.FacilityResourceVO" resultType="int">
-			SELECT COUNT(*) totcnt
-			FROM tb_resour_faci_applicate a 
-			   INNER JOIN tb_facility b
-			   ON a.resour_faci_id = b.resour_faci_id
-			   AND a.resour_faci_divi_cd = 'F'
-			WHERE 1=1
-			<if test="searchText != null and searchText != ''">
-		        <choose>
-		        	<when test='searchType eq ""'>
-						AND	(b.facility_nm LIKE CONCAT('%',#{searchText},'%') OR a.comp_nm LIKE CONCAT('%',#{searchText},'%')) 
-					</when>
-		            <when test='searchType eq 1'>
-						AND	b.facility_nm LIKE CONCAT('%',#{searchText},'%')
-					</when>
-		            <when test='searchType eq 2'>
-						AND	a.comp_nm LIKE CONCAT('%',#{searchText},'%')
-					</when>
-				</choose>
-			</if> 
-			<if test="searchFromDate != null and searchFromDate != '' and searchToDate != null and searchToDate != ''">
-			       <![CDATA[
-		           AND ((use_to_dt >= replace(#{searchFromDate},'-','') AND use_to_dt <= replace(#{searchToDate},'-',''))
-						    OR (use_fr_dt >= replace(#{searchFromDate},'-','') AND use_fr_dt <= replace(#{searchToDate},'-',''))
-						    OR (use_fr_dt <= replace(#{searchFromDate},'-','') AND use_to_dt >= replace(#{searchToDate},'-','')))
-					]]>	     
-			</if> 				 
+       <![CDATA[
+			SELECT count(*) AS totcnt
+			FROM(SELECT	member_id as memberId
+						,date_format(use_fr_dt, '%Y-%m-%d') AS useFrDt
+						,time_format(use_fr_tm,'%i시') AS useFrTm
+						,date_format(use_to_dt, '%Y-%m-%d') AS useToDt
+						,time_format(use_to_tm,'%i시') AS useToTm
+						,use_pers_num AS usePersNum
+						,date_format(reg_dt , '%Y-%m-%d')AS regDt
+						,(SELECT common_nm as commonNm 
+			                FROM ta_common
+			              WHERE 1=1 AND group_cd = "G00027" AND use_flag = "Y" AND common_cd =applic_st_cd) AS applicStCd
+			FROM tb_resour_faci_applicate a) c
+		  WHERE 1=1
+		]]>
+		<if test="searchType != null and searchType != ''">
+	        <choose>
+	        	<when test='searchType eq ""'>
+					AND	c.applicStCd LIKE CONCAT('%','','%')
+				</when>
+	            <when test='searchType eq 1'>
+					AND	c.applicStCd ='접수'
+				</when>
+	            <when test='searchType eq 2'>
+					AND	c.applicStCd ='진행중'
+				</when>
+	            <when test='searchType eq 3'>
+					AND	c.applicStCd ='반려'
+				</when>
+	            <when test='searchType eq 4'>
+					AND	c.applicStCd ='완료'
+				</when>
+			</choose>
+		</if> 		
+	ORDER BY c.regDt DESC		 
 	</select>
 	
 <!-- 시설 및 자원 관리 > 시설신청정보 -->
@@ -359,8 +363,8 @@
 
 			<if test="searchFromDate != null and searchFromDate != '' and searchToDate != null and searchToDate != ''">
 			       <![CDATA[
-		           AND ((use_to_dt >= replace(#{searchFromDate},'-','') AND use_to_dt <= replace(#{searchToDate},'-',''))
-						    OR (use_fr_dt >= replace(#{searchFromDate},'-','') AND use_fr_dt <= replace(#{searchToDate},'-',''))
+		           AND ((use_to_dt >= replace(#{searchToDate},'-','') AND use_to_dt <= replace(#{searchToDate},'-',''))
+						    OR (use_fr_dt >= replace(#{searchFromDate},'-','') AND use_fr_dt <= replace(#{searchFromDate},'-',''))
 						    OR (use_fr_dt <= replace(#{searchFromDate},'-','') AND use_to_dt >= replace(#{searchToDate},'-','')))
 					]]>	     
 			</if> 	
@@ -421,8 +425,8 @@
 			</if>  
 			<if test="searchFromDate != null and searchFromDate != '' and searchToDate != null and searchToDate != ''">
 			       <![CDATA[
-		           AND ((use_to_dt >= replace(#{searchFromDate},'-','') AND use_to_dt <= replace(#{searchToDate},'-',''))
-						    OR (use_fr_dt >= replace(#{searchFromDate},'-','') AND use_fr_dt <= replace(#{searchToDate},'-',''))
+		           AND ((use_to_dt >= replace(#{searchToDate},'-','') AND use_to_dt <= replace(#{searchToDate},'-',''))
+						    OR (use_fr_dt >= replace(#{searchFromDate},'-','') AND use_fr_dt <= replace(#{searchFromDate},'-',''))
 						    OR (use_fr_dt <= replace(#{searchFromDate},'-','') AND use_to_dt >= replace(#{searchToDate},'-','')))
 					]]>	     
 			</if> 				
@@ -442,9 +446,6 @@
 			      </if>
 			      <if test="useToTm != null and useToTm != ''">
 			      	,use_to_tm = #{useToTm}
-			      </if>			      			      			      
-			      <if test="facilityNm != null and facilityNm != ''">
-			      	,resour_faci_id = #{facilityNm}
 			      </if>			      			      			      
 			WHERE appli_no = #{appliNo}
 	</update>		

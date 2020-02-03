@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * @Class Name : BusinessVO.java
  * @Description : BusinessVO Class
- * @Modification Information  
+ * @Modification Information 
  * @
  * @  수정일      수정자              수정내용
  * @ ---------   ---------   -------------------------------

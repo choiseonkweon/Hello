@@ -20,13 +20,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import egovframework.rte.fdl.property.EgovPropertyService;
 import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
-import jcep.admin.model.BusinessVO;
+import jcep.admin.common.MakeExcel;
 import jcep.admin.model.EnterpriseBuyerExpertVO;
 import jcep.admin.model.MemberVO;
 import jcep.admin.service.EnterpriseBuyerExpertService;
 import jcep.admin.service.MemberService;
 import net.sf.json.JSONArray;
-
 /**
  * @Class Name : EnterpriseBuyerExpertController.java
  * @Description : EnterpriseBuyerExpert Controller  Class
@@ -45,9 +44,10 @@ public class EnterpriseBuyerExpertController {
 
 	@Resource(name = "enterpriseBuyerExpertService")
 	protected EnterpriseBuyerExpertService enterpriseBuyerExpertService;
-	
+		
 	@Resource(name = "memberService")
 	protected MemberService memberService;
+
 	
 	/** EgovPropertyService */
 	@Resource(name = "propertiesService")
@@ -545,15 +545,17 @@ public class EnterpriseBuyerExpertController {
 		  ModelAndView mav = new ModelAndView();
 		  for(int i=0;i<selectClassCd.size();i++) {
 			  System.out.println(selectClassCd.get(i));
-			  String selectClassCd2 =selectClassCd.get(i);
-			  System.out.println(selectClassCd);
+
 		  }
 		  HashMap<String,Object> hMap = new HashMap<String,Object>();
 		  hMap.put("selectClassCd", selectClassCd);
 		  hMap.put("evaluationCnt", evaluationCnt);
 		  List<Map<String,Object>>expertList = memberService.SelectExpertList(hMap);
+		  List<Map<String,Object>>selectClassNm = memberService.selectClassNmList(hMap);		  
+
 
 		  mav.addObject("expert",expertList);
+		  mav.addObject("selectClassNm",selectClassNm);
 		  mav.setViewName("/html/ExpertEvaluList");
 		  return mav;
 	  }
@@ -577,4 +579,69 @@ public class EnterpriseBuyerExpertController {
 	        
 			return "jsonView";
 		}	
+		
+		
+		@RequestMapping("evalu/evaluInformationManagementDetail.do")
+		public ModelAndView evaluInformationManagementDetail(@ModelAttribute("searchVO") MemberVO searchVO, ModelAndView mav) throws Exception {
+			String param = searchVO.getSelectNo();
+			System.out.println("하잇"+param);
+			HashMap<String,String> result = memberService.selectEvaluInformationManagementDetail(param);
+			List<HashMap<String,String>> selectClassNm = memberService.selectClassNm(param);
+			List<HashMap<String,String>> slectEvaluDtlList = memberService.selectEvaluInformationManagementDetailList(param);
+
+			  for(int i=0;i<selectClassNm.size();i++) {
+				  System.out.println(selectClassNm.get(i));
+			  }
+			  for(int i=0;i<slectEvaluDtlList.size();i++) {
+				  System.out.println(slectEvaluDtlList.get(i));
+			  }
+			System.out.println(result.toString());
+			
+			mav.addObject("result",result);
+			mav.addObject("selectClassNm",selectClassNm);
+			mav.addObject("slectEvaluDtlList",slectEvaluDtlList);
+			mav.setViewName("/view/evaluInformationManagementDetail");
+			return mav;
+		}
+		
+		
+		// 엑셀 다운로드
+		@RequestMapping("/evalu/ExpertEvaluExcelDownload.do")
+		public String  ExpertEvaluExcelDownload(@RequestParam(required=false) Map<String,List<Map<String,Object>>> paramList, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	        ObjectMapper om = new ObjectMapper();
+	        List<Map<String,String>> list =  om.readValue(om.writeValueAsString(JSONArray.fromObject(paramList.get("params"))), List.class);
+	        String selectTitle =  om.readValue(om.writeValueAsString(paramList.get("selectTitle")),String.class);
+	        String evaluationDt =  om.readValue(om.writeValueAsString(paramList.get("evaluationDt")),String.class);
+	        String evaluationCnt =  om.readValue(om.writeValueAsString(paramList.get("evaluationCnt")),String.class);
+	        List<Map<String,String>> selectClassCd =  om.readValue(om.writeValueAsString(JSONArray.fromObject(paramList.get("selectClassCd"))),List.class);	        
+
+			Map<String , Object> beans = new HashMap<String , Object>();
+
+			List<Map<String, String>> boardList = new ArrayList<>();
+			String fileName = "";
+			String templateFile = "";				
+				fileName = "boardProject(search)"; 
+				templateFile = "searchBoard.xlsx";
+				
+				for(int i=0; i<list.size(); i++) {
+					System.out.println(i +": " +list.get(i));
+				}
+//			beans.put("list", list);		
+			beans.put("selectTitle", selectTitle);		
+			beans.put("evaluationDt", evaluationDt);		
+			beans.put("evaluationCnt", evaluationCnt);		
+//			beans.put("selectClassCd", selectClassCd);		
+			
+			
+			MakeExcel me = new MakeExcel();
+			System.out.println(request);
+			System.out.println(response);
+			System.out.println(beans);
+			System.out.println(me.get_Filename(fileName));
+			System.out.println(templateFile);
+	        me.download(request, response, beans, me.get_Filename(fileName), templateFile);
+			
+	        return "jsonView";
+		}
+		
 }

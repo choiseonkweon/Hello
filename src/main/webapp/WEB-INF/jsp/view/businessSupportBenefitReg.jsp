@@ -25,7 +25,7 @@
 		<div id="content">
 			<div class="row">
 				<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
-					<h1 class="page-title txt-color-blueDark"><i class="fa-fw fa fa-home"></i><b>지원사업수혜실적</b></h1>
+					<h1 class="page-title txt-color-blueDark"><i class="fa-fw fa fa-home"></i><b>지원사업수혜실적 등록</b></h1>
 				</div>
 			</div>
 			
@@ -170,7 +170,7 @@
 		$(document).ready(function () {
 			$("#cancelBtn").click(function(){
 				if(confirm("이 페이지에서 나가시겠습니까?")){
-					location.href = "/db/business/businessSupportBenefitList.do";
+					location.href = "/db/business/businessSupportBenefitList.do"
 				}
 			});				
 			
@@ -359,13 +359,13 @@
 			
 			if($('#bussAnncemntNm').text() == ""){
 				alert("사업을 입력하세요.");
-				goBussSearch('Y');				
+				goBussSearch();				
 				return;
 			}
 
 			if($("#resultTbody tr").length === 0){
 				alert("기업을 선택하세요.");
-				goEntprSearch('Y');
+				goEntprSearch();
 				return;
 			}
 			
@@ -490,7 +490,7 @@
 						dataType: 'json',
 						success : function(data) {
 	                		alert("저장이 완료 되었습니다.");
-	                		location.href = "/db/business/businessSupportBenefitList.do";
+	                		location.reload();
 							return false;							
 							
 						},  

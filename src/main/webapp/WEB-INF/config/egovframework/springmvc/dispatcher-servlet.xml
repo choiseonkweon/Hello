@@ -44,6 +44,9 @@
         </property>
     </bean>
     
+    <!-- Excpel Download-->
+<!--      <bean id="excelDownloadView" class="com.test.excel.util.ExcelDownloadView"/> -->
+     
     <!-- Tiles -->
     <bean id="tilesViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
   		<property name="viewClass" value="org.springframework.web.servlet.view.tiles3.TilesView" />
@@ -94,7 +97,7 @@
 	</bean>
 	
 	<!-- 로컬 파일업로드 디렉토리   -->
-	<bean id="facilityImgPath" class="java.lang.String">
+<!-- 	<bean id="facilityImgPath" class="java.lang.String">
 	    <constructor-arg value="C:\JCEP_SYSTEM\JCEP\Hello\src\main\webapp\upload\facilityImg"/>
 	</bean>
 	<bean id="resourceImgPath" class="java.lang.String">
@@ -102,7 +105,7 @@
 	</bean>
 	<bean id="noticeFilePath" class="java.lang.String">
 	    <constructor-arg value="C:\JCEP_SYSTEM\JCEP_SYSTEM\target\upload\noticeFile"/>
-	</bean>
+	</bean> -->
 	
 	<!-- fileViewResolver(download) -->
  <bean id="fileDownloadView" class="jcep.admin.common.FileDownloadView" />
@@ -110,7 +113,7 @@
   <property name="order" value="0" />
  </bean> 
 	
-	<!-- 서버 파일업로드 디렉토리 
+<!-- 	서버 파일업로드 디렉토리  -->
 	<bean id="facilityImgPath" class="java.lang.String">
 	    <constructor-arg value="/root/apache-tomcat-9.0.10/webapps/JCEP_SYSTEM/upload/facilityImg"/>
 	</bean> 
@@ -119,7 +122,7 @@
 	</bean>
 	<bean id="noticeFilePath" class="java.lang.String">
 	    <constructor-arg value="/root/apache-tomcat-9.0.10/webapps/JCEP_SYSTEM/upload/noticeFile"/>
-	</bean>-->
+	</bean>
 	
 	<!-- 
 	20191129 로그인 인터셉터 

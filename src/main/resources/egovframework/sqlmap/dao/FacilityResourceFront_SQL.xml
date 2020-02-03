@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="jcep.front.dao.FacilityResourceFrontMapper">
 
-<!-- 시설 및 자원 관리 > 시설 정보  -->
+<!-- 시설 및 자원 관리 > 시설 정보 -->
 	<select id="selectFacilityUseList" parameterType="jcep.front.model.FacilityResourceFrontVO" resultType="jcep.front.model.FacilityResourceFrontVO">
 			/* selectFacilityUseList */
 			SELECT

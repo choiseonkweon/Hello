@@ -169,7 +169,7 @@
 					        processData : false,  
 							success : function(data) {
 			                		alert("저장이 완료 되었습니다.");
-			                		location.href = "/db/facility/facilityRegistrationManagementList.do";
+			                		location.reload();
 									return false;
 							},  
 						    error:function(request,status,error){ //ajax 오류인경우  
@@ -182,7 +182,7 @@
 			
 			$("#cancelBtn").click(function(){
 				if(confirm("이 페이지에서 나가시겠습니까?")){
-					location.href = "/db/facility/facilityRegistrationManagementList.do";
+					location.href = "/db/facility/facilityRegistrationManagementList.do"
 				}
 			});			
 			

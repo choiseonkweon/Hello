@@ -705,19 +705,6 @@ public class MemberService {
 	 * @exception Exception
 	 */
 	public ArrayList<MemberVO> selectOnlineCounselingStatus(MemberVO params) throws Exception{
-/*		
-		session.setAttribute("memberId", params.getMemberId());
-		session.setAttribute("memberId1", params.getMemberId1());
-		session.setAttribute("memberIdx", params.getMemberIdx());
-
-*/		String memberId = params.getMemberId();
-		String memberId1 = params.getMemberId1();
-		String memberIdx = params.getMemberIdx();
-		System.out.println("selectJoinStep03U _ memberId ::: " + memberId);
-		System.out.println("selectJoinStep03U _ memberId1 ::: " + memberId1);
-		System.out.println("selectJoinStep03U _ memberIdx :: " + memberIdx);
-		
-		
 		return memberMapper.selectOnlineCounselingStatus(params);
 	}
 
@@ -1113,6 +1100,9 @@ public class MemberService {
 	public List<Map<String,Object>> SelectExpertList(HashMap<String,Object> hMap)throws Exception{
 		return memberMapper.SelectExpertList(hMap);		
 	}
+	public List<Map<String,Object>> selectClassNmList(HashMap<String,Object> hMap)throws Exception{
+		return memberMapper.selectClassNmList(hMap);		
+	}
 public int ExpertEvaluInsertOk(HashMap<String,Object> hMap)throws Exception{
 		HashMap<String,Object> slectEvaluTable = new HashMap<String,Object>();
 		List<Map<String,Object>> slectClassTable = (List<Map<String, Object>>) hMap.get("selectClassCd");
@@ -1159,7 +1149,18 @@ public int ExpertEvaluInsertOk(HashMap<String,Object> hMap)throws Exception{
 			addEvalu2.put("selectClassCd", slectClassTable.get(i));
 			insertOk = memberMapper.SelectSelectClassCdInsert(addEvalu2);
 		}
-		System.out.println("완료되면 야하고 외쳐!!!!"); 
+		System.out.println("완료되면 야하고 외쳐!!!!");
 		return result;
+	}
+
+	public List<HashMap<String,String>> selectClassNm(String param)throws Exception{
+		return memberMapper.selectClassNm(param);		
+}
+
+	public HashMap<String,String> selectEvaluInformationManagementDetail(String param)throws Exception{
+		return memberMapper.selectEvaluInformationManagementDetail(param);		
+	}
+	public List<HashMap<String,String>> selectEvaluInformationManagementDetailList(String param)throws Exception{
+		return memberMapper.selectEvaluInformationManagementDetailList(param);		
 	}
 }

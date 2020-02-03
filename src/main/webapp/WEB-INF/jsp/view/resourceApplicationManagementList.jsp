@@ -55,11 +55,11 @@
 											<th style="text-align:center;background:#eee;vertical-align:middle;">예약일</th>
 											<td>
 														<label class="input"> 
-															<input class="input-sm" type="text" name="searchFromDate" id="searchFromDate" placeholder=""  value="${searchVO.searchFromDate}" readonly="readonly" data-dateformat="yy-mm-dd"  />
+															<input class="input-sm" type="text" name="searchFromDate" id="searchFromDate" placeholder=""  value="${searchVO.searchFromDate}" data-dateformat="yy-mm-dd"  />
 															&nbsp;~&nbsp;
 														</label>
 														<label class="input"> 
-															<input class="input-sm" type="text" name="searchToDate" id="searchToDate" placeholder="" value="${searchVO.searchToDate}" readonly="readonly" data-dateformat="yy-mm-dd">
+															<input class="input-sm" type="text" name="searchToDate" id="searchToDate" placeholder="" value="${searchVO.searchToDate}" data-dateformat="yy-mm-dd">
 														</label>
 												<a href="javascript:goSearch();" class="btn btn-primary" style="margin-left: 120px;"><b>검색</b></a>
 											</td>
@@ -141,10 +141,6 @@
 							<form:form commandName="searchVO" id="listForm" name="listForm" method="post">
 				        		<ui:pagination paginationInfo = "${paginationInfo}" type="image" jsFunction="fn_egov_link_page" />
 				        		<form:hidden path="pageIndex" />
-				        		<form:hidden path="searchType" />
-				        		<form:hidden path="searchText" />
-				        		<form:hidden path="searchFromDate" />
-				        		<form:hidden path="searchToDate" />						        		
 				        	</form:form>	
 			        	</div>
 					</div>
@@ -226,7 +222,7 @@
 								          <th class="tc">사용시간</th>
 								          <td><span id="useDate"  class="view"></span>
 												<div class="set modify">
-													<input type="text" class="input-sm" data-dateformat="yyyy-mm-dd" id="useFrDt" name="useFrDt" value="" readonly="readonly" style="width: 110px; margin-right: 4px;" />
+													<input type="text" class="input-sm" data-dateformat="yyyy-mm-dd" id="useFrDt" name="useFrDt" value="" style="width: 110px; margin-right: 4px;" />
 													<select class="modify" name="useFrTm" id="useFrTm" style="width: 100px;">
 														<option value="0900">9시</option>
 														<option value="1000">10시</option>
@@ -240,7 +236,7 @@
 													</select>
 												</div>
 												<div class="set modify">
-													<input type="text" class="input-sm" data-dateformat="yyyy-mm-dd" id="useToDt" name="useToDt" readonly="readonly" style="width: 110px; margin-right: 4px;" />
+													<input type="text" class="input-sm" data-dateformat="yyyy-mm-dd" id="useToDt" name="useToDt" style="width: 110px; margin-right: 4px;" />
 													<select class="modify" name="useToTm" id="useToTm" style="width: 100px;">
 														<option value="1000">10시</option>
 														<option value="1100">11시</option>
@@ -285,7 +281,7 @@
         /* pagination 페이지 링크 function */
         function fn_egov_link_page(pageNo){
         	document.listForm.pageIndex.value = pageNo;
-        	document.listForm.action = "<c:url value='/resource/resourceApplicationManagementList.do'/>";
+        	document.listForm.action = "<c:url value='/member/authList.do'/>";
            	document.listForm.submit();
         }
         

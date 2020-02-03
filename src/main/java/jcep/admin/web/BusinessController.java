@@ -2,9 +2,7 @@
 
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -515,18 +513,6 @@ public class BusinessController {
 		searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
 		searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
 		searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
-		
-		/* FROM - TO Default */
-		Date dt = new Date();
-		SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
-
-		if("".equals(searchVO.getSearchFromDate()) || null == searchVO.getSearchFromDate()) {
-			searchVO.setSearchFromDate(format1.format(dt));
-		}
-		if("".equals(searchVO.getSearchToDate()) || null == searchVO.getSearchToDate()) {
-			searchVO.setSearchToDate(format1.format(dt));
-		}		
-		
 
 		ArrayList<Map<String,Object>> supportList = businessService.selectBusinessSupportBenefitList(searchVO);
 		model.addAttribute("resultList", supportList);
@@ -655,17 +641,6 @@ public class BusinessController {
 		searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
 		searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
 		searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
-
-		/* FROM - TO Default */
-		Date dt = new Date();
-		SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
-
-		if("".equals(searchVO.getSearchFromDate()) || null == searchVO.getSearchFromDate()) {
-			searchVO.setSearchFromDate(format1.format(dt));
-		}
-		if("".equals(searchVO.getSearchToDate()) || null == searchVO.getSearchToDate()) {
-			searchVO.setSearchToDate(format1.format(dt));
-		}		
 
 		ArrayList<Map<String,Object>> supportList = businessService.selectBusinessContentPerformList(searchVO);
 		model.addAttribute("resultList", supportList);
@@ -809,17 +784,6 @@ public class BusinessController {
 		searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
 		searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
 
-		/* FROM - TO Default */
-		Date dt = new Date();
-		SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
-
-		if("".equals(searchVO.getSearchFromDate()) || null == searchVO.getSearchFromDate()) {
-			searchVO.setSearchFromDate(format1.format(dt));
-		}
-		if("".equals(searchVO.getSearchToDate()) || null == searchVO.getSearchToDate()) {
-			searchVO.setSearchToDate(format1.format(dt));
-		}		
-
 		ArrayList<Map<String,Object>> supportList = businessService.selectBusinessIntltProptyList(searchVO);
 		model.addAttribute("resultList", supportList);
 		
@@ -952,17 +916,6 @@ public class BusinessController {
 		searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
 		searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
 		searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
-		
-		/* FROM - TO Default */
-		Date dt = new Date();
-		SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
-
-		if("".equals(searchVO.getSearchFromDate()) || null == searchVO.getSearchFromDate()) {
-			searchVO.setSearchFromDate(format1.format(dt));
-		}
-		if("".equals(searchVO.getSearchToDate()) || null == searchVO.getSearchToDate()) {
-			searchVO.setSearchToDate(format1.format(dt));
-		}		
 
 		ArrayList<Map<String,Object>> supportList = businessService.selectBusinessAttractList(searchVO);
 		model.addAttribute("resultList", supportList);
@@ -1037,17 +990,6 @@ public class BusinessController {
 		searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
 		searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
 		searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
-		
-		/* FROM - TO Default */
-		Date dt = new Date();
-		SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
-
-		if("".equals(searchVO.getSearchFromDate()) || null == searchVO.getSearchFromDate()) {
-			searchVO.setSearchFromDate(format1.format(dt));
-		}
-		if("".equals(searchVO.getSearchToDate()) || null == searchVO.getSearchToDate()) {
-			searchVO.setSearchToDate(format1.format(dt));
-		}		
 		
 		ArrayList<Map<String,Object>> bussAnncemntList = businessService.selectBussAttractEntprSearchList(searchVO);
 		model.addAttribute("resultList", bussAnncemntList);
@@ -1218,17 +1160,6 @@ public class BusinessController {
 			searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
 			searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
 			searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
-			
-			/* FROM - TO Default */
-			Date dt = new Date();
-			SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
-
-			if("".equals(searchVO.getSearchFromDate()) || null == searchVO.getSearchFromDate()) {
-				searchVO.setSearchFromDate(format1.format(dt));
-			}
-			if("".equals(searchVO.getSearchToDate()) || null == searchVO.getSearchToDate()) {
-				searchVO.setSearchToDate(format1.format(dt));
-			}
 
 			ArrayList<Map<String,Object>> supportList = businessService.selectBusinessInfraResourFaciUseResultList(searchVO);
 			model.addAttribute("resultList", supportList);
@@ -1284,17 +1215,6 @@ public class BusinessController {
 			searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
 			searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
 			searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
-			
-			/* FROM - TO Default */
-			Date dt = new Date();
-			SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
-
-			if("".equals(searchVO.getSearchFromDate()) || null == searchVO.getSearchFromDate()) {
-				searchVO.setSearchFromDate(format1.format(dt));
-			}
-			if("".equals(searchVO.getSearchToDate()) || null == searchVO.getSearchToDate()) {
-				searchVO.setSearchToDate(format1.format(dt));
-			}			
 			
 			ArrayList<Map<String,Object>> bussAnncemntList = businessService.selectBussInfraResourFaciSearchList(searchVO);
 			model.addAttribute("resultList", bussAnncemntList);
@@ -1380,17 +1300,6 @@ public class BusinessController {
 			searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
 			searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
 			
-			/* FROM - TO Default */
-			Date dt = new Date();
-			SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
-
-			if("".equals(searchVO.getSearchFromDate()) || null == searchVO.getSearchFromDate()) {
-				searchVO.setSearchFromDate(format1.format(dt));
-			}
-			if("".equals(searchVO.getSearchToDate()) || null == searchVO.getSearchToDate()) {
-				searchVO.setSearchToDate(format1.format(dt));
-			}			
-			
 			ArrayList<Map<String,Object>> supportList = businessService.selectBusinessInfraEnterpriseList(searchVO);
 			model.addAttribute("resultList", supportList);
 			
@@ -1446,17 +1355,6 @@ public class BusinessController {
 			searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
 			searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
 			searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
-			
-			/* FROM - TO Default */
-			Date dt = new Date();
-			SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
-
-			if("".equals(searchVO.getSearchFromDate()) || null == searchVO.getSearchFromDate()) {
-				searchVO.setSearchFromDate(format1.format(dt));
-			}
-			if("".equals(searchVO.getSearchToDate()) || null == searchVO.getSearchToDate()) {
-				searchVO.setSearchToDate(format1.format(dt));
-			}			
 			
 			ArrayList<Map<String,Object>> bussAnncemntList = businessService.selectBussInfraEntprResourFaciSearchList(searchVO);
 			model.addAttribute("resultList", bussAnncemntList);

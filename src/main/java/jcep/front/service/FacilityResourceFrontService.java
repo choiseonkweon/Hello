@@ -13,7 +13,7 @@ import jcep.front.model.FacilityResourceFrontVO;
 /**
  * @Class Name : FacilityResourceFrontService.java
  * @Description : FacilityResourceFrontService Class
- * @Modification Information 
+ * @Modification Information
  * @
  * @  수정일      수정자              수정내용
  * @ ---------   ---------   -------------------------------

@@ -5,9 +5,7 @@ import java.awt.Image;
 import java.awt.MediaTracker;
 import java.awt.Toolkit;
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -220,6 +218,7 @@ public class FacilityResourceController {
 	 */
 	@RequestMapping(value = "/facility/facilityApplicationManagementList.do")
 	public ModelAndView facilityApplicationManagementList(@ModelAttribute("searchVO") FacilityResourceVO searchVO, ModelAndView mv, Model model) throws Exception {
+		System.out.println("searchVO_1***********************"+searchVO);
 		searchVO.setPageUnit(propertiesService.getInt("pageUnit"));
 		searchVO.setPageSize(propertiesService.getInt("pageSize"));
 
@@ -231,17 +230,8 @@ public class FacilityResourceController {
 		searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
 		searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
 		searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
+       
 		
-		/* FROM - TO Default */
-		Date dt = new Date();
-		SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
-
-		if("".equals(searchVO.getSearchFromDate()) || null == searchVO.getSearchFromDate()) {
-			searchVO.setSearchFromDate(format1.format(dt));
-		}
-		if("".equals(searchVO.getSearchToDate()) || null == searchVO.getSearchToDate()) {
-			searchVO.setSearchToDate(format1.format(dt));
-		}		
 		
 		ArrayList<FacilityResourceVO> facilityApplicateList = facilityResourceService.selectFacilityApplicateList(searchVO);
 		model.addAttribute("resultList", facilityApplicateList);
@@ -249,6 +239,7 @@ public class FacilityResourceController {
 		int totCnt = facilityResourceService.selectFacilityApplicateListTotCnt(searchVO);
 		paginationInfo.setTotalRecordCount(totCnt);
 		model.addAttribute("paginationInfo", paginationInfo);
+		System.out.println("searchVO_2***********************"+searchVO);
 		mv.setViewName("/view/facilityApplicationManagementList");
 		
 		return mv;
@@ -306,7 +297,7 @@ public class FacilityResourceController {
 	 * @param searchVO -  조회조건 정보가 담긴 VO
 	 * @param status
 	 * @return "resourceRegistrationManagementReg"
-	 * @exception Exception 
+	 * @exception Exception
 	 */
 	@RequestMapping("/resource/resourceRegistrationManagementReg.do")
 	public String resourceRegistrationManagementReg(@ModelAttribute("searchVO") FacilityResourceVO searchVO, Model model, ModelAndView mv, HttpServletRequest request) throws Exception {
@@ -400,6 +391,7 @@ public class FacilityResourceController {
 	 */
 	@RequestMapping(value = "/resource/resourceApplicationManagementList.do")
 	public ModelAndView resourceApplicationManagementList(@ModelAttribute("searchVO") FacilityResourceVO searchVO, ModelAndView mv, Model model) throws Exception {
+		System.out.println("searchVO_1***********************"+searchVO);
 		searchVO.setPageUnit(propertiesService.getInt("pageUnit"));
 		searchVO.setPageSize(propertiesService.getInt("pageSize"));
 
@@ -411,17 +403,6 @@ public class FacilityResourceController {
 		searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
 		searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
 		searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
-		
-		/* FROM - TO Default */
-		Date dt = new Date();
-		SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
-
-		if("".equals(searchVO.getSearchFromDate()) || null == searchVO.getSearchFromDate()) {
-			searchVO.setSearchFromDate(format1.format(dt));
-		}
-		if("".equals(searchVO.getSearchToDate()) || null == searchVO.getSearchToDate()) {
-			searchVO.setSearchToDate(format1.format(dt));
-		}		
 
 		ArrayList<FacilityResourceVO> resourceApplicateList = facilityResourceService.selectResourceApplicateList(searchVO);
 		model.addAttribute("resultList", resourceApplicateList);
@@ -429,6 +410,7 @@ public class FacilityResourceController {
 		int totCnt = facilityResourceService.selectResourceApplicateListTotCnt(searchVO);
 		paginationInfo.setTotalRecordCount(totCnt);
 		model.addAttribute("paginationInfo", paginationInfo);
+		System.out.println("searchVO_2***********************"+searchVO);
 		mv.setViewName("/view/resourceApplicationManagementList");
 		
 		return mv;

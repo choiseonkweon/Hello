@@ -176,7 +176,7 @@ table.datetable td.tit {text-align: left;}
 .mobile .box .sti {margin: 15px 0 10px; font-size: 14px;}
 
 .mobile .box {width: auto !important; position: absolute; top: 10px; left: 10px; bottom: 10px; right: 10px; margin: 0 !important;}
-/* 사용 신청  */
+/* 사용 신청 */
 .request_wrap {position:relative; margin-top:40px;}
 .request_wrap p.point {color:#f25f5f; font-size:14px; float:right;}
 .request_wrap .request_list {position: relative;overflow:hidden;clear:both;padding: 30px 0px 0;z-index: 2;width: 100%;}

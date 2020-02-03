@@ -7,7 +7,7 @@ import jcep.admin.model.PagingVO;
 /**
  * @Class Name : FacilityResourceFrontVO.java
  * @Description : FacilityResourceFrontVO Class
- * @Modification Information 
+ * @Modification Information
  * @
  * @  수정일      수정자              수정내용
  * @ ---------   ---------   -------------------------------

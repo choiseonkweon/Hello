@@ -44,7 +44,7 @@
 		<div id="ribbon">
 			<!-- breadcrumb -->
 			<ol class="breadcrumb">
-				<li>Home</li><li>사업 관리</li><li><b>사업운영 실적관리</b></li><li><b>기업지원</b></li>
+				<li>Home</li><li>사업 관리</li><li><b>사업운영 실적관리</b></li><li><b>기업지원 </b></li>
 			</ol>
 			<!-- end breadcrumb -->
 		</div>
@@ -54,7 +54,7 @@
 		<div id="content">
 			<div class="row">
 				<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
-					<h1 class="page-title txt-color-blueDark"><i class="fa-fw fa fa-home"></i><b>사업운영 실적관리_기업지원</b></h1>
+					<h1 class="page-title txt-color-blueDark"><i class="fa-fw fa fa-home"></i><b>콘텐츠개발 및 제작지원실적</b></h1>
 				</div>
 			</div>
 			<div class="table-responsive">
@@ -152,10 +152,6 @@
 							<form:form commandName="searchVO" id="listForm" name="listForm" method="post">
 				        		<ui:pagination paginationInfo = "${paginationInfo}" type="image" jsFunction="fn_egov_link_page" />
 				        		<form:hidden path="pageIndex" />
-				        		<form:hidden path="searchType" />
-				        		<form:hidden path="searchText" />
-				        		<form:hidden path="searchFromDate" />
-				        		<form:hidden path="searchToDate" />						        		
 				        	</form:form>	
 			        	</div>
 					</div>
@@ -175,3 +171,8 @@
 	
 </body>
 </html>
+
+
+
+
+
