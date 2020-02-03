@@ -190,6 +190,7 @@ $(document).ready(function () {
 					benefitRespsibHpNo 	+= $('#benefitRespsibHpNo2').val();
 					benefitRespsibHpNo 	+= $('#benefitRespsibHpNo3').val();
 			formData.append("expertCareerNum",$('#expertCareerNum').val());//경력지수
+			formData.append("expertRegNo",$('#expertRegNo').val());//사업자등록번호
 			formData.append("largeSpecialAreaCd",$('#largeSpecialAreaCd').val());//전문분야
 			formData.append("detailSpecialAreaCd",$('#detailSpecialAreaCd').val());//세부전문분야
 			formData.append("expertInterestAreaCd",$('#expertInterestAreaCd').val());//관심분야
@@ -212,6 +213,8 @@ $(document).ready(function () {
 			formData.append("expertOffiTel",expertOffiTel);//휴대폰
 			formData.append("expertOffiFax",expertOffiFax);//팩스
 			formData.append("benefitRespsibHpNo",benefitRespsibHpNo);//담당자전화
+			formData.append("memberId",$('#memberId').val());//담당자전화
+			alert($('#memberId').val());
 			$.ajax({
 				type : 'post',
 				url:'/db/mypageExpertUpdate.do',

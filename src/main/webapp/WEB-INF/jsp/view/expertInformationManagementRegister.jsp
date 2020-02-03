@@ -39,6 +39,7 @@
 			var largeSpecialAreaCd = '${data.largeSpecialAreaCd}';
 			$('#largeSpecialAreaCd').val(largeSpecialAreaCd);
 			var detailSpecialAreaCd = '${data.detailSpecialAreaCd}';
+			alert(detailSpecialAreaCd);
 			largeSpecialAreaCdSelectBox(detailSpecialAreaCd);
 			//관심분야
 			var expertInterestAreaCd = '${data.expertInterestAreaCd}';
@@ -197,6 +198,7 @@
 
  function largeSpecialAreaCdSelectBox(dataOption){
  	var selectBoxData = $("#largeSpecialAreaCd").val();
+ 	alert(selectBoxData);
      var selectOption = dataOption;
  	$.ajax({
  		type : 'post',

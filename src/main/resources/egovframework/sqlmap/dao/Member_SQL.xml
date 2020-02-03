@@ -1962,42 +1962,45 @@
 		<select id="selectOnlineCounselingStatus" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
 		/* 온라인 상담신청 현황 */
 		/* selectOnlineCounselingStatus */		
-			
-			select
-				@rownum:=@rownum+1 as pageNum,
-				a.member_id as memberId,
-				a.onestop_support_no as onestopSupportNo,
-                a.supp_buss_area_cd as suppBussAreaCd,
-                a.comp_appl_nm as compApplNm,
-				a.applicat_dt as applicatDt,
-                (case 
-				when a.applic_st_cd = 'Y' then '지문완료' 
-				when a.applic_st_cd = 'N' then '진행중' 
-				else '접수' end) as applicStCd,
-				a.comp_tel_no as compTelNo,
-				a.advice_hope_dt as adviceHopeDt,
-				a.advice_place_cd as advicePlaceCd,
-				a.advice_area_cd as adviceAreaCd,
-				a.advice_applic_cont as adviceApplicCont
-			from tb_onestop_support a
-			where 1=1
-			  AND a.member_id = CONCAT(#{memberIdx}) 
-			   and (SELECT @ROWNUM:=0)=0
-			  ORDER BY reg_dt asc
-	
+		<![CDATA[
+			SELECT 	entpr.entpr_respsib_nm 		AS entprRespsibNm
+						,entpr.entpr_nm 					AS entprNm
+						,onestop.member_id 				AS memberId
+						,onestop.onestop_support_no AS onestopSupportNo
+						,onestop.supp_buss_area_cd 	AS suppBussAreaCd
+						,onestop.pro_member_id 		AS proMemberId
+						,onestop.reg_dt 					AS regDt
+						,(SELECT common_nm
+                            FROM ta_common
+                          WHERE 1=1
+                              AND group_cd = 'G00027'
+                              AND common_cd = onestop.applic_st_cd
+                         ) 										AS applicStCd
+			  FROM	tb_onestop_support onestop
+			   JOIN	tb_enterprise entpr ON entpr.member_id = onestop.member_id
+			WHERE	1=1
+		]]>	
+		<if test='searchText != null and searchText != "" '>
+			    AND applic_st_cd LIKE CONCAT('%',#{searchText},'%')
+		</if>
+		ORDER By	onestop.reg_dt DESC
+			 LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+		
 	</select>
 	
 	
 		<select id="selectOnlineCounselingStatusCount" parameterType="jcep.admin.model.MemberVO"  resultType="int">
-		/* 온라인 상담신청 현황 갯수 */
-		/* selectOnlineCounselingStatusCount */		
-			
-			select
-				COUNT(*) as totCnt
-			from tb_onestop_support a
-			where 1=1
-			  AND a.member_id = CONCAT(#{memberIdx}) 
-	
+		<![CDATA[
+			SELECT 	count(*) AS totCnt
+			  FROM	tb_onestop_support onestop
+			   JOIN	tb_enterprise entpr ON entpr.member_id = onestop.member_id
+			WHERE	1=1
+		]]>	
+		<if test='searchText != null and searchText != "" '>
+			    AND applic_st_cd LIKE CONCAT('%',#{searchText},'%')
+		</if>
+		ORDER By	onestop.reg_dt DESC
+			 LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
 	</select>
 	
 	<select id="selectOnlineCounselingStatusPopup" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
@@ -3101,6 +3104,7 @@ x	</select>
 	</select>
 	<update id="mypageExpertUpdate" parameterType="jcep.admin.model.MemberVO" >
 		<![CDATA[
+		
 			update 	tb_expert
 			SET 		expert_career_num 				=	#{expertCareerNum}
 						,large_special_area_cd			=	#{largeSpecialAreaCd}
@@ -3109,7 +3113,7 @@ x	</select>
 						,expert_detail_intrt_area_cd	=	#{expertDetailIntrtAreaCd}
 						,expert_inds_edu_cd				=	#{expertIndsEduCd}
 						,expert_st_reg_no				=	#{expertStRegNo}
-						,expert_reg_no				=	#{expertRegNo}
+						,expert_reg_no					=	#{expertRegNo}
 						,expert_final_school_nm			=	#{expertFinalSchoolNm}
 						,expert_major_nm					=	#{expertMajorNm}
 						,expert_fnal_edu_cd				=	#{expertFnalEduCd}
@@ -3719,7 +3723,7 @@ x	</select>
 												)
 										values(#{selectNo}
 												,#{selectTitle}
-												,date_format(now(), '%Y.%m.%d')
+												,date_format(now(), '%Y-%m-%d')
 												,#{evaluationDt}
 												,#{evaluationCnt}
 												,sysdate()
@@ -3742,4 +3746,69 @@ x	</select>
 												  )
 		]]>
 	</insert>
+ 	<select id="selectClassNmList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		/*selectClassNmList*/
+		<![CDATA[
+			SELECT common_nm As commonNm
+			  FROM ta_common
+			WHERE 1=1
+			    AND group_cd = 'G00012'
+			    AND use_flag = 'Y'
+		]]>
+		<choose>
+            <when test="selectClassCd.size != 0">
+                AND common_cd in 
+                <foreach collection="selectClassCd" item="selectClassCd" index="index" separator="," open="(" close=")">
+                    #{selectClassCd}
+                </foreach>
+            </when>
+        </choose>	
+	</select>
+	
+ 	<select id="selectClassNm" parameterType="String" resultType="java.util.HashMap">
+		/*selectClassNm*/
+		<![CDATA[
+			SELECT(	SELECT common_nm AS commonNm
+			              FROM ta_common
+			            WHERE 1=1
+			                AND group_cd = 'G00012'
+			                AND use_flag = 'Y'
+				            AND common_cd = select_class_cd
+					  ) AS	selectClassCd
+		       FROM tb_slect_class
+			 WHERE 1=1
+			     AND select_no = #{selectNo}
+		]]>
+	</select>
+
+ 	<select id="selectEvaluInformationManagementDetail" parameterType="String" resultType="java.util.HashMap">
+		/*selectEvaluInformationManagementDetail*/
+		<![CDATA[
+			SELECT select_no		 	AS selectNo
+					  ,select_title 		AS selectTitle
+			          ,select_dt			AS selectDt
+			          ,evaluation_dt 	AS evaluationDt
+			          ,evaluation_cnt 	AS evaluationCnt
+			  FROM tb_slect_evalu
+			WHERE 1=1
+			    AND select_no =#{selectNo}
+		]]>
+	</select>
+	
+	<select id="selectEvaluInformationManagementDetailList" parameterType="String" resultType="java.util.HashMap">
+		/*selectEvaluInformationManagementDetailList*/
+		<![CDATA[
+			SELECT 	expert_nm AS expertNm
+					,(
+						CASE attend_yn
+						WHEN 'Y' THEN '참석'
+						WHEN 'N' THEN '불참'
+						END
+					 ) AS attendYn
+			        ,remark
+			FROM tb_slect_evalu_dtl
+			WHERE 1=1
+			AND select_no = #{selectNO}
+		]]>
+	</select>
   </mapper>

@@ -766,6 +766,8 @@ public interface MemberMapper {
 	
 	public List<Map<String,Object>> SelectExpertList(HashMap<String,Object> hMap)throws Exception;
 
+	public List<Map<String,Object>> selectClassNmList(HashMap<String,Object> hMap)throws Exception;
+
 	public int insertEvalu(HashMap<String,Object> hMap)throws Exception;
 
 	public int insertEvaluDtl(HashMap<String,Object> hMap)throws Exception;
@@ -774,4 +776,11 @@ public interface MemberMapper {
 	
 	public int SelectSelectClassCdInsert(HashMap<String,Object> hMap)throws Exception;
 	public String SelectSearchSelectNo(int result)throws Exception;
+
+	public List<HashMap<String,String>> selectClassNm(String param)throws Exception;
+
+	public HashMap<String,String> selectEvaluInformationManagementDetail(String param)throws Exception;
+
+	public List<HashMap<String,String>> selectEvaluInformationManagementDetailList(String param)throws Exception;
+
 }

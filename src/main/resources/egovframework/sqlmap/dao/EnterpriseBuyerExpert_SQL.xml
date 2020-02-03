@@ -1145,6 +1145,7 @@ LEFT OUTER JOIN	tb_buss_anncemnt_attch_file c 	ON		a.buss_anncemnt_no = c.buss_a
 		</if>
 		<![CDATA[
 			ORDER BY reg_dt DESC
+			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
 		]]>
 	</select>
 

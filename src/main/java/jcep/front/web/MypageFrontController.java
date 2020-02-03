@@ -64,9 +64,8 @@ public class MypageFrontController {
 	 */
 	@RequestMapping(value = "/onlineCounselingStatus.do")
 	public ModelAndView onlineCounselingStatus(@ModelAttribute("searchVO") MemberVO searchVO, ModelAndView mv, Model model, HttpServletRequest request, HttpSession session) throws Exception {
-
-		System.out.println("onlineCounselingStatus_U1***********************"+searchVO);
-
+		int sessionjoinTypeCd = Integer.parseInt((String) session.getAttribute("joinTypeCd"));
+		System.out.println("셀렉트 "+searchVO.getSearchText());
 		PaginationInfo paginationInfo = new PaginationInfo();
 		paginationInfo.setCurrentPageNo(searchVO.getPageIndex());
 		paginationInfo.setRecordCountPerPage(searchVO.getPageUnit());
@@ -75,51 +74,22 @@ public class MypageFrontController {
 		searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
 		searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
 		searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
-		
-		String memberId = (String) session.getAttribute("memberId");
-		String memberId1 = (String) session.getAttribute("memberId");
-		String memberIdx = (String) session.getAttribute("memberId");
-		String largeSpecialAreaCd = request.getParameter("largeSpecialAreaCd");
-		String onestopSupportNo = request.getParameter("onestopSupportNo");
-		
-		searchVO.setMemberId(memberId);
-		searchVO.setMemberId1(memberId1);
-		searchVO.setMemberIdx(memberIdx);
-		searchVO.setLargeSpecialAreaCd(largeSpecialAreaCd);
-		searchVO.setOnestopSupportNo(onestopSupportNo);
-		
-		searchVO.getOnestopSupportNo();
-		
-		System.out.println("searchVO.getOnestopSupportNo() :: " + searchVO.getOnestopSupportNo());
-		
-		System.out.println("memberId :: " + memberId);
-		System.out.println("memberId1 :: " + memberId1);
-		System.out.println("memberIdx :: " + memberIdx);
-		System.out.println("largeSpecialAreaCd :: " + largeSpecialAreaCd);
-		System.out.println("onestopSupportNo :: " + onestopSupportNo);
+		String JoinType = null;
+		if(sessionjoinTypeCd==000001) {//기업
+			JoinType = "1";
+			
+		}else if(sessionjoinTypeCd==000002) {//전문가
+			JoinType = "2";
+		}
 
 		List<MemberVO> authList = memberService.selectOnlineCounselingStatus(searchVO);
 		model.addAttribute("resultList", authList);
-		//model.addAttribute("viewType", "modify");
-		
-		System.out.println("authList :: " + authList);
 
 		int totCnt = memberService.selectOnlineCounselingStatusCount(searchVO);
 		paginationInfo.setTotalRecordCount(totCnt);
-		//model.addAttribute("paginationInfo", paginationInfo);
-		
-		ArrayList<MemberVO> authList1 = memberService.selectOnlineCounselingStatusPopup(searchVO);
-		model.addAttribute("resultList1", authList1);
-		
-		ArrayList<MemberVO> authList2 = memberService.selectOnlineCounselingStatusPopup1(searchVO);
-		model.addAttribute("resultList2", authList2);
-		
 		mv.addObject("paginationInfo", paginationInfo);
-		mv.addObject("request", authList);
-		mv.addObject("request1", authList1);
-		mv.addObject("request2", authList2);
-		
-		System.out.println("onlineCounselingStatus_U2***********************"+searchVO);
+		mv.addObject("JoinType", JoinType);
+		mv.addObject("list", authList);
 		
 		mv.setViewName("/view/frontView/onlineCounselingStatus");
 		
@@ -133,44 +103,44 @@ public class MypageFrontController {
 	 * @return "noticeList"
 	 * @exception Exception
 	 */
-	@RequestMapping(value = "/onlineCounselingStatusPopup")
-	public ModelAndView onlineCounselingStatusPopup(@ModelAttribute("searchVO") MemberVO searchVO, ModelAndView mv, Model model, HttpServletRequest request, HttpSession session) throws Exception {
-		
-		System.out.println("onlineCounselingStatusPopup_U1***********************"+searchVO);
-		
+	@RequestMapping(value = "/onlineCounselingStatusDetail.do")
+	public ModelAndView onlineCounselingStatusDetail(@ModelAttribute("searchVO") MemberVO searchVO, Model model, ModelAndView mv, HttpServletRequest request) throws Exception {
+		System.out.println("안녕");
 		String memberId = request.getParameter("memberId");
-		String memberId1 = request.getParameter("memberId1");
-		String memberIdx = request.getParameter("memberIdx");
-		String largeSpecialAreaCd = request.getParameter("largeSpecialAreaCd");
 		String onestopSupportNo = request.getParameter("onestopSupportNo");
-		
+
 		searchVO.setMemberId(memberId);
-		searchVO.setMemberId1(memberId1);
-		searchVO.setMemberIdx(memberIdx);
-		searchVO.setLargeSpecialAreaCd(largeSpecialAreaCd);
 		searchVO.setOnestopSupportNo(onestopSupportNo);
-		
-		searchVO.getOnestopSupportNo();
-		
-		System.out.println("searchVO.getOnestopSupportNo() :: " + searchVO.getOnestopSupportNo());
-		
 		System.out.println("memberId :: " + memberId);
-		System.out.println("memberId1 :: " + memberId1);
-		System.out.println("memberIdx :: " + memberIdx);
-		System.out.println("largeSpecialAreaCd :: " + largeSpecialAreaCd);
 		System.out.println("onestopSupportNo :: " + onestopSupportNo);
 
-		ArrayList<MemberVO> authList2 = memberService.selectOnlineCounselingStatusPopup1(searchVO);		
-		//model.addAttribute("detail", detail);
-		//model.addAttribute("viewType", "modify");
-		System.out.println("authList2 :: " + authList2);
+		MemberVO detail = memberService.selectAdviceOnlineStatusManagementDetail(searchVO);
 		
-		mv.setViewName("/view/frontView/onlineCounselingStatus.do");
+		HashMap<String,String> hMap = new HashMap<String,String>();
+		hMap.put("memberId", memberId);
+		hMap.put("onestopSupportNo", onestopSupportNo);
 
-		System.out.println("onlineCounselingStatusPopup_U2***********************"+searchVO);
+		hMap.put("attchFileDiviCd", "000001");			
+		MemberVO File1 = memberService.selectAdviceOnlineStatusBusinessFile(hMap);
+		hMap.put("attchFileDiviCd", "000002");
+		MemberVO File2 = memberService.selectAdviceOnlineStatusBusinessFile(hMap);
+		hMap.put("attchFileDiviCd", "000003");
+		MemberVO File3 = memberService.selectAdviceOnlineStatusBusinessFile(hMap);
+		hMap.put("attchFileDiviCd", "000004");
+		MemberVO File4 = memberService.selectAdviceOnlineStatusBusinessFile(hMap);
+		model.addAttribute("File1", File1);
+		model.addAttribute("File2", File2);
+		model.addAttribute("File3", File3);
+		model.addAttribute("File4", File4);
+		model.addAttribute("result", detail);
+				
+		mv.setViewName("/html/onlineCounselingStatusDetail");
 		
 		return mv;
 	}
+	
+	
+	
 
 
 	/**
@@ -771,9 +741,10 @@ public class MypageFrontController {
 		ModelAndView mav = new ModelAndView("jsonView");
 		MemberVO memberVo = new MemberVO();
 
-		memberVo.setMemberId((String)session.getAttribute("memberId")); //로그인한 아이디 가져오기
-		
+		memberVo.setMemberId(request.getParameter("memberId")); //로그인한 아이디 가져오기
+		System.out.println("아이디값"+ request.getParameter("memberId"));;
 		memberVo.setExpertCareerNum(request.getParameter("expertCareerNum"));
+		System.out.println("경력년수:" + request.getParameter("expertCareerNum"));
 		memberVo.setLargeSpecialAreaCd(request.getParameter("largeSpecialAreaCd"));
 		memberVo.setDetailSpecialAreaCd(request.getParameter("detailSpecialAreaCd"));
 		memberVo.setExpertInterestAreaCd(request.getParameter("expertInterestAreaCd"));
@@ -798,16 +769,13 @@ public class MypageFrontController {
 		memberVo.setExpertOffiFax(request.getParameter("expertOffiFax"));
 		memberVo.setBenefitRespsibHpNo(request.getParameter("benefitRespsibHpNo"));
 		
-		System.out.println("업데이트");
 		System.out.println(memberVo.getBenefitBirthDt());
 
-		int update = memberService.mypageExpertUpdateCheck(memberVo);
-		int returnCode = 0;
-		if(update > 0) {
-			returnCode = memberService.mypageExpertUpdate(memberVo);
+//		int update = memberService.mypageExpertUpdateCheck(memberVo);
+			System.out.println("업데이트");			
+			int returnCode = memberService.mypageExpertUpdate(memberVo);
 			mav.addObject("returnCode", returnCode);
 			System.out.println(returnCode);
-		}
 
 		return mav;
 	}
