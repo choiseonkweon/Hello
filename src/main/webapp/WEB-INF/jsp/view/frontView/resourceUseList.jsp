@@ -146,7 +146,7 @@
 					<th>주소</th>
 					<td>
 						<input class="extraRoadAddr" id="compAddr1" name="compAddr1"  readonly="readonly" onclick="javascript:openDaumPostcode()" value="" type="text" style="width: 275px; margin-right: 4px;" />
-						<a class="txtbtn" style="width: 100px;"  onclick="javascript:openDaumPostcode()">우편번호검색</a>
+						<button type="button" class="txtbtn" id="postBtn" onclick="javascript:openDaumPostcode()"  style="width: 100px;">우편번호검색</button>
 						<input type="text" id="compAddr2" name="compAddr2" style="width: 275px;  margin-right: 4px;" />
 					</td>
 				</tr>
@@ -159,7 +159,16 @@
 				<tr>
 					<th>연락처</th>
 					<td>
-						<input type="text" id="compTelNo" name="compTelNo" value="" onkeydown="javascript:return onlyNumber(event)" maxlength="12"  style="width: 150px;" />
+							<select style="width: 25%;" id="compTelNo" name="compTelNo">
+								<option value="">선택</option>
+								<c:forEach var="hpNoList" items="${hpNoList}" varStatus="status">
+									<option value="${hpNoList.commonCd}"><c:out value="${hpNoList.commonCd}"/></option>
+								</c:forEach>
+							</select>
+							<em>-</em>
+							<input type="text" style="width: 25%;" id="compTelNo2" name="compTelNo2" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="4">
+							<em>-</em>
+							<input type="text" style="width: 25%;" id="compTelNo3" name="compTelNo3" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="4">	
 					</td>
 				</tr>
 				<tr>

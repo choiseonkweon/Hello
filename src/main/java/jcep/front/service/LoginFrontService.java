@@ -2,6 +2,7 @@ package jcep.front.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -9,7 +10,9 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import jcep.admin.common.UploadFileUtils;
 import jcep.admin.model.MemberVO;
 import jcep.front.dao.LoginFrontMapper;
 import jcep.front.model.LoginFrontVO;
@@ -95,74 +98,36 @@ public class LoginFrontService {
 		return loginFrontMapper.memberExpertInsert(params);
 	}
 
+
 	/**
-	 * 회원정보를 등록한다.
+	 * 회원을 등록한다.
 	 * @param params - 수정할 정보가 담긴 MemberVO
 	 * @return void형
 	 * @exception Exception
 	 */
-	public Integer memberExpertInsertExpert(MemberVO params) throws Exception{
-		
-		return loginFrontMapper.memberExpertInsertExpert(params);
-	}
-	
+	public Integer memberInsert(Map<String, Object> params,MultipartHttpServletRequest mRequest) throws Exception{
+		Integer returnCode = 0;
+		returnCode  =  loginFrontMapper.memberInsert(params);
+		if(returnCode > 0) {
+			
+			if("000001".equals(params.get("joinTypeCd"))) { // 기업
+				returnCode  = loginFrontMapper.memberExpertInsertEnterprise(params);	      
+				
+			}else if("000002".equals(params.get("joinTypeCd"))){ // 전문가
+				
+				List<Map<String,Object>> fileData = UploadFileUtils.getFileUpload(mRequest,params.get("filePath").toString());
 
-	/**
-	 * 전문가정보를 등록한다.
-	 * @param params - 수정할 정보가 담긴 MemberVO
-	 * @return void형
-	 * @exception Exception
-	 */
-	public Integer memberEnterpriseInsert(MemberVO params) throws Exception{
-		
-		return loginFrontMapper.memberEnterpriseInsert(params);
-	}
-
-	/**
-	 * 전문가정보를 등록한다.
-	 * @param params - 수정할 정보가 담긴 MemberVO
-	 * @return void형
-	 * @exception Exception
-	 */
-	public Integer memberExpertInsertEnterprise(MemberVO params) throws Exception{
-		
-		return loginFrontMapper.memberExpertInsertEnterprise(params);
-	}
-
-	/**
-	 * 바이어정보를 등록한다.
-	 * @param params - 수정할 정보가 담긴 MemberVO
-	 * @return void형
-	 * @exception Exception
-	 */
-	public Integer memberBuyerInsert(MemberVO params) throws Exception{
-		
-		return loginFrontMapper.memberBuyerInsert(params);
-	}
-
-	/**
-	 * 바이어정보를 등록한다.
-	 * @param params - 수정할 정보가 담긴 MemberVO
-	 * @return void형
-	 * @exception Exception
-	 */
-	public Integer memberBuyerInsertEnterprise(MemberVO params) throws Exception{
-		
-		return loginFrontMapper.memberBuyerInsertEnterprise(params);
-	}
-		
-
-	
-
-	/**
-	 * 회원정보를 등록한다.
-	 * @param params - 수정할 정보가 담긴 MemberVO
-	 * @return void형
-	 * @exception Exception
-	 */
-	public Integer memberExpertInsert2(MemberVO params) throws Exception{
-		
-		return loginFrontMapper.memberExpertInsert2(params);
+				params.put("fileCourse", fileData.get(0).get("fileCourse").toString());
+				params.put("orgFileNm", "/"+ fileData.get(0).get("orgFileNm").toString());				
+				
+				returnCode = loginFrontMapper.memberExpertInsertExpert(params);
+			}else if("000003".equals(params.get("joinTypeCd"))) { // 바이어
+				
+				returnCode = loginFrontMapper.memberBuyerInsertEnterprise(params);  
+			}
+		}
+		      
+		return returnCode;
 	}
 
 	/**

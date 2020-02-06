@@ -7,45 +7,33 @@
 <%@ taglib prefix="spring"	uri="http://www.springframework.org/tags"%>    
 <!DOCTYPE html>
 <html>
-<link rel='stylesheet' type='text/css' href='css/reset.css' />
-<link rel='stylesheet' type='text/css' href='css/common.css' />
-<link rel='stylesheet' type='text/css' href='css/sub.css' />
-<script type="text/javascript" src="../db/assets/js/jquery-1.12.4.min.js"></script>
-<script type="text/javascript" src="../db/assets/js/jquery.easing.1.3.js"></script>
-<script type="text/javascript" src="../db/assets/js/ui.js"></script>
 
-<script src="http://dmaps.daum.net/map_js_init/postcode.v2.js"></script>
 <script type="text/javaScript" defer="defer">
-	$(document).ready(function () {
-		
-/* 		var memberId = $('#memberId').val();
-		alert("memberId :: " + memberId); */
-		
-		//var largeBussAreaCd = $('#largeBussAreaCd').val();
-   
-		//document.getElementById('upregFormCd').value=largeBussAreaCd;
+var member = {}; 
 
+	$(document).ready(function () {
+		oneDatepicker2("date");
 		
 		$("#idChkBtn").click(function(){
-			//alert($('#memberId').val());
-			//alert($('#expertHeadTel1').val());
-			if($('#memberId').val() == ''){
+			var pMember = $("#memberId");
+
+			if(pMember.val() == ''){
 				alert('아이디를 입력하세요.');
-				$('#memberId').focus();
+				pMember.focus();
 				return false;
 			}else{
 				$.ajax({
 					type : 'post',
 					url:'/db/member/memberIdChk.do',
-					data: {memberId : $('#memberId').val()},
+					data: {memberId : pMember.val()},
 					dataType: 'json',
 					success : function(data) {
 						if(data.idCnt != 0){
-							$("#chkYn").val("N");
+							member = {chkMemberId : "",chkYn : "N"};
 							$("#able").hide();
 							$("#enable").show();
 						}else{
-							$("#chkYn").val("Y");
+							member = {chkMemberId :pMember.val(),chkYn : "Y"};
 							$("#able").show();
 							$("#enable").hide();
 						}
@@ -60,10 +48,27 @@
 			 
 		});
 		
+		
+		$("#memberId").change(function(){
+			member = {chkMemberId : "",chkYn : "N"};
+			$("#able").hide();
+			$("#enable").hide();
+		});		
+		
 
 		function checkValue(){
 			var retValue = true;
 			
+			if($('#memberId').val() == ""){
+				alert("아이디를 입력하세요.");
+				$('#memberId').focus();
+				return;
+			}
+			if(member.chkMemberId != $('#memberId').val() || member.chkMemberId === "" || member.chkYn != "Y"){
+				alert("아이디를 중복체크 하세요.");
+				return;
+			}
+
 			var idReg = /^[a-z]+[a-z0-9]{5,19}$/g;
 			
 	        if( !idReg.test($('#memberId').val() ) ) {
@@ -72,17 +77,7 @@
 	        }
 
 			
-			if($('#memberId').val() == ""){
-				alert("아이디를 입력하세요.");
-				$('#memberId').focus();
-				return;
-			}
 			
-			
-			if($('#chkYn').val() != "Y"){
-				alert("아이디를 중복체크 하세요.");
-				return;
-			}
 			
 			if($('#memberPw').val() == ""){
 				alert("비밀번호를 입력하세요.");
@@ -98,49 +93,101 @@
 			
 			if($('#memberPw').val() != $('#memPwdChk').val()){
 				alert("비밀번호가 일치하지 않습니다.");
+				$('#memPwdChk').val();
 				return;
 			}
 			
-			if($('#memberNm').val() == ""){
-				alert("이름을 입력하세요.");
-				$('#memberNm').focus();
+			if($('#entprNm').val() == ""){
+				alert("회사명을 입력하세요.");
+				$('#entprNm').focus();
 				return;
 			}
 			
-			if($('#entprRespsibHpNo').val() == ""){
-				alert("휴대폰번호를 입력하세요.");
-				$('#expertHeadTel').focus();
+			if($('#entprCeo').val() == ""){
+				alert("대표자를 입력하세요.");
+				$('#entprCeo').focus();
+				return;
+			}
+			
+			if($('#entprComRegNum').val() == ""){
+				alert("사업자등록번호를 입력하세요.");
+				$('#entprComRegNum').focus();
+				return;
+			}
+			
+			if($('#entprCeoEmail').val() == ""){
+				alert("대표자이메일을 입력하세요.");
+				$('#entprCeoEmail').focus();
+				return;
+			}
+			if($('#selboxDirect').val() == ""){
+				alert("대표자이메일을 입력하세요.");
+				$('#selboxDirect').focus();
+				return;
+			}
+			
+			if($('#largeBussAreaCd').val() == ""){
+				alert("사업분야 대분류를 선택하세요.");
+				$('#largeBussAreaCd').focus();
+				return;
+			}
+			if($('#midiumBussAreaCd').val() == ""){
+				alert("사업분야 중분류를 선택하세요.");
+				$('#midiumBussAreaCd').focus();
+				return;
+			}
+			if($('#entprEstDt').val() == ""){
+				alert("설립일을 선택하세요.");
+				$('#entprEstDt').focus();
+				return;
+			}
+			if($('#entprHeadAddr').val() == ""){
+				alert("본사 주소를 입력하세요.");
+				$('#entprHeadAddr').focus();
+				return;
+			}
+			if($('#entprHeadDetailAddr').val() == ""){
+				alert("본사 상세주소를 선택하세요.");
+				$('#entprHeadDetailAddr').focus();
+				return;
+			}
+			if($('#entprHeadTel').val() == ""){
+				alert("대표전화를 입력하세요.");
+				$('#entprHeadTel').focus();
+				return;
+			}
+			if($('#expertOffiTel1').val() == ""){
+				alert("대표전화를 선택하세요.");
+				$('#expertOffiTel1').focus();
+				return;
+			}
+			if($('#expertOffiTel2').val() == ""){
+				alert("대표전화를 선택하세요.");
+				$('#expertOffiTel2').focus();
 				return;
 			}
 
-/* 			if($('#expertHeadTel2').val() == ""){
-				alert("휴대폰번호를 입력하세요.");
-				$('#expertHeadTel2').focus();
-				return;
-			}
-			
-			if($('#expertHeadTel3').val() == ""){
-				alert("휴대폰번호를 입력하세요.");
-				$('#expertHeadTel3').focus();
-				return;
-			} */
 			return retValue;
 		}
 		
 		$("#createBtn").click(function(){
 			if(checkValue()){
+				$("#joinTypeCd").val("000001");
+				var formData = new FormData(document.insertFrm);
 				$.ajax({
 					type : 'post',
-					url:'/db/memberEnterpriseInsert.do',
-					data: $('#insertFrm').serialize(),
+					url:'/db/memberInsert.do',
+					data: formData,
+					enctype: 'multipart/form-data',
 					dataType: 'json',
+					contentType : false,
+			        processData : false, 						
 					success : function(data) {
 						if(data.returnCode == 0){
 		                    alert("등록을 실패 하였습니다.");
 		                    return;
 		                }else{
-		                	alert("등록이 완료 되었습니다.");
-		                	window.location.href="/db/login.do";
+		                	window.location.href="/db/joinStep04.do";
 		                }
 					},  
 				    error:function(request,status,error){ //ajax 오류인경우  
@@ -151,37 +198,6 @@
 			} 
 		});
 		
-		$("#saveBtn").click(function(){
-			$.ajax({
-				type : 'post',
-				url:'/db/memberEnterpriseUpdate.do',
-				data: $('#updateFrm').serialize(),
-				dataType: 'json',
-				success : function(data) {
-					if(data.returnCode == 0){
-	                    alert("등록을 실패 하였습니다.");
-	                    return;
-	                }else{
-	                	alert("수정이 완료 되었습니다.");
-	                	window.location.href="/db/login.do";
-	                }
-				},  
-			    error:function(request,status,error){ //ajax 오류인경우  
-		            alert("작업중 에러가 발생했습니다.");      
-		            console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
-		   		} 
-		 	});
-		});
-		
-		 
-		 $("#resourceBtn").click(function(){
-				$("#resourcePop").show();
-		 });	
-		 
-		 $(".closeBtn").click(function(){
-				$("#resourcePop").hide();
-		 });
-		 
 		 $("#cancel").click(function(){
 			var result = confirm("취소하시겠습니까?");
 			if(result){
@@ -197,14 +213,10 @@
 					var memberId = $('#memberId').val();
 					var memberPw = $('#memberPw').val();
 					
-					//confirm("memberId :: " + memberId);
-					//confirm("memberPw :: " + memberPw); 
-					
 					$.ajax({
 						type : 'post',
 						url:'/db/frontView/loginCheck.do',
 						data: {
-							//memberId : memberId,
 							memberId : $('#memberId').val(),
 							memberPw : memberPw,
 						},
@@ -255,50 +267,6 @@
 						} 
 					}); 
 				}); 
-			
-		 /*  $(function(){
-		      //직접입력 인풋박스 기존에는 숨어있다가
-				$("#selboxDirect").show();
-				$("#selbox").change(function() {
-		                //직접입력을 누를 때 나타남
-						if($("#selbox").val() == "direct") {
-							$("#selboxDirect").show();
-						}
-						else if($("#selbox").val() == "@nate.com") {
-							$("#selboxDirect").show();
-						}
-						else if($("#selbox").val() == "@naver.com") {
-							$("#selboxDirect").show();
-						}
-						else if($("#selbox").val() == "@gmail.com") {
-							$("#selboxDirect").show();
-						}else {
-							$("#selboxDirect").hide();
-						}
-					}); 
-					
-				$("#selboxDirect1").show();
-				$("#selbox1").change(function() {
-		               //직접입력을 누를 때 나타남
-					if($("#selbox1").val() == "direct") {
-						$("#selboxDirect1").show();
-					}  
-					else if($("#selbox1").val() == "@nate.com") {
-						$("#selboxDirect1").show();
-					}  
-					else if($("#selbox1").val() == "@naver.com") {
-						$("#selboxDirect1").show();
-					}  
-					else if($("#selbox1").val() == "@gmail.com") {
-						$("#selboxDirect1").show();
-					}  else {
-						$("#selboxDirect1").hide();
-					}
-				}) ;	
-				
-				
-		  }); */
-
 	});
 	
 
@@ -386,6 +354,42 @@
 		}
 	}
 	
+	//대분류 변경 -> 중분류 조회 
+	function largeBussCdChange(target){
+		var largeCdValue = target.value; 
+		var medium = $("#mediumBussAreaCd");
+		if("" === largeCdValue || undefined === largeCdValue){
+			medium.find("option:gt(0)").remove();
+		}else{
+			
+			$.ajax({
+				type : 'post',
+				url:'/db/selectOnchange.do',
+				data: {
+					"selectBoxData" : largeCdValue
+				},
+				dataType: 'json',
+				success : function(data) {
+		              var htmls = "";
+			              if(data.data.length > 0){
+	                         $(data.data).each(function(){
+	                            htmls +='<option value="' + this.commonCd + '">' + this.commonNm + '</>'; 
+	                        });   //each end 
+	                        medium.find("option:gt(0)").remove();
+	                        medium.append(htmls);  
+			              }else{
+			            	  medium.find("option:gt(0)").remove();
+			              }		
+				},  
+			    error:function(request,status,error){ //ajax 오류인경우  
+		            alert("작업중 에러가 발생했습니다.");      
+		   		}
+			});			
+			
+		}
+		
+	}
+	
 </script>
         
 	<style>
@@ -396,11 +400,6 @@
 
 </head>
 <body>
-<input type="hidden" name="searchType" value="<c:out value='${searchVO.searchType}'/>"/>
-<input type="hidden" name="searchText" value="<c:out value='${searchVO.searchText}'/>"/>
-<input type="hidden" name="memberSt" value="<c:out value='${searchVO.memberSt}'/>"/>
-<input type="hidden" name="pageIndex" value="<c:out value='${searchVO.pageIndex}'/>"/> 
-<input type="hidden" name="chkYn" id="chkYn" value="">
 
 <div id="wrap" class="sub s6">
 <jsp:include page="menu.jsp"></jsp:include>	
@@ -413,35 +412,22 @@
 				<span class="now">회원가입</span>
 				<span class="now">회원 가입 및 수정</span>
 				<span class="now">
-					<c:if test="${viewType eq 'create'}">
-				<div class="row">
-					<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
-						<h1 class="page-title txt-color-blueDark"><i class="fa-fw fa fa-home"></i><b>회원정보 등록</b></h1>
+					<div class="row">
+						<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+							<h1 class="page-title txt-color-blueDark"><i class="fa-fw fa fa-home"></i><b>회원정보 등록</b></h1>
+						</div>
 					</div>
-				</div>
-		</c:if>
-		<c:if test="${viewType eq 'modify'}">
-			<div class="row">
-				<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
-					<h1 class="page-title txt-color-blueDark"><i class="fa-fw fa fa-home"></i><b>회원정보 수정</b></h1>
-				</div>
-			</div>
-		</c:if>
-				</span>
-			</div>
-		</div>
+				</span>				
+			</div><!-- layout01 clearfix -->
+		</div><!-- location -->
 		<div class="layout01">
-		
 			<h2 class="">회원가입 - 더 새로워진 전남콘테츠기업육성센터 홈페이지를 만나보세요!</h2>
 			<div class="cont">
 				<h3>회원</h3>
-			
-							
-			<!--  회원정보 가입 form S -->
-			<c:if test="${viewType eq 'create' }">
 			<section id="widget-grid" class="">			
 				<div class="continner">
-				<form id="insertFrm" name="insertFrm" action="#" method="POST">
+				<form id="insertFrm" name="insertFrm" action="#" method="POST" enctype="multipart/form-data">
+					<input type="hidden" id="joinTypeCd" name="joinTypeCd" value="" />
 					<div class="tab">
 						<ul class="tab01_4 clearfix">
 							<li class="step"><a href="/db/joinStep01.do">가입유형</a></li>
@@ -487,42 +473,31 @@
 									</td>
 								</tr>
 								<tr>
-									<th colspan="2" class="essential">이름</th>
+									<th colspan="2">이름</th>
 									<td colspan="3">
 										<input type="text" style="width: 100%;" id="memberNm" name="memberNm" maxlength="30">
 									</td>
 								</tr>
 								<tr>
-									<th colspan="2" class="essential">휴대폰번호</th>
+									<th colspan="2">휴대폰번호</th>
 									<td>
-										<input type="text" style="width: 50%;" id="entprRespsibHpNo" name="entprRespsibHpNo" maxlength="11" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');">
-										*특수문자 사용할 수 없습니다.
-<!-- 										<em>-</em>
-										<input type="text" style="width: 25%;" id="expertHeadTel2" name="expertHeadTel2">
+										<select style="width: 25%;" id="entprRespsibHpNo" name="entprRespsibHpNo">
+											<option value="">선택</option>
+											<c:forEach var="hpNoList" items="${hpNoList}" varStatus="status">
+												<option value="${hpNoList.commonCd}"><c:out value="${hpNoList.commonCd}"/></option>
+											</c:forEach>
+										</select>
 										<em>-</em>
-										<input type="text" style="width: 25%;" id="expertHeadTel3" name="expertHeadTel3"> -->
+										<input type="text" style="width: 25%;" id="entprRespsibHpNo2" name="entprRespsibHpNo2" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="4">
+										<em>-</em>
+										<input type="text" style="width: 25%;" id="entprRespsibHpNo3" name="entprRespsibHpNo3" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="4">										
 									</td>
 									<th>이메일</th>
 									<td id = 'entprRespsibEmail1'>
-										<!-- <input type="text" style="width: 40%;" id="entprRespsibEmail" name="entprRespsibEmail"maxlength="30" >
-										<em>@</em>
-										상단의 select box에서 '직접입력'을 선택하면 나타날 인풋박스
-										<input type="text" id="selboxDirect1" name="selboxDirect1" style="width: 40%;"/>
-										<select style="width: 40%;" id="selbox1" name="selbox1">
-											<option value="">선택</option>
-											<option value="@nate.com">@nate.com</option>
-											<option value="@naver.com">@naver.com</option>
-											<option value="@gmail.com">@gmail.com</option>
-											<option value="direct">기타</option>
-										</select> -->
 										
-										
-										<input type="text" name="entprRespsibEmail" id="entprRespsibEmail" title="이메일 앞자리주소"  style="width: 40%;" maxlength="30"/>
+										<input type="text" name="entprRespsibEmail" id="entprRespsibEmail" title="이메일 앞자리주소"  style="width: 30%;" maxlength="30" onkeyup="this.value=this.value.replace(/[^A-Za-z0-9]/g,'');"/>
 								        @
-								        <input type="text" name="selboxDirect1" id="selboxDirect1" title="이메일 뒷자리주소" style="width: 40%;" maxlength="30" /> 
-								        <div class="select-box">
-								            <label for="selbox1">이메일 뒷자리 선택</label>
-								            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								        <input type="text" name="selboxDirect1" id="selboxDirect1" title="이메일 뒷자리주소" style="width: 30%;" maxlength="30" /> 
 								            <select id="selbox1" title="이메일 뒷자리 선택">
 								                <option value="1">직접입력</option>
 								                <option value="naver.com">naver.com</option>
@@ -534,45 +509,30 @@
 								                <option value="freechal.com">freechal.com</option>
 								                <option value="hanmir.com">hanmir.com</option>
 								            </select>
-								        </div>
 								        <span class="desc"></span>
 										
 									</td>
 								</tr>
 								<tr>
-									<th colspan="2">회사명</th>
+									<th colspan="2" class="essential">회사명</th>
 									<td>
 										<input type="text" style="width: 100%;" id="entprNm" name="entprNm" maxlength="30" >
 									</td>
-									<th>대표자</th>
+									<th class="essential">대표자</th>
 									<td>
 										<input type="text" style="width: 100%;" id="entprCeo" name="entprCeo" maxlength="30" >
 									</td>
 								</tr>
 								<tr>
-									<th colspan="2">사업자등록번호</th>
+									<th colspan="2" class="essential">사업자등록번호</th>
 									<td>
 										<input type="text" style="width: 100%;" id="entprComRegNum" name="entprComRegNum" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="10">
 									</td>
-									<th>대표자이메일</th>
+									<th class="essential">대표자이메일</th>
 									<td id="entprCeoEmail1">
-										<!-- <input type="text" style="width: 40%;" id="entprCeoEmail" name="entprCeoEmail" maxlength="30">
-										<em>@</em>
-										상단의 select box에서 '직접입력'을 선택하면 나타날 인풋박스
-										<input type="text" id="selboxDirect" name="selboxDirect" style="width: 40%;"/>
-										<select style="width: 40%;" id="selbox" name="selbox">
-											<option value="@nate.com">@nate.com</option>
-											<option value="@naver.com">@naver.com</option>
-											<option value="@gmail.com">@gmail.com</option>
-											<option value="direct">기타</option>
-										</select> -->
-										
-										<input type="text" name="entprCeoEmail" id="entprCeoEmail" title="이메일 앞자리주소"  style="width: 40%;" maxlength="30"/>
+										<input type="text" name="entprCeoEmail" id="entprCeoEmail" title="이메일 앞자리주소"  style="width: 30%;" maxlength="30" onkeyup="this.value=this.value.replace(/[^A-Za-z0-9]/g,'');"/>
 								        @
-								        <input type="text" name="selboxDirect" id="selboxDirect" title="이메일 뒷자리주소" style="width: 40%;" maxlength="30" /> 
-								        <div class="select-box">
-								            <label for="selbox">이메일 뒷자리 선택</label>
-								            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								        <input type="text" name="selboxDirect" id="selboxDirect" title="이메일 뒷자리주소" style="width: 30%;" maxlength="30" /> 
 								            <select id="selbox" title="이메일 뒷자리 선택">
 								                <option value="1">직접입력</option>
 								                <option value="naver.com">naver.com</option>
@@ -584,7 +544,6 @@
 								                <option value="freechal.com">freechal.com</option>
 								                <option value="hanmir.com">hanmir.com</option>
 								            </select>
-								        </div>
 								        <span class="desc"></span>
 										
 										
@@ -592,20 +551,17 @@
 								</tr>
 								
 								<tr>
-									<th colspan="2">사업분야</th>
+									<th colspan="2" class="essential">사업분야</th>
 									<td>
-										<select id="largeBussAreaCd" name="largeBussAreaCd">
-											<c:forEach var ="areaList" items="${areaList}" varStatus="status" >
-												<option value="${areaList.commonNm}" <c:if test="${areaList.commonNm=='ICT'}">selected</c:if>>${areaList.commonNm}</option>
+										<select id="largeBussAreaCd" name="largeBussAreaCd" onchange="javascript:largeBussCdChange(this);" >
+											<option value="">대분류</option>
+											<c:forEach var ="areaList" items="${areaList}" varStatus="status">
+												<option value="${areaList.commonCd}">${areaList.commonNm}</option>
 											</c:forEach>
 										</select>
-										<%-- 
-									   <select id="intltProptCd" name="intltProptCd">
-						                     <c:forEach var="propt" items="${propt}" varStatus="status" >
-						                         <option value="${propt.commonNm}" <c:if test="${propt.commonNm=='특허'}">selected</c:if> >${propt.commonNm}</option>
-						                      </c:forEach>
-						               </select>
-										 --%>
+										<select id="mediumBussAreaCd" name="mediumBussAreaCd" style="width:150px;">
+											<option value="">중분류</option>
+										</select>										
 									</td>
 									<th>홈페이지</th>
 									<td>
@@ -613,38 +569,35 @@
 									</td>
 								</tr>
 								<tr>
-									<th rowspan="4">주소</th>
-									<th rowspan="2" class="row">본사</th>
+									<th colspan="2" class="essential">설립일</th>
 									<td>
-										<input type="text" id="entprHeadAddr" name="entprHeadAddr" class="input-sm" value="" maxlength="50" style="width:90%" readonly="readonly">
-										<button type="button" class="txtbtn" style="width: 120px;" onclick="javascript:openDaumPostcode()">우편번호 검색</button>
+										<input class="date" type="text" style="width: 40%;" id="entprEstDt" name="entprEstDt" readonly="readonly">
 									</td>
-									<th>대표전화</th>
+									<th>자본금</th>
+									<td>
+										<input type="text" style="width: 100%;" id="entprCapitalAmt" name="entprCapitalAmt" onkeydown="this.value=this.value.replace(/[^0-9]/g,'');" onkeyup="this.value=this.value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');" maxlength="10">
+									</td>
+								</tr>								
+								
+								<tr>
+									<th rowspan="4">주소</th>
+									<th rowspan="2" class="row essential">본사</th>
+									<td>
+										<input type="text" id="entprHeadAddr" name="entprHeadAddr" class="input-sm" value="" readonly="readonly" onclick="javascript:openDaumPostcode()" maxlength="50" style="width:70%" readonly="readonly">
+										<button type="button" class="txtbtn" style="width: 100px;" onclick="javascript:openDaumPostcode()">우편번호 검색</button>
+									</td>
+									<th class="essential">대표전화</th>
 									<td>
 										<select style="width: 25%;" id="entprHeadTel" name="entprHeadTel">
-											<option></option>
-											<option value="02">02</option>
-											<option value="031">031</option>
-											<option value="032">032</option>
-											<option value="033">033</option>
-											<option value="041">041</option>
-											<option value="042">042</option>
-											<option value="043">043</option>
-											<option value="044">044</option>
-											<option value="051">051</option>
-											<option value="052">052</option>
-											<option value="053">053</option>
-											<option value="054">054</option>
-											<option value="055">055</option>
-											<option value="061">061</option>
-											<option value="062">062</option>
-											<option value="063">063</option>
-											<option value="064">064</option>
+											<option value="">선택</option>
+											<c:forEach var="totTelNoList" items="${totTelNoList}" varStatus="status">
+												<option value="${totTelNoList.commonCd}"><c:out value="${totTelNoList.commonCd}"/></option>
+											</c:forEach>
 										</select>
 										<em>-</em>
-										<input type="text" style="width: 25%;" id="expertOffiTel1" name="expertOffiTel1" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="4">
+										<input type="text" style="width: 25%;" id="entprHeadTel2" name="entprHeadTel2" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="4">
 										<em>-</em>
-										<input type="text" style="width: 25%;" id="expertOffiTel2" name="expertOffiTel2" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="4">
+										<input type="text" style="width: 25%;" id="entprHeadTel3" name="entprHeadTel3" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="4">
 									</td>
 								</tr>
 								<tr>
@@ -654,64 +607,36 @@
 									</td>
 									<th>대표FAX</th>
 									<td>
-										<select style="width: 25%;" id="expertOffiFax" name="expertOffiFax">
-											<option></option>
-											<option value="02">02</option>
-											<option value="031">031</option>
-											<option value="032">032</option>
-											<option value="033">033</option>
-											<option value="041">041</option>
-											<option value="042">042</option>
-											<option value="043">043</option>
-											<option value="044">044</option>
-											<option value="051">051</option>
-											<option value="052">052</option>
-											<option value="053">053</option>
-											<option value="054">054</option>
-											<option value="055">055</option>
-											<option value="061">061</option>
-											<option value="062">062</option>
-											<option value="063">063</option>
-											<option value="064">064</option>
+										<select style="width: 25%;" id="entprHeadFax" name="entprHeadFax">
+											<option value="">선택</option>
+											<c:forEach var="telNoList" items="${telNoList}" varStatus="status">
+												<option value="${telNoList.commonCd}"><c:out value="${telNoList.commonCd}"/></option>
+											</c:forEach>
 										</select>
 										<em>-</em>
-										<input type="text" style="width: 25%;" id="expertOffiFax1" name="expertOffiFax1" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="4">
+										<input type="text" style="width: 25%;" id="entprHeadFax2" name="entprHeadFax2" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="4">
 										<em>-</em>
-										<input type="text" style="width: 25%;" id="expertOffiFax2" name="expertOffiFax2" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="4">
+										<input type="text" style="width: 25%;" id="entprHeadFax3" name="entprHeadFax3" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="4">
 									</td>
 								</tr>
 								<tr>
 									<th rowspan="2" class="row">자택</th>
 									<td>
-										<input type="text" id="entprBranchAddr" name="entprBranchAddr" class="input-sm" value="" maxlength="50" style="width:90%" readonly="readonly">
-										<button type="button" class="txtbtn" style="width: 120px;" onclick="javascript:openDaumPostcode1()">우편번호 검색</button>
+										<input type="text" id="entprBranchAddr" name="entprBranchAddr" class="input-sm" value="" readonly="readonly" onclick="javascript:openDaumPostcode1()" maxlength="50" style="width:70%">
+										<button type="button" class="txtbtn" style="width: 100px;" onclick="javascript:openDaumPostcode1()">우편번호 검색</button>
 									</td>
 									<th>대표전화</th>
 									<td>
 										<select style="width: 25%;" id="entprBranchTel" name="entprBranchTel">
-											<option></option>
-											<option value="02">02</option>
-											<option value="031">031</option>
-											<option value="032">032</option>
-											<option value="033">033</option>
-											<option value="041">041</option>
-											<option value="042">042</option>
-											<option value="043">043</option>
-											<option value="044">044</option>
-											<option value="051">051</option>
-											<option value="052">052</option>
-											<option value="053">053</option>
-											<option value="054">054</option>
-											<option value="055">055</option>
-											<option value="061">061</option>
-											<option value="062">062</option>
-											<option value="063">063</option>
-											<option value="064">064</option>
+											<option value="">선택</option>
+											<c:forEach var="totTelNoList" items="${totTelNoList}" varStatus="status">
+												<option value="${totTelNoList.commonCd}"><c:out value="${totTelNoList.commonCd}"/></option>
+											</c:forEach>
 										</select>
 										<em>-</em>
-										<input type="text" style="width: 25%;" id="memberMyTel1" name="memberMyTel1" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="4">
+										<input type="text" style="width: 25%;" id="entprBranchTel2" name="entprBranchTel2" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="4">
 										<em>-</em>
-										<input type="text" style="width: 25%;" id="memberMyTel2" name="memberMyTel2" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="4">
+										<input type="text" style="width: 25%;" id="entprBranchTel3" name="entprBranchTel3" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="4">
 									</td>
 								</tr>
 								<tr>
@@ -722,36 +647,29 @@
 									<th>대표FAX</th>
 									<td>
 										<select style="width: 25%;" id="entprBranchFax" name="entprBranchFax">
-											<option></option>
-											<option value="02">02</option>
-											<option value="031">031</option>
-											<option value="032">032</option>
-											<option value="033">033</option>
-											<option value="041">041</option>
-											<option value="042">042</option>
-											<option value="043">043</option>
-											<option value="044">044</option>
-											<option value="051">051</option>
-											<option value="052">052</option>
-											<option value="053">053</option>
-											<option value="054">054</option>
-											<option value="055">055</option>
-											<option value="061">061</option>
-											<option value="062">062</option>
-											<option value="063">063</option>
-											<option value="064">064</option>
+											<option value="">선택</option>
+											<c:forEach var="telNoList" items="${telNoList}" varStatus="status">
+												<option value="${telNoList.commonCd}"><c:out value="${telNoList.commonCd}"/></option>
+											</c:forEach>
 										</select>
 										<em>-</em>
-										<input type="text" style="width: 25%;" id="memberMyFax1" name="memberMyFax1" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="4">
+										<input type="text" style="width: 25%;" id="entprBranchFax2" name="entprBranchFax2" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="4">
 										<em>-</em>
-										<input type="text" style="width: 25%;" id="memberMyFax2" name="memberMyFax2" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="4">
+										<input type="text" style="width: 25%;" id="entprBranchFax3" name="entprBranchFax3" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="4">
 									</td>
 								</tr>
+								<tr>
+									<th colspan="2">정책정보 제공을 위한 <br> 수집 및 이용동의</th>
+									<td colspan="3">
+										<select style="width: 8%;" id="conllentPublicYn" name="conllentPublicYn">
+											<option value="Y" ${resultList.conllentPublicYn == 'Y' ? 'selected="selected"' : '' }>동의</option>
+											<option value="N" ${resultList.conllentPublicYn != 'Y' ? 'selected="selected"' : '' }>미동의</option>
+										</select>
+									</td>
+								</tr>								
 							</tbody>
 						</table>
 					</div>
-
-
 					<div class="submitbtn">
 						<button type="button" id="createBtn" name="createBtn" class="ok">신청하기</button>
 						<button type="button" id="cancel" name="cancel" class="no">취소</button>
@@ -759,244 +677,16 @@
 					</form>
 					
 				</div>
-				
-				</section>
-			</c:if>
-			
-			
-			<!--  회원정보 수정 form S -->
-			<c:if test="${viewType eq 'modify' }">
-				<section id="widget-grid" class="">			
-				<div class="continner">
-				<form id="updateFrm" name="updateFrm" action="#" method="POST">
-					<input type="hidden" name="memberIdx" id="memberIdx" value="<c:out value="${detail.memberIdx}"/>"/>
-					<div class="tab">
-						<ul class="tab01_4 clearfix">
-							<li class="step"><a href="/db/joinStep01.do">가입유형</a></li>
-							<li class="step"><a href="/db/joinStep02.do">약관동의</a></li>
-							<li class="on"><a href="#none">정보입력</a></li>
-							<li><a href="#none">가입완료</a></li>
-						</ul>
-					</div>
-					
-			
-					<div class="joininfobox">
-						<h4>기업정보수정</h4>
-						<table class="table01 tb_pc">
-							<colgroup>
-								<col style="width:10%;">
-								<col style="width:5%;">
-								<col style="width:35%;">
-								<col style="width:15%;">
-								<col style="width:35%;">
-							</colgroup>
-							<tbody>
-								<tr>
-									<th colspan="2" class="essential">아이디</th>
-									<td colspan="2">
-										<input type="text" id="memberId" name="memberId" value="${detail.memberId}" readonly="readonly"/>
-									</td>
-								</tr>
-								<tr>
-									<th colspan="2" class="essential">비밀번호</th>
-									<td>
-										<label class="input">
-											<input type="password" id="memberPw" name="memberPw" value="${detail.memberPw}" maxlength="30"/>
-										</label>
-									</td>
-									<th class="essential">비밀번호 확인</th>
-									<td>
-										<label class="input">
-											<input type="password" id="memPwdChk" name="memPwdChk" value="${detail.memberPw}" maxlength="30" />
-										</label>
-									</td>
-								</tr>
-								<tr>
-									<th colspan="2" class="essential">이름</th>
-									<td colspan="3">
-										<input type="text" id="entprRespsibNm" name="entprRespsibNm" value="${detail.memberNm}" maxlength="30"/>
-									</td>
-								</tr>
-								<tr>
-									<th colspan="2" class="essential">휴대폰번호</th>
-									<td>
-										<label class="input">
-											<input type="text" style="width: 100%;" id="entprRespsibHpNo" name="entprRespsibHpNo" value="${detail.entprRespsibHpNo}" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="12" />
-										</label>
-									</td>
-									<th>이메일</th>
-									<td>
-										<label class="input">
-											<input type="text" style="width: 100%;" id=entprRespsibEmail name="entprRespsibEmail" value="${detail.entprRespsibEmail}" maxlength="30"/>
-										</label>	
-									</td>
-								</tr>
-								<tr>
-									<th colspan="2">회사명</th>
-									<td>
-										<label class="input">
-											<input type="text" style="width: 100%;" id="entprNm" name="entprNm" value="${detail.entprNm}" maxlength="30"/>
-										</label>	
-									</td>
-									<th>대표자</th>
-									<td>
-										<label class="input">
-											<input type="text" style="width: 100%;" id="entprCeo" name="entprCeo" value="${detail.entprCeo}" maxlength="30"/>
-										</label>	
-									</td>
-								</tr>
-								<tr>
-									<th colspan="2">사업자등록번호</th>
-									<td>
-										<label class="input">
-											<input type="text" style="width: 100%;" id="entprComRegNum" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="10" name="entprComRegNum" value="${detail.entprComRegNum} "/>
-										</label>	
-									</td>
-									<th>대표자이메일</th>
-									<td>
-										<label class="input">
-										 	<input type="text" style="width: 100%;" id="entprCeoEmail" name="entprCeoEmail" value="${detail.entprCeoEmail} " maxlength="30" />
-										</label> 
-									</td>
-								</tr>
-								<tr>
-									<th colspan="2">사업분야</th>
-									<td>
-										<label class="input">
-											<%-- <input type="text" style="width: 100%;" id="largeBussAreaCd" name="largeBussAreaCd" value="${detail.largeBussAreaCd} "/> --%>
-											<select id="largeBussAreaCd" name="largeBussAreaCd">
-											<%-- <c:forEach var ="areaList" items="${areaList}" varStatus="status" > --%>
-												<option value="ICT" ${detail.largeBussAreaCd eq 'ICT' ? 'selected="selected"' : '' }>ICT</option>
-												<option value="콘텐츠" ${detail.largeBussAreaCd eq '콘텐츠' ? 'selected="selected"' : '' }>콘텐츠</option>
-												<option value="1인창조" ${detail.largeBussAreaCd eq '1인창조' ? 'selected="1인창조"' : '' }>1인창조</option>
-												<option value="기타" ${detail.largeBussAreaCd eq '기타' ? 'selected="selected"' : '' }>기타</option>
-											<%-- </c:forEach> --%>
-											</select>
-										 
-										</label>	
-									</td>
-									<th>홈페이지</th>
-									<td>
-										<label class="input">
-										 	<input type="text" style="width: 100%;" id="entprSite" name="entprSite" value="${detail.entprSite} "  maxlength="40"/>
-										</label> 
-									</td>
-								</tr>
-								
-								<tr>
-									<th rowspan="4">주소</th>
-									<th rowspan="2" class="row">본사</th>
-									<td>
-										<label class="input">
-											<input type="text" id="entprHeadAddr" name="entprHeadAddr" class="input-sm" value="${detail.entprHeadAddr}" maxlength="50" style="width:90%" readonly="readonly">
-											<button type="button" class="txtbtn" style="width: 120px;" onclick="javascript:openDaumPostcode()">우편번호 검색</button>
-										</label>
-									</td>
-									<th>대표전화</th>
-									<td>
-										<input type="text" style="width: 100%;" id="entprHeadTel" name="entprHeadTel" value="${detail.entprHeadTel}" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="12"/>
-									</td>
-								</tr>
-								<tr>
-									<td>
-										상세주소
-										<input type="text" style="width: 70%;" id="entprHeadDetailAddr" name="entprHeadDetailAddr" value="${detail.entprHeadDetailAddr}" />
-									</td>
-									<th>대표FAX</th>
-									<td>
-										<input type="text" style="width: 100%;" id="entprHeadFax" name="entprHeadFax" value="${detail.entprHeadFax}" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="12" />
-									</td>
-								</tr>
-								<tr>
-									<th rowspan="2" class="row">지사</th>
-									<td>
-										<input type="text" id="entprBranchAddr" name="entprBranchAddr" class="input-sm" value="${detail.entprBranchAddr}" maxlength="50" style="width:90%" readonly="readonly">
-										<button type="button" class="txtbtn" style="width: 120px;" onclick="javascript:openDaumPostcode1()">우편번호 검색</button>
-									</td>
-									<th>대표전화</th>
-									<td>
-										<input type="text" style="width: 100%;" id="entprBranchTel" name="entprBranchTel" value="${detail.entprBranchTel}" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="12">
-									</td>
-								</tr>
-								<tr>
-									<td>
-										상세주소
-										<input type="text" style="width: 70%;" id="entprBranchDetailAddr" name="entprBranchDetailAddr" value="${detail.entprBranchDetailAddr}" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="12">
-									</td>
-									<th>대표FAX</th>
-									<td>
-										<input type="text" style="width: 100%;" id="entprBranchFax" name="entprBranchFax" value="${detail.entprBranchFax}" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="12">
-									</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
+				</section>		
 
-					<div class="submitbtn">
-						<button type="button" id="saveBtn" name="saveBtn" class="ok">수정하기</button>
-						<button type="button" id="cancel1" name="cancel1" class="no">취소</button>
-					</div>
-					</form>
-				</div>
-				
-				</section>
-			</c:if>
-			
-				
-			</div>
-		</div>
-	</div>
-	
-</div>
-<%-- 
-<form role="form" id="insertFrm" action="#" class="form-horizontal" method="post">
-	<input type="hidden" name="memberIdx" id="memberIdx" value="">
-	<input type="hidden" id="memberId" name="memberId" value="">
-	<input type="hidden" name="memberPw" id="memberPw" value="">
-	<input type="hidden" name="memberNm" id="memberNm" value="">
-	<input type="hidden" name="expertOffiAddr" id="expertOffiAddr" value="">
-	<input type="hidden" name="expertOffiDetailAddr" id="expertOffiDetailAddr" value="">
-	<input type="hidden" name="expertOffiTel" id="expertOffiTel" value="">
-	<input type="hidden" name="expertHeadTel" id="expertHeadTel" value="">
-	<input type="hidden" name="expertEmail" id="expertEmail" value="">
-	<input type="hidden" name="memberBelong" id="memberBelong" value="">
-	<input type="hidden" name="memberJoinDt" id="memberJoinDt" value="">
-	<input type="hidden" name="memberJoinType" id="memberJoinType" value="">
-	<input type="hidden" name="memberSt" id="memberSt" value="">
-	<input type="hidden" name="expertFinalSchoolNm" id="expertFinalSchoolNm" value="">
-	<input type="hidden" name="expertMajorNm" id="expertMajorNm" value="">
-	<input type="hidden" name="expertHeadAddrNm" id="expertHeadAddrNm" value="">
-	<input type="hidden" name="expertDptmNm" id="expertDptmNm" value="">
-	<input type="hidden" name="memberSpecialty" id="memberSpecialty" value="">
-	<input type="hidden" name="detailSpecialAreaCd" id="detailSpecialAreaCd" value="">
-	<input type="hidden" name="expertInterestAreaCd" id="expertInterestAreaCd" value="">
-	<input type="hidden" name="expertDetailIntrtAreaCd" id="expertDetailIntrtAreaCd" value="">
-	<input type="hidden" name="expertOffiFax" id="expertOffiFax" value="">
-	<input type="hidden" name="expertHomeAddr" id="expertHomeAddr" value="">
-	<input type="hidden" name="memberMytel" id="memberMytel" value="">
-	<input type="hidden" name="memberMyfax" id="memberMyfax" value="">
-	<input type="hidden" name="	expertHomeDetailAddr" id="expertHomeDetailAddr" value="">
-</form>
- --%>
-
+			</div><!-- cont -->
+		</div><!-- layout01 -->
+	</div><!--contents  -->
+</div><!-- wrap -->
+	<form role="form" id="requestFrm" action="#" class="form-horizontal" method="post">	 
+	   <input type="hidden" name="conllentPublicYn" id="conllentPublicYn" value="">
+    </form>		
 </body>
 
 </html>
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
  

@@ -17,8 +17,13 @@
 	</tx:advice>
 
 	<aop:config>
-		<aop:pointcut id="requiredTx" expression="execution(* egovframework.example.sample..impl.*Impl.*(..))"/>
+		<aop:pointcut id="requiredTx" expression="execution(* jcep.admin.service..*Service.*(..))"/>
 		<aop:advisor advice-ref="txAdvice" pointcut-ref="requiredTx" />
+	</aop:config>
+	
+	<aop:config>
+		<aop:pointcut id="requiredTx2" expression="execution(* jcep.front.service..*Service.*(..))"/>
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="requiredTx2" />
 	</aop:config>
 
 </beans>

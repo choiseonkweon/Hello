@@ -73,14 +73,13 @@ $(document).ready(function () {
 				},
 				dataType: 'json',
 				success : function(data) {
-					console.log(data);
 					if(data.idCnt == 0){
 					alert("아이디와 비밀번호를 확인해주세요");
 					}else{
 						if(data.memberPw == null){
 							alert("비밀번호를 확인해주세요")
 						}else{
-							if(data.memberStCd == 'N'){
+							if(data.memberStCd != '000001'){
 								alert("관리자 승인이 되지 않았습니다.");
 							}else{
 								alert("로그인 합니다.");
@@ -91,7 +90,6 @@ $(document).ready(function () {
 				},  
 				    error:function(request,status,error){ //ajax 오류인경우  
 		         	   alert("작업중 에러가 발생했습니다.");      
-		          	  console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
 		   			}
 				});
 			}		

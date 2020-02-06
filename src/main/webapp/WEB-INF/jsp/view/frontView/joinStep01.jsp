@@ -7,36 +7,11 @@
 <%@ taglib prefix="spring"	uri="http://www.springframework.org/tags"%>    
 <!DOCTYPE html>
 <html>
-<link rel='stylesheet' type='text/css' href='css/reset.css' />
-<link rel='stylesheet' type='text/css' href='css/common.css' />
-<link rel='stylesheet' type='text/css' href='css/sub.css' />
-<script type="text/javascript" src="../db/assets/js/jquery-1.12.4.min.js"></script>
-<script type="text/javascript" src="../db/assets/js/jquery.easing.1.3.js"></script>
-<script type="text/javascript" src="../db/assets/js/ui.js"></script>
-
-
 <head>
 
 
 <script type="text/javaScript" >
 	$(document).ready(function () {
-	//$('#loginLogin').click(function () {	
-		
-		/*  $(".tab > ul li").click(function(){
-			   var now_tab = $(this).index();
-			   $(this).parent().find("li").removeClass("on");
-			   $(this).parent().parent().parent().find(".tabBtn").addClass("hidden");
-			   $(this).parent().find("li").eq(now_tab).addClass("on");
-			   $(this).parent().parent().parent().find(".tabBtn").eq(now_tab).removeClass("hidden"); 
-		 }); */
-		 
-		 $("#resourceBtn").click(function(){
-				$("#resourcePop").show();
-		 });	
-		 
-		 $(".closeBtn").click(function(){
-				$("#resourcePop").hide();
-		 });	
 		 
 		 $("#enterprise").click(function(){
 			 window.location.href="/db/joinStep021.do";
@@ -64,14 +39,10 @@
 				var memberId = $('#memberId').val();
 				var memberPw = $('#memberPw').val();
 				
-				//confirm("memberId :: " + memberId);
-				//confirm("memberPw :: " + memberPw); 
-				
 				$.ajax({
 					type : 'post',
 					url:'/db/frontView/loginCheck.do',
 					data: {
-						//memberId : memberId,
 						memberId : $('#memberId').val(),
 						memberPw : memberPw,
 					},

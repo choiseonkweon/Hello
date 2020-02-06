@@ -50,30 +50,7 @@
 			WHERE 	member_id 						=	#{memberId} 
 	      ]]>
 	</select>
-	
-	
-	
-	
-	<insert id="memberExpertInsert" parameterType="jcep.admin.model.MemberVO">
-			/*memberExpertInsert*/
-			<![CDATA[
-			INSERT INTO tb_member (
-				member_id,
-				member_pw,
-				member_nm,
-				join_type_cd,
-				reg_dt
-			)
-			VALUES(
-				#{memberId},
-				#{memberPw},
-				#{memberNm},
-				'000002',
-				CURRENT_TIMESTAMP					
-			)
-			]]>
-	</insert>
-	
+
 	
 	<insert id="memberExpertInsertExpert" parameterType="jcep.admin.model.MemberVO">
 		/* memberExpertInsertExpert */
@@ -83,22 +60,30 @@
 				member_id,
 				expert_nm,
 				expert_head_tel,
+				expert_head_tel2,
+				expert_head_tel3,
 				expert_email,
 				expert_final_school_nm,
 				expert_major_nm,
 				expert_head_addr_nm,
 				expert_dptm_nm,
 				large_special_area_cd,
-				medium_special_area_cd,
 				detail_special_area_cd,
-				expert_interest_area_cd,
-				expert_detail_intrt_area_cd,
 				expert_offi_addr,
 				expert_offi_detail_addr,
 				expert_offi_tel,
+				expert_offi_tel2,
+				expert_offi_tel3,
 				expert_offi_fax,
+				expert_offi_fax2,
+				expert_offi_fax3,
 				expert_home_addr,
 				expert_home_detail_addr,
+				expert_st_reg_no,
+				expert_inds_edu_cd,
+				expert_offi_duty_nm,
+				org_file_nm,
+				file_course,
 				reg_dt
 			 )
 			 values
@@ -106,22 +91,30 @@
 				#{memberId},
 				#{memberNm},
 			 	#{expertHeadTel},
-			 	#{expertEmail},
+			 	#{expertHeadTel2},
+			 	#{expertHeadTel3},
+			 	concat(#{expertEmail},'@',#{selboxDirect}),
 			 	#{expertFinalSchoolNm},
 			 	#{expertMajorNm},
 			 	#{expertHeadAddrNm},
 			 	#{expertDptmNm},
 			 	#{largeSpecialAreaCd},
-			 	#{mediumSpecialAreaCd},
 			 	#{detailSpecialAreaCd},
-			 	#{expertInterestAreaCd},
-			 	#{expertDetailIntrtAreaCd},
 			 	#{expertOffiAddr},
 			 	#{expertOffiDetailAddr},
-			 	(#{expertOffiTel}#{expertOffiTel1}),
-			 	(#{expertOffiFax}#{expertOffiFax1}),
+			 	#{expertOffiTel},
+			 	#{expertOffiTel2},
+			 	#{expertOffiTel3},
+			 	#{expertOffiFax},
+			 	#{expertOffiFax2},
+			 	#{expertOffiFax3},
 			 	#{expertHomeAddr},
 			 	#{expertHomeDetailAddr},
+			 	#{expertStRegNo},
+			 	#{expertIndsEduCd},
+			 	#{expertOffiDutyNm},
+			 	#{orgFileNm},
+			 	#{fileCourse},
 			 	CURRENT_TIMESTAMP
 			 )
 			 ]]>
@@ -130,21 +123,24 @@
 	
 	
 	
-	<insert id="memberEnterpriseInsert" parameterType="jcep.admin.model.MemberVO">
-			/*memberExpertInsert1*/
+	<insert id="memberInsert" parameterType="jcep.admin.model.MemberVO">
 			<![CDATA[
 			INSERT INTO tb_member (
 				member_id,
 				member_pw,
 				member_nm,
 				join_type_cd,
+				conllent_public_yn,
+				member_st_cd,
 				reg_dt
 			)
 			VALUES(
 				#{memberId},
 				#{memberPw},
 				#{memberNm},
-				'000001',
+				#{joinTypeCd},
+				#{conllentPublicYn},
+				'000003',
 				CURRENT_TIMESTAMP	
 			)
 			]]>	
@@ -158,21 +154,34 @@
 			member_id,
 			entpr_respsib_nm,
 			entpr_respsib_hp_no,
+			entpr_respsib_hp_no2,
+			entpr_respsib_hp_no3,
 			entpr_respsib_email,
 			entpr_nm,
 			entpr_ceo,
 			entpr_com_reg_num,
 			entpr_ceo_email,
 			large_buss_area_cd,
+			medium_buss_area_cd,
 			entpr_site,
 			entpr_head_addr,
 			entpr_head_detail_addr,
 			entpr_head_tel,
+			entpr_head_tel2,
+			entpr_head_tel3,
 			entpr_head_fax,
+			entpr_head_fax2,
+			entpr_head_fax3,
 			entpr_branch_addr,
 			entpr_branch_detail_addr,
 			entpr_branch_tel,
+			entpr_branch_tel2,
+			entpr_branch_tel3,
 			entpr_branch_fax,
+			entpr_branch_fax2,
+			entpr_branch_fax3,
+			entpr_est_dt,
+			entpr_capital_amt,
 			reg_dt
 		)
 		values
@@ -180,46 +189,38 @@
 			#{memberId},
 			#{memberNm},
 			#{entprRespsibHpNo},
-			#{entprRespsibEmail},
+			#{entprRespsibHpNo2},
+			#{entprRespsibHpNo3},
+			concat(#{entprRespsibEmail},'@',#{selboxDirect1}),
 			#{entprNm},
 			#{entprCeo},
 			#{entprComRegNum},
-			#{entprCeoEmail},
+			concat(#{entprCeoEmail},'@',#{selboxDirect}),
 			#{largeBussAreaCd},
+			#{mediumBussAreaCd},
 			#{entprSite},
 			#{entprHeadAddr},
 			#{entprHeadDetailAddr},
 			#{entprHeadTel},
+			#{entprHeadTel2},
+			#{entprHeadTel3},
 			#{entprHeadFax},
+			#{entprHeadFax2},
+			#{entprHeadFax3},
 			#{entprBranchAddr},
 			#{entprBranchDetailAddr},
 			#{entprBranchTel},
+			#{entprBranchTel2},
+			#{entprBranchTel3},
 			#{entprBranchFax},
+			#{entprBranchFax2},
+			#{entprBranchFax3},
+			replace(#{entprEstDt},'-',''),
+			replace(#{entprCapitalAmt},',',''),
 			CURRENT_TIMESTAMP
 		)
 		]]>	
 	
-	</insert>
-	
-	
-	<insert id="memberBuyerInsert" parameterType="jcep.admin.model.MemberVO">
-			/*memberBuyerInsert*/
-			<![CDATA[
-			INSERT INTO tb_member (
-				member_id,
-				member_pw,
-				member_nm,
-				join_type_cd,
-				reg_dt
-			)
-			VALUES(
-				#{memberId},
-				#{memberPw},
-				#{memberNm},
-				'000003',
-				CURRENT_TIMESTAMP	
-			)
-			]]>	
 	</insert>
 	
 	<insert id="memberBuyerInsertEnterprise" parameterType="jcep.admin.model.MemberVO">
@@ -229,40 +230,68 @@
 		(	
 			member_id,
 			buyer_nm,
+			buyer_email,
+			buyer_cel_no1,
+			buyer_cel_no2,
+			buyer_cel_no3,
 			buyer_head_tel,
+			buyer_head_tel2,
+			buyer_head_tel3,
 			buyer_ceo_email,
 			company_nm,
 			buyer_ceo,
 			buyer_com_reg_num,
 			buyer_site,
-			buyer_bus_area,
+			buyer_bus_area_cd,
 			buyer_head_addr,
 			buyer_head_detail_addr,
 			buyer_head_fax,
+			buyer_head_fax2,
+			buyer_head_fax3,
 			buyer_branch_addr,
 			buyer_branch_detail_addr,
 			buyer_branch_tel,
+			buyer_branch_tel2,
+			buyer_branch_tel3,
 			buyer_branch_fax,
+			buyer_branch_fax2,
+			buyer_branch_fax3,
+			buyer_est_dt,
+			buyer_capital_amt,
 			reg_dt
 		)
 		values
 		(	
 			#{memberId},
 			#{memberNm},
+			concat(#{buyerEmail},'@',#{selboxDirect1}),
+			#{buyerCelNo1},
+			#{buyerCelNo2},
+			#{buyerCelNo3},
 			#{buyerHeadTel},
-			#{buyerCeoEmail},
+			#{buyerHeadTel2},
+			#{buyerHeadTel3},
+			concat(#{buyerCeoEmail},'@',#{selboxDirect}),
 			#{companyNm},
 			#{buyerCeo},
 			#{buyerComRegNum},
 			#{buyerSite},
-			#{buyerBusArea},
+			#{buyerBusAreaCd},
 			#{buyerHeadAddr},
 			#{buyerHeadDetailAddr},
 			#{buyerHeadFax},
+			#{buyerHeadFax2},
+			#{buyerHeadFax3},
 			#{buyerBranchAddr},
 			#{buyerBranchDetailAddr},
 			#{buyerBranchTel},
+			#{buyerBranchTel2},
+			#{buyerBranchTel3},
 			#{buyerBranchFax},
+			#{buyerBranchFax2},
+			#{buyerBranchFax3},
+			replace(#{buyerEstDt},'-',''),
+			replace(#{buyerCapitalAmt},',',''),
 			CURRENT_TIMESTAMP
 		)
 	]]>	

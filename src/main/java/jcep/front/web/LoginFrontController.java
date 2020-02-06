@@ -93,11 +93,8 @@ public class LoginFrontController {
 		login.put("memberId", request.getParameter("memberId"));
 		login.put("memberPw", request.getParameter("memberPw"));
 		
-		System.out.println("memberId" + request.getParameter("memberId"));
-		System.out.println("memberPw :: " + request.getParameter("memberId"));
-		
 		int idCnt = loginFrontService.selectLoginListTotCnt(login);	///아이디가 있나 없나 체크
-		System.out.println("idCnt:::" + idCnt);
+		System.out.println("  :::::::: " + idCnt);
 		if(idCnt > 0) {
 			data = loginFrontService.loginData(login);
 			if(data!=null) {
@@ -107,25 +104,11 @@ public class LoginFrontController {
 				model.addAttribute("memberId", data.getMemberId());	//승인상태값 
 				model.addAttribute("memberPw", data.getMemberPw());	//승인상태값 
 				model.addAttribute("memberStCd", data.getMemberStCd());	//승인상태값 
-				System.out.println("아이디" + data.getMemberId());
-				System.out.println("비밀번호" + data.getMemberPw());
-				System.out.println("승인상태" + data.getMemberStCd());
-				System.out.println("회원구분" + data.getJoinTypeCd());
 			}				
 		}
 		
 	
 		model.addAttribute("idCnt", idCnt);
-
-		/*		String memberStCd = loginFrontService.selectLoginListMemberStCd(searchVO, session);//승인상태 체크 
-		request.setAttribute("memberStCd", memberStCd);
-		System.out.println("memberStCd :: " + memberStCd);*/		
-/*		request.setAttribute("memberId", data.getMemberId());
-		request.setAttribute("memberPw", data.getMemberPw());
-		request.setAttribute("idCnt", idCnt);
-		request.setAttribute("memberStCd", memberStCd);*/
-
-		System.out.println("memberId :::" + session.getAttribute("memberId"));
 		return "jsonView";
 	}
 	

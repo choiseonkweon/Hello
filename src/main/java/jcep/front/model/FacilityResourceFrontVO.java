@@ -208,7 +208,7 @@ public class FacilityResourceFrontVO extends PagingVO {
 	
 	
 	// 자원시설 신청 정보 
-	private String compNm,compAddr1,compAddr2,compApplNm,compTelNo,compMail1,compMail2,useObj,useFrDt,useFrTm,useToDt,useToTm,resourFaciDiviCd,calYn,useDate,appliNo;
+	private String compNm,compAddr1,compAddr2,compApplNm,compTelNo,compTelNo2,compTelNo3,compMail1,compMail2,useObj,useFrDt,useFrTm,useToDt,useToTm,resourFaciDiviCd,calYn,useDate,appliNo;
 	private int usePersNum;
 	
 	
@@ -1274,6 +1274,18 @@ public class FacilityResourceFrontVO extends PagingVO {
 	}
 	public void setUseDate(String useDate) {
 		this.useDate = useDate;
+	}
+	public String getCompTelNo2() {
+		return compTelNo2;
+	}
+	public void setCompTelNo2(String compTelNo2) {
+		this.compTelNo2 = compTelNo2;
+	}
+	public String getCompTelNo3() {
+		return compTelNo3;
+	}
+	public void setCompTelNo3(String compTelNo3) {
+		this.compTelNo3 = compTelNo3;
 	}
 
 }

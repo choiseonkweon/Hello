@@ -6,6 +6,7 @@ import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -27,6 +28,7 @@ import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 import egovframework.rte.fdl.property.EgovPropertyService;
 import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 import jcep.admin.model.MemberVO;
+import jcep.admin.service.MemberService;
 import jcep.front.model.FacilityResourceFrontVO;
 import jcep.front.service.FacilityResourceFrontService;
 
@@ -60,6 +62,9 @@ public class FacilityResourceFrontController {
 	@Resource(name="noticeFilePath")
     String noticeFilePath;
 	
+	@Resource(name = "memberService")
+	protected MemberService memberService;	
+	
 
 	/**
 	 * 시설신청 목록을 조회한다. (pageing)
@@ -89,6 +94,13 @@ public class FacilityResourceFrontController {
 		int totCnt = facilityResourceFrontService.selectFacilityUseListTotCnt(searchVO);
 		paginationInfo.setTotalRecordCount(totCnt);
 		model.addAttribute("paginationInfo", paginationInfo);
+		
+		//전문분야 - 대분류 
+		MemberVO commonsVo = new MemberVO();
+		// 휴대전화 코드
+		commonsVo.setGroupCd("G00050");
+		List<MemberVO> hpNoList = memberService.selectCommonsList(commonsVo);
+		model.addAttribute("hpNoList" ,hpNoList);		
 		
 		mv.setViewName("/view/frontView/facilityUseList");
 		
@@ -175,6 +187,13 @@ public class FacilityResourceFrontController {
 		int totCnt = facilityResourceFrontService.selectResourceUseListTotCnt(searchVO);
 		paginationInfo.setTotalRecordCount(totCnt);
 		model.addAttribute("paginationInfo", paginationInfo);
+		
+		//전문분야 - 대분류 
+		MemberVO commonsVo = new MemberVO();
+		// 휴대전화 코드
+		commonsVo.setGroupCd("G00050");
+		List<MemberVO> hpNoList = memberService.selectCommonsList(commonsVo);
+		model.addAttribute("hpNoList" ,hpNoList);				
 		
 		mv.setViewName("/view/frontView/resourceUseList");
 		

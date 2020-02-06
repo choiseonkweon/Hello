@@ -7,57 +7,67 @@
 <%@ taglib prefix="spring"	uri="http://www.springframework.org/tags"%>    
 <!DOCTYPE html>
 <html>
-<link rel='stylesheet' type='text/css' href='css/reset.css' />
-<link rel='stylesheet' type='text/css' href='css/common.css' />
-<link rel='stylesheet' type='text/css' href='css/sub.css' />
-<script type="text/javascript" src="../db/assets/js/jquery-1.12.4.min.js"></script>
-<script type="text/javascript" src="../db/assets/js/jquery.easing.1.3.js"></script>
-<script type="text/javascript" src="../db/assets/js/ui.js"></script>
-
-<script src="http://dmaps.daum.net/map_js_init/postcode.v2.js"></script>
 <script type="text/javaScript" defer="defer">
-	$(document).ready(function () {
-		
-/* 		var memberId = $('#memberId').val();
-		alert("memberId :: " + memberId); */
-		
-		$("#idChkBtn").click(function(){
-			//alert($('#memberId').val());
-			//alert($('#expertHeadTel1').val());
-			if($('#memberId').val() == ''){
-				alert('아이디를 입력하세요.');
-				$('#memberId').focus();
-				return false;
-			}else{
-				$.ajax({
-					type : 'post',
-					url:'/db/member/memberIdChk.do',
-					data: {memberId : $('#memberId').val()},
-					dataType: 'json',
-					success : function(data) {
-						if(data.idCnt != 0){
-							$("#chkYn").val("N");
-							$("#able").hide();
-							$("#enable").show();
-						}else{
-							$("#chkYn").val("Y");
-							$("#able").show();
-							$("#enable").hide();
-						}
-					},  
-				    error:function(request,status,error){ //ajax 오류인경우  
-			            alert("작업중 에러가 발생했습니다.");      
-			            console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
-			   		} 
-			 	});
-				return false;
-			}
-			 
-		});
+var member = {}; 
+
+$(document).ready(function () {
+	oneDatepicker2("date");
+	
+	$("#idChkBtn").click(function(){
+		var pMember = $("#memberId");
+
+		if(pMember.val() == ''){
+			alert('아이디를 입력하세요.');
+			pMember.focus();
+			return false;
+		}else{
+			$.ajax({
+				type : 'post',
+				url:'/db/member/memberIdChk.do',
+				data: {memberId : pMember.val()},
+				dataType: 'json',
+				success : function(data) {
+					if(data.idCnt != 0){
+						member = {chkMemberId : "",chkYn : "N"};
+						$("#able").hide();
+						$("#enable").show();
+					}else{
+						member = {chkMemberId :pMember.val(),chkYn : "Y"};
+						$("#able").show();
+						$("#enable").hide();
+					}
+				},  
+			    error:function(request,status,error){ //ajax 오류인경우  
+		            alert("작업중 에러가 발생했습니다.");      
+		            console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+		   		} 
+		 	});
+			return false;
+		}
+		 
+	});
+	
+	
+	$("#memberId").change(function(){
+		member = {chkMemberId : "",chkYn : "N"};
+		$("#able").hide();
+		$("#enable").hide();
+	});	
 		
 
 		function checkValue(){
 			var retValue = true;
+			if($('#memberId').val() == ""){
+				alert("아이디를 입력하세요.");
+				$('#memberId').focus();
+				return;
+			}
+			
+			if(member.chkMemberId != $('#memberId').val() || member.chkMemberId === "" || member.chkYn != "Y"){
+				alert("아이디를 중복체크 하세요.");
+				return;
+			}	
+			
 			
 			var idReg = /^[a-z]+[a-z0-9]{5,19}$/g;
 			
@@ -66,16 +76,6 @@
 	            return;
 	        }
 			
-			if($('#memberId').val() == ""){
-				alert("아이디를 입력하세요.");
-				$('#memberId').focus();
-				return;
-			}
-			
-			if($('#chkYn').val() != "Y"){
-				alert("아이디를 중복체크 하세요.");
-				return;
-			}
 			
 			if($('#memberPw').val() == ""){
 				alert("비밀번호를 입력하세요.");
@@ -105,28 +105,32 @@
 				$('#expertHeadTel').focus();
 				return;
 			}
-
-/* 			if($('#expertHeadTel2').val() == ""){
+			if($('#expertHeadTel2').val() == ""){
 				alert("휴대폰번호를 입력하세요.");
 				$('#expertHeadTel2').focus();
 				return;
 			}
-			
 			if($('#expertHeadTel3').val() == ""){
 				alert("휴대폰번호를 입력하세요.");
 				$('#expertHeadTel3').focus();
 				return;
-			} */
+			}
+
 			return retValue;
 		}
 		
 		$("#createBtn").click(function(){
 			if(checkValue()){
+				$("#joinTypeCd").val("000002");	
+				var formData = new FormData(document.insertFrm);
 				$.ajax({
 					type : 'post',
-					url:'/db/memberExpertInsert.do',
-					data: $('#insertFrm').serialize(),
+					url:'/db/memberInsert.do',
+					data: formData,
 					dataType: 'json',
+					enctype: 'multipart/form-data',
+					contentType : false,
+			        processData : false, 					
 					success : function(data) {
 						if(data.returnCode == 0){
 		                    alert("등록을 실패 하였습니다.");
@@ -143,37 +147,6 @@
 			 	});
 			} 
 		});
-		
-		$("#saveBtn").click(function(){
-			$.ajax({
-				type : 'post',
-				url:'/db/memberExpertUpdate.do',
-				data: $('#updateFrm').serialize(),
-				dataType: 'json',
-				success : function(data) {
-					if(data.returnCode == 0){
-	                    alert("등록을 실패 하였습니다.");
-	                    return;
-	                }else{
-	                	alert("수정이 완료 되었습니다.");
-	                	window.location.href="/db/login.do";
-	                }
-				},  
-			    error:function(request,status,error){ //ajax 오류인경우  
-		            alert("작업중 에러가 발생했습니다.");      
-		            console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
-		   		} 
-		 	});
-		});
-		
-		 
-		 $("#resourceBtn").click(function(){
-				$("#resourcePop").show();
-		 });	
-		 
-		 $(".closeBtn").click(function(){
-				$("#resourcePop").hide();
-		 });
 		 
 		 $("#cancel").click(function(){
 			var result = confirm("취소하시겠습니까?");
@@ -220,19 +193,6 @@
 					
 				}
 			 });
-		 
-/*   $(function(){
-      //직접입력 인풋박스 기존에는 숨어있다가
-		$("#selboxDirect").hide();
-		$("#selbox").change(function() {
-                //직접입력을 누를 때 나타남
-				if($("#selbox").val() == "direct") {
-					$("#selboxDirect").show();
-				}  else {
-					$("#selboxDirect").hide();
-				}
-			}) 
-		}); */
 
 		 $('#selbox').change(function() { 
 			$("#selbox option:selected").each(function() { 
@@ -285,7 +245,7 @@
 			            }
 
 			            // 우편번호와 주소 정보를 해당 필드에 넣는다.
-			            document.getElementById('expertOffiAddr').value = "(" + data.zonecode + ")" + " " + fullRoadAddr;
+			            document.getElementById('expertHomeAddr').value = "(" + data.zonecode + ")" + " " + fullRoadAddr;
 			  }
 		}).open();
 	}
@@ -321,11 +281,58 @@
 			            }
 
 			            // 우편번호와 주소 정보를 해당 필드에 넣는다.
-			            document.getElementById('expertHomeAddr').value = "(" + data.zonecode + ")" + " " + fullRoadAddr;
+			            document.getElementById('expertOffiAddr').value = "(" + data.zonecode + ")" + " " + fullRoadAddr;
 			  }
 		}).open();
 	}
 	
+	//전문분야 변경 -> 세부 조회 
+	function largeSpecialAreaCdChange(target){
+		var largeCdValue = target.value; 
+		var detail = $("#detailSpecialAreaCd");
+		if("" === largeCdValue || undefined === largeCdValue){
+			detail.find("option:gt(0)").remove();
+		}else{
+			
+			$.ajax({
+				type : 'post',
+				url:'/db/selectOnchange.do',
+				data: {
+					"selectBoxData" : largeCdValue
+				},
+				dataType: 'json',
+				success : function(data) {
+		              var htmls = "";
+			              if(data.data.length > 0){
+	                         $(data.data).each(function(){
+	                            htmls +='<option value="' + this.commonCd + '">' + this.commonNm + '</>'; 
+	                        });   //each end 
+	                        detail.find("option:gt(0)").remove();
+	                        detail.append(htmls);  
+			              }else{
+			            	  detail.find("option:gt(0)").remove();
+			              }		
+				},  
+			    error:function(request,status,error){ //ajax 오류인경우  
+		            alert("작업중 에러가 발생했습니다.");      
+		   		}
+			});			
+			
+		}
+		
+	}	
+	
+	function getThumbnailPrivew(html, $target) {
+		     if (html.files && html.files[0]) {
+		         var reader = new FileReader();
+		         reader.onload = function (e) {
+		             $target.css('display', '');
+		             $target.html('<img src="' + e.target.result + '" border="0" alt="" style="width:100px;height:140px;""/>');
+		 			 document.getElementById('chkImg').value = 'Y';
+		         }
+		         reader.readAsDataURL(html.files[0]);
+		     }
+		}	
 	
 </script>
         
@@ -338,12 +345,6 @@
 </head>
 <body>
 
-<input type="hidden" name="searchType" value="<c:out value='${searchVO.searchType}'/>"/>
-<input type="hidden" name="searchText" value="<c:out value='${searchVO.searchText}'/>"/>
-<input type="hidden" name="memberSt" value="<c:out value='${searchVO.memberSt}'/>"/>
-<input type="hidden" name="pageIndex" value="<c:out value='${searchVO.pageIndex}'/>"/> 
-<input type="hidden" name="chkYn" id="chkYn" value="">
-
 <div id="wrap" class="sub s6">
 	<jsp:include page="menu.jsp"></jsp:include>	
 	<div id="contents">
@@ -355,20 +356,11 @@
 				<span class="now">회원가입</span>
 				<span class="now">회원 가입 및 수정</span>
 				<span class="now">
-					<c:if test="${viewType eq 'create'}">
 				<div class="row">
 					<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
 						<h1 class="page-title txt-color-blueDark"><i class="fa-fw fa fa-home"></i><b>회원정보 등록</b></h1>
 					</div>
 				</div>
-		</c:if>
-		<c:if test="${viewType eq 'modify'}">
-			<div class="row">
-				<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
-					<h1 class="page-title txt-color-blueDark"><i class="fa-fw fa fa-home"></i><b>회원정보 수정</b></h1>
-				</div>
-			</div>
-		</c:if>
 				</span>
 			</div>
 		</div>
@@ -377,13 +369,10 @@
 			<h2 class="">회원가입 - 더 새로워진 전남콘테츠기업육성센터 홈페이지를 만나보세요!</h2>
 			<div class="cont">
 				<h3>회원</h3>
-			
-							
-			<!--  회원정보 가입 form S -->
-			<c:if test="${viewType eq 'create' }">
 			<section id="widget-grid" class="">			
 				<div class="continner">
-				<form id="insertFrm" name="insertFrm" action="#" method="POST">
+				<form id="insertFrm" name="insertFrm" action="#" method="POST" enctype="multipart/form-data">
+					<input type="hidden" id="joinTypeCd" name="joinTypeCd" value="" />				
 					<div class="tab">
 						<ul class="tab01_4 clearfix">
 							<li class="step"><a href="/db/joinStep01.do">가입유형</a></li>
@@ -407,9 +396,9 @@
 							<tbody>
 								<tr>
 									<th colspan="2" class="essential">아이디</th>
-									<td colspan="2">
-										<input type="text" id="memberId" name="memberId" style="width: 50%;" maxlength="20" onkeyup="this.value=this.value.replace(/[^A-Za-z0-9]/g,'');" />
-										<button class="txtbtn" id="idChkBtn" style="width: 100px;">중복확인</button>
+									<td>
+										<input type="text" id="memberId" name="memberId" style="width: 65%;" maxlength="20" onkeyup="this.value=this.value.replace(/[^A-Za-z0-9]/g,'');" />
+										<button type="button" class="txtbtn" id="idChkBtn" style="width: 100px;">중복확인</button>
 										<div id="able" style="padding-top:5px;padding-bottom:5px;width:99%;display:none;color:blue;">
 											사용가능한 아이디입니다.
 										</div>
@@ -417,13 +406,19 @@
 											사용 불가능한 아이디입니다.
 										</div>
 									</td>
+									<th>사진</th>
+									<td>
+										<input type="file" name="uploadFileNm" id="uploadFileNm" onchange="getThumbnailPrivew(this,$('#image'))"><br>
+										<input type="hidden" id="chkImg" name="chkImg" value="" />
+										<div id='image'></div>									
+									</td>									
 								</tr>
 								<tr>
 									<th colspan="2" class="essential">비밀번호</th>
 									<td>
 										<input type="password" style="width: 100%;" id="memberPw" name="memberPw" maxlength="30">
 									</td>
-									<th>비밀번호 확인</th>
+									<th class="essential">비밀번호 확인</th>
 									<td>
 										<input type="password" style="width: 100%;" id="memPwdChk" name="memPwdChk" maxlength="30">
 									</td>
@@ -431,41 +426,32 @@
 								<tr>
 									<th colspan="2" class="essential">이름</th>
 									<td>
-										<input type="text" style="width:100%;" id="memberNm" name="memberNm">
+										<input type="text" style="width:100%;" id="memberNm" name="memberNm" maxlength="30">
 									</td>
-									<th></th>
+									<th>과학기술인/<br>사업자등록번호 </th>
 									<td>
-										<!-- <input type="text" style="width:100%;" id="memberNm" name="memberNm"> -->
+										 <input type="text" style="width:100%;" id="expertStRegNo" name="expertStRegNo" maxlength="20" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');">
 									</td>
 								</tr>
 								<tr>
 									<th colspan="2" class="essential">휴대폰번호</th>
 									<td>
-										<input type="text" style="width:100%;" id="expertHeadTel" name="expertHeadTel" maxlength="12" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');">
-<!-- 										<em>-</em>
-										<input type="text" style="width: 25%;" id="expertHeadTel2" name="expertHeadTel2">
+										<select style="width: 25%;" id="expertHeadTel" name="expertHeadTel">
+											<option value="">선택</option>
+											<c:forEach var="hpNoList" items="${hpNoList}" varStatus="status">
+												<option value="${hpNoList.commonCd}"><c:out value="${hpNoList.commonCd}"/></option>
+											</c:forEach>
+										</select>
 										<em>-</em>
-										<input type="text" style="width: 25%;" id="expertHeadTel3" name="expertHeadTel3"> -->
+										<input type="text" style="width: 25%;" id="expertHeadTel2" name="expertHeadTel2" okkeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="4">
+										<em>-</em>
+										<input type="text" style="width: 25%;" id="expertHeadTel3" name="expertHeadTel3" onkeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="4">	
 									</td>
-									<th>이메일</th>
+									<th class="essential">이메일</th>
 									<td>
-										<!-- <input type="text" style="width: 40%;" id="expertEmail" name="expertEmail">
-										<em>@</em>
-										상단의 select box에서 '직접입력'을 선택하면 나타날 인풋박스
-										<input type="text" id="selboxDirect" name="selboxDirect" style="width: 40%;"/>
-										<select style="width: 40%;" id="selbox" name="selbox">
-											<option value="nate.com">nate.com</option>
-											<option value="naver.com">naver.com</option>
-											<option value="gmail.com">gmail.com</option>
-											<option value="direct">기타</option>
-										</select> -->
-										
-										<input type="text" name="expertEmail" id="expertEmail" title="이메일 앞자리주소"  style="width: 40%;" maxlength="30"/>
+										<input type="text" name="expertEmail" id="expertEmail" title="이메일 앞자리주소"  style="width: 30%;" maxlength="30" onkeyup="this.value=this.value.replace(/[^A-Za-z0-9]/g,'');"/>
 								        @
-								        <input type="text" name="selboxDirect" id="selboxDirect" title="이메일 뒷자리주소" style="width: 40%;" maxlength="30" /> 
-								        <div class="select-box">
-								            <label for="selbox">이메일 뒷자리 선택</label>
-								            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								        <input type="text" name="selboxDirect" id="selboxDirect" title="이메일 뒷자리주소" style="width: 30%;" maxlength="30" /> 
 								            <select id="selbox" title="이메일 뒷자리 선택">
 								                <option value="1">직접입력</option>
 								                <option value="naver.com">naver.com</option>
@@ -477,42 +463,62 @@
 								                <option value="freechal.com">freechal.com</option>
 								                <option value="hanmir.com">hanmir.com</option>
 								            </select>
-								        </div>
 								        <span class="desc"></span>
-										
-										
 									</td>
 								</tr>
 								<tr>
-									<th colspan="2">출신학교</th>
+									<th colspan="2" class="essential">출신학교</th>
 									<td>
-										<input type="text" style="width: 100%;" id="expertFinalSchoolNm" name="expertFinalSchoolNm">
+										<input type="text" style="width: 100%;" id="expertFinalSchoolNm" name="expertFinalSchoolNm" maxlength="30">
 									</td>
-									<th>전공</th>
+									<th class="essential">전공</th>
 									<td>
-										<input type="text" style="width: 100%;" id="expertMajorNm" name="expertMajorNm">
+										<input type="text" style="width: 100%;" id="expertMajorNm" name="expertMajorNm" maxlength="20">
 									</td>
 								</tr>
 								<tr>
-									<th colspan="2">소속기관</th>
+									<th colspan="2" class="essential">소속기관</th>
 									<td>
-										<input type="text" style="width: 100%;" id="expertHeadAddrNm" name="expertHeadAddrNm">
+										<input type="text" style="width: 100%;" id="expertHeadAddrNm" name="expertHeadAddrNm" maxlength="20">
 									</td>
 									<th>해당부서</th>
 									<td>
-										<input type="text" style="width: 100%;" id="expertDptmNm" name="expertDptmNm">
+										<input type="text" style="width: 100%;" id="expertDptmNm" name="expertDptmNm" maxlength="20">
 									</td>
 								</tr>
 								<tr>
-									<th colspan="2" colspan="2">전문분야</th>
+									<th colspan="2">직책</th>
 									<td>
-										<input type="text" style="width: 100%;" id="memberSpecialty" name="memberSpecialty">
+										<input type="text" style="width: 100%;" id="expertOffiDutyNm" name="expertOffiDutyNm" maxlength="30">
 									</td>
-									<th>세부전문분야</th>
+									<th>산학연관</th>
 									<td>
-										<input type="text" style="width: 100%;" id="detailSpecialAreaCd" name="detailSpecialAreaCd">
+										<select  id="expertIndsEduCd" name="expertIndsEduCd">
+												<option value="">선택</option>
+											<c:forEach var ="exIndsEduCdList" items="${exIndsEduCdList}" varStatus="status">
+												<option value="${exIndsEduCdList.commonCd}">${exIndsEduCdList.commonNm}</option>
+											</c:forEach>										
+										</select>										
 									</td>
 								</tr>
+								<tr>
+									<th colspan="2" class="essential">전문분야</th>
+									<td>
+										<select  id="largeSpecialAreaCd" name="largeSpecialAreaCd" onchange="javascript:largeSpecialAreaCdChange(this);">
+												<option value="">선택</option>
+											<c:forEach var ="areaList" items="${areaList}" varStatus="status">
+												<option value="${areaList.commonCd}">${areaList.commonNm}</option>
+											</c:forEach>										
+										</select>
+									</td>
+									<th class="essential">세부전문분야</th>
+									<td>
+										<select  id="detailSpecialAreaCd" name="detailSpecialAreaCd">
+											<option value="">선택</option>
+										</select>										
+									</td>
+								</tr>
+								<!-- 
 								<tr>
 									<th colspan="2">관심분야</th>
 									<td>
@@ -523,39 +529,39 @@
 										<input type="text" style="width: 100%;" id="expertDetailIntrtAreaCd" name="expertDetailIntrtAreaCd">
 									</td>
 								</tr>
+								 -->
 								<tr>
 									<th rowspan="4">주소</th>
+									<th rowspan="2" class="row">자택</th>
+									<td colspan="3">
+										<input type="text" id="expertHomeAddr" name="expertHomeAddr" class="input-sm" value="" onclick="javascript:openDaumPostcode()" maxlength="50" style="width:30%" readonly="readonly">
+										<button type="button" class="txtbtn" style="width: 100px;" onclick="javascript:openDaumPostcode()">우편번호 검색</button>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="3">
+										상세주소
+										<input type="text" style="width: 30%;" id="expertHomeDetailAddr" name="expertHomeDetailAddr" maxlength="40">
+									</td>								
+								</tr>								
+								<tr>
 									<th rowspan="2" class="row">본사</th>
 									<td>
-										<input type="text" id="expertOffiAddr" name="expertOffiAddr" class="input-sm" value="" maxlength="50" style="width:90%" readonly="readonly">
-										<button type="button" class="txtbtn" style="width: 120px;" onclick="javascript:openDaumPostcode()">우편번호 검색</button>
+										<input type="text" id="expertOffiAddr" name="expertOffiAddr" class="input-sm" value="" onclick="javascript:openDaumPostcode1()" maxlength="50" style="width:69%" readonly="readonly">
+										<button type="button" class="txtbtn" style="width: 100px;" onclick="javascript:openDaumPostcode1()">우편번호 검색</button>
 									</td>
 									<th>대표전화</th>
 									<td>
 										<select style="width: 25%;" id="expertOffiTel" name="expertOffiTel">
-											<option></option>
-											<option value="02">02</option>
-											<option value="031">031</option>
-											<option value="032">032</option>
-											<option value="033">033</option>
-											<option value="041">041</option>
-											<option value="042">042</option>
-											<option value="043">043</option>
-											<option value="044">044</option>
-											<option value="051">051</option>
-											<option value="052">052</option>
-											<option value="053">053</option>
-											<option value="054">054</option>
-											<option value="055">055</option>
-											<option value="061">061</option>
-											<option value="062">062</option>
-											<option value="063">063</option>
-											<option value="064">064</option>
+											<option value="">선택</option>
+											<c:forEach var="totTelNoList" items="${totTelNoList}" varStatus="status">
+												<option value="${totTelNoList.commonCd}"><c:out value="${totTelNoList.commonCd}"/></option>
+											</c:forEach>
 										</select>
 										<em>-</em>
-										<input type="text" style="width: 25%;" id="expertOffiTel1" name="expertOffiTel1" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="4">
-										<em>-</em>
 										<input type="text" style="width: 25%;" id="expertOffiTel2" name="expertOffiTel2" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="4">
+										<em>-</em>
+										<input type="text" style="width: 25%;" id="expertOffiTel3" name="expertOffiTel3" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="4">
 									</td>
 								</tr>
 								<tr>
@@ -566,98 +572,26 @@
 									<th>대표FAX</th>
 									<td>
 										<select style="width: 25%;" id="expertOffiFax" name="expertOffiFax">
-											<option></option>
-											<option value="02">02</option>
-											<option value="031">031</option>
-											<option value="032">032</option>
-											<option value="033">033</option>
-											<option value="041">041</option>
-											<option value="042">042</option>
-											<option value="043">043</option>
-											<option value="044">044</option>
-											<option value="051">051</option>
-											<option value="052">052</option>
-											<option value="053">053</option>
-											<option value="054">054</option>
-											<option value="055">055</option>
-											<option value="061">061</option>
-											<option value="062">062</option>
-											<option value="063">063</option>
-											<option value="064">064</option>
+											<option value="">선택</option>
+											<c:forEach var="telNoList" items="${telNoList}" varStatus="status">
+												<option value="${telNoList.commonCd}"><c:out value="${telNoList.commonCd}"/></option>
+											</c:forEach>
 										</select>
-										<em>-</em>
-										<input type="text" style="width: 25%;" id="expertOffiFax1" name="expertOffiFax1" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="4">
 										<em>-</em>
 										<input type="text" style="width: 25%;" id="expertOffiFax2" name="expertOffiFax2" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="4">
+										<em>-</em>
+										<input type="text" style="width: 25%;" id="expertOffiFax3" name="expertOffiFax3" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="4">
 									</td>
 								</tr>
 								<tr>
-									<th rowspan="2" class="row">자택</th>
-									<td>
-										<input type="text" id="expertHomeAddr" name="expertHomeAddr" class="input-sm" value="" maxlength="50" style="width:90%" readonly="readonly">
-										<button type="button" class="txtbtn" style="width: 120px;" onclick="javascript:openDaumPostcode1()">우편번호 검색</button>
-									</td>
-									<th>대표전화</th>
-									<td>
-										<select style="width: 25%;" id="memberMytel" name="memberMytel">
-											<option></option>
-											<option value="02">02</option>
-											<option value="031">031</option>
-											<option value="032">032</option>
-											<option value="033">033</option>
-											<option value="041">041</option>
-											<option value="042">042</option>
-											<option value="043">043</option>
-											<option value="044">044</option>
-											<option value="051">051</option>
-											<option value="052">052</option>
-											<option value="053">053</option>
-											<option value="054">054</option>
-											<option value="055">055</option>
-											<option value="061">061</option>
-											<option value="062">062</option>
-											<option value="063">063</option>
-											<option value="064">064</option>
+									<th colspan="2">정책정보 제공을 위한 <br> 수집 및 이용동의</th>
+									<td colspan="3">
+										<select style="width: 8%;" id="conllentPublicYn" name="conllentPublicYn">
+											<option value="Y" ${resultList.conllentPublicYn == 'Y' ? 'selected="selected"' : '' }>동의</option>
+											<option value="N" ${resultList.conllentPublicYn != 'Y' ? 'selected="selected"' : '' }>미동의</option>
 										</select>
-										<em>-</em>
-										<input type="text" style="width: 25%;" id="memberMyTel1" name="memberMyTel1" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="4">
-										<em>-</em>
-										<input type="text" style="width: 25%;" id="memberMyTel2" name="memberMyTel2" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="4">
 									</td>
-								</tr>
-								<tr>
-									<td>
-										상세주소
-										<input type="text" style="width: 70%;" id="expertHomeDetailAddr" name="expertHomeDetailAddr" maxlength="40">
-									</td>
-									<th>대표FAX</th>
-									<td>
-										<select style="width: 25%;" id="memberMyfax" name="memberMyfax">
-											<option></option>
-											<option value="02">02</option>
-											<option value="031">031</option>
-											<option value="032">032</option>
-											<option value="033">033</option>
-											<option value="041">041</option>
-											<option value="042">042</option>
-											<option value="043">043</option>
-											<option value="044">044</option>
-											<option value="051">051</option>
-											<option value="052">052</option>
-											<option value="053">053</option>
-											<option value="054">054</option>
-											<option value="055">055</option>
-											<option value="061">061</option>
-											<option value="062">062</option>
-											<option value="063">063</option>
-											<option value="064">064</option>
-										</select>
-										<em>-</em>
-										<input type="text" style="width: 25%;" id="memberMyFax1" name="memberMyFax1" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="4">
-										<em>-</em>
-										<input type="text" style="width: 25%;" id="memberMyFax2" name="memberMyFax2" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="4">
-									</td>
-								</tr>
+								</tr>									
 							</tbody>
 						</table>
 					</div>
@@ -672,228 +606,11 @@
 				</div>
 				
 				</section>
-			</c:if>
-			
-			
-			<!--  회원정보 수정 form S -->
-			<c:if test="${viewType eq 'modify' }">
-				<section id="widget-grid" class="">			
-				<div class="continner">
-				<form id="updateFrm" name="updateFrm" action="#" method="POST">
-					<input type="hidden" name="memberIdx" id="memberIdx" value="<c:out value="${detail.memberIdx}"/>"/>
-					<div class="tab">
-						<ul class="tab01_4 clearfix">
-							<li class="step"><a href="/db/joinStep01.do">가입유형</a></li>
-							<li class="step"><a href="/db/joinStep02.do">약관동의</a></li>
-							<li class="on"><a href="#none">정보입력</a></li>
-							<li><a href="#none">가입완료</a></li>
-						</ul>
-					</div>
-					
-			
-					<div class="joininfobox">
-						<h4>전문가정보입력</h4>
-						<table class="table01 tb_pc">
-							<colgroup>
-								<col style="width:10%;">
-								<col style="width:5%;">
-								<col style="width:35%;">
-								<col style="width:15%;">
-								<col style="width:35%;">
-							</colgroup>
-							<tbody>
-								<tr>
-									<th colspan="2" class="essential">아이디</th>
-									<td colspan="2">
-										<input type="text" id="memberId" name="memberId" value="${detail.memberId}" readonly="readonly"/>
-									</td>
-								</tr>
-								<tr>
-									<th colspan="2" class="essential">비밀번호</th>
-									<td>
-										<label class="input">
-											<input type="password" id="memberPw" name="memberPw" value="${detail.memberPw}" />
-										</label>
-									</td>
-									<th class="essential">비밀번호 확인</th>
-									<td>
-										<label class="input">
-											<input type="password" id="memPwdChk" name="memPwdChk" value="${detail.memberPw}" />
-										</label>
-									</td>
-								</tr>
-								<tr>
-									<th colspan="2" class="essential">이름</th>
-									<td colspan="3">
-										<input type="text" id="memberNm" name="memberNm" value="${detail.memberNm}" />
-									</td>
-								</tr>
-								<tr>
-									<th colspan="2">휴대폰1번호</th>
-									<td>
-										<label class="input">
-											<input type="text" style="width: 100%;" id="expertHeadTel" name="expertHeadTel" value="${detail.expertHeadTel}" maxlength="12" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" />
-										</label>
-									</td>
-									<th>이메일</th>
-									<td>
-										<label class="input">
-											<input type="text" style="width: 100%;" id="expertEmail" name="expertEmail" value="${detail.expertEmail}" />
-										</label>	
-									</td>
-								</tr>
-								<tr>
-									<th colspan="2">출신학교</th>
-									<td>
-										<label class="input">
-											<input type="text" style="width: 100%;" id="expertFinalSchoolNm" name="expertFinalSchoolNm" value="${detail.expertFinalSchoolNm}" />
-										</label>	
-									</td>
-									<th>전공</th>
-									<td>
-										<label class="input">
-											<input type="text" style="width: 100%;" id="expertMajorNm" name="expertMajorNm" value="${detail.expertMajorNm}" />
-										</label>	
-									</td>
-								</tr>
-								<tr>
-									<th colspan="2">소속기관</th>
-									<td>
-										<label class="input">
-											<input type="text" style="width: 100%;" id="expertHeadAddrNm" name="expertHeadAddrNm" value="${detail.expertHeadAddrNm} "/>
-										</label>	
-									</td>
-									<th>해당부서</th>
-									<td>
-										<label class="input">
-										 	<input type="text" style="width: 100%;" id="expertDptmNm" name="expertDptmNm" value="${detail.expertDptmNm} " />
-										</label> 
-									</td>
-								</tr>
-								<tr>
-									<th colspan="2" colspan="2">전문분야</th>
-									<td>
-										<label class="input">
-											<input type="text" style="width: 100%;" id="memberSpecialty" name="memberSpecialty" value="${detail.memberSpecialty}" />
-										</label>	
-									</td>
-									<th>세부전문분야</th>
-									<td>
-										<label class="input">
-											<input type="text" style="width: 100%;" id="detailSpecialAreaCd" name="detailSpecialAreaCd" value="${detail.detailSpecialAreaCd}" />
-										</label>	
-									</td>
-								</tr>
-								<tr>
-									<th colspan="2">관심분야</th>
-									<td>
-										<label class="input">
-											<input type="text" style="width: 100%;" id="expertInterestAreaCd" name="expertInterestAreaCd" value="${detail.expertInterestAreaCd}" />
-										</label>	
-									</td>
-									<th>세부관심분야</th>
-									<td>
-										<label class="input">
-											<input type="text" style="width: 100%;" id="expertDetailIntrtAreaCd" name="expertDetailIntrtAreaCd" value="${detail.expertDetailIntrtAreaCd}"/>
-										</label>	
-									</td>
-								</tr>
-								<tr>
-									<th rowspan="4">주소</th>
-									<th rowspan="2" class="row">본사</th>
-									<td>
-										<label class="input">
-											<input type="text" id="expertOffiAddr" name="expertOffiAddr" class="input-sm" value="${detail.expertOffiAddr}" maxlength="50" style="width:90%" readonly="readonly">
-											<button type="button" class="txtbtn" style="width: 120px;" onclick="javascript:openDaumPostcode()">우편번호 검색</button>
-										</label>
-									</td>
-									<th>대표전화</th>
-									<td>
-										<input type="text" style="width: 100%;" id="expertOffiTel" name="expertOffiTel" value="${detail.expertOffiTel}" maxlength="12" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" />
-									</td>
-								</tr>
-								<tr>
-									<td>
-										상세주소
-										<input type="text" style="width: 70%;" id="expertOffiDetailAddr" name="expertOffiDetailAddr" value="${detail.expertOffiDetailAddr}" />
-									</td>
-									<th>대표FAX</th>
-									<td>
-										<input type="text" style="width: 100%;" id="expertOffiFax" name="expertOffiFax" value="${detail.expertOffiFax}" maxlength="12" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" />
-									</td>
-								</tr>
-								<tr>
-									<th rowspan="2" class="row">자택</th>
-									<td>
-										<input type="text" id="expertHomeAddr" name="expertHomeAddr" class="input-sm" value="${detail.expertHomeAddr}" maxlength="50" style="width:90%" readonly="readonly">
-										<button type="button" class="txtbtn" style="width: 120px;" onclick="javascript:openDaumPostcode1()">우편번호 검색</button>
-									</td>
-									<th>대표전화</th>
-									<td>
-										<input type="text" style="width: 100%;" id="memberMytel" name="memberMytel" value="${detail.memberMytel}" maxlength="12" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" />
-									</td>
-								</tr>
-								<tr>
-									<td>
-										상세주소
-										<input type="text" style="width: 70%;" id="expertHomeDetailAddr" name="expertHomeDetailAddr" value="${detail.expertHomeDetailAddr}">
-									</td>
-									<th>대표FAX</th>
-									<td>
-										<input type="text" style="width: 100%;" id="memberMyfax" name="memberMyfax" value="${detail.memberMyfax}" maxlength="12" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" />
-									</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-
-					<div class="submitbtn">
-						<button type="button" id="saveBtn" name="saveBtn" class="ok">수정하기</button>
-						<button type="button" id="cancel1" name="cancel1" class="no">취소</button>
-					</div>
-					</form>
-				</div>
-				
-				</section>
-			</c:if>
-			
-				
 			</div>
 		</div>
 	</div>
 	
 </div>
-<%-- 
-<form role="form" id="insertFrm" action="#" class="form-horizontal" method="post">
-	<input type="hidden" name="memberIdx" id="memberIdx" value="">
-	<input type="hidden" id="memberId" name="memberId" value="">
-	<input type="hidden" name="memberPw" id="memberPw" value="">
-	<input type="hidden" name="memberNm" id="memberNm" value="">
-	<input type="hidden" name="expertOffiAddr" id="expertOffiAddr" value="">
-	<input type="hidden" name="expertOffiDetailAddr" id="expertOffiDetailAddr" value="">
-	<input type="hidden" name="expertOffiTel" id="expertOffiTel" value="">
-	<input type="hidden" name="expertHeadTel" id="expertHeadTel" value="">
-	<input type="hidden" name="expertEmail" id="expertEmail" value="">
-	<input type="hidden" name="memberBelong" id="memberBelong" value="">
-	<input type="hidden" name="memberJoinDt" id="memberJoinDt" value="">
-	<input type="hidden" name="memberJoinType" id="memberJoinType" value="">
-	<input type="hidden" name="memberSt" id="memberSt" value="">
-	<input type="hidden" name="expertFinalSchoolNm" id="expertFinalSchoolNm" value="">
-	<input type="hidden" name="expertMajorNm" id="expertMajorNm" value="">
-	<input type="hidden" name="expertHeadAddrNm" id="expertHeadAddrNm" value="">
-	<input type="hidden" name="expertDptmNm" id="expertDptmNm" value="">
-	<input type="hidden" name="memberSpecialty" id="memberSpecialty" value="">
-	<input type="hidden" name="detailSpecialAreaCd" id="detailSpecialAreaCd" value="">
-	<input type="hidden" name="expertInterestAreaCd" id="expertInterestAreaCd" value="">
-	<input type="hidden" name="expertDetailIntrtAreaCd" id="expertDetailIntrtAreaCd" value="">
-	<input type="hidden" name="expertOffiFax" id="expertOffiFax" value="">
-	<input type="hidden" name="expertHomeAddr" id="expertHomeAddr" value="">
-	<input type="hidden" name="memberMytel" id="memberMytel" value="">
-	<input type="hidden" name="memberMyfax" id="memberMyfax" value="">
-	<input type="hidden" name="	expertHomeDetailAddr" id="expertHomeDetailAddr" value="">
-</form>
- --%>
-
 </body>
 
 </html>

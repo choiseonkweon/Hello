@@ -238,12 +238,14 @@ public class MemberVO extends PagingVO {
 	private String joinDt;
 	private String joinTypeCd;
 	private String joinTypeCdNm;
-	private String memberStCd;
+	private String memberStCd,memberStCdNm;
 	private String regDt;
 	private String entprRespsibNm;
 	
 	// 20191113 신승원 기업정보
 	private String entprRespsibHpNo;
+	private String entprRespsibHpNo2;
+	private String entprRespsibHpNo3;
 	private String entprRespsibEmail;
 	private String entprNm;
 	private String entprCeo;
@@ -326,6 +328,11 @@ public class MemberVO extends PagingVO {
 	private String buyerBranchFax3;			
 	private String buyerEstDt;			
 	private String buyerCapitalAmt;		
+	private String buyerEmail;		
+	private String buyerCelNo;		
+	private String buyerCelNo1;		
+	private String buyerCelNo2;		
+	private String buyerCelNo3;		
 
 	// 20191113 신승원 바이어히스토리
 	private String buyerHistIdx;		
@@ -674,6 +681,8 @@ public class MemberVO extends PagingVO {
 	
 	private String buyerHistSpecNm;
 	
+	private String conllentPublicYn;
+	
 	/*20200113 최선권 원스톱지원업무일지정보 첨부파일구분코드 추가*/
 	private String attchFileDiviCd;
 
@@ -682,8 +691,6 @@ public class MemberVO extends PagingVO {
 
 	/*20200115 최선권 검색 셀렉트 구분변수 추가*/
 	private String searchSelect;
-	
-	
 	
 	public String getSearchSelect() {
 		return searchSelect;
@@ -3947,5 +3954,59 @@ public class MemberVO extends PagingVO {
 		}
 	public void setApprovalDt(String approvalDt) {
 		this.approvalDt = approvalDt;
+	}
+	public String getConllentPublicYn() {
+		return conllentPublicYn;
+	}
+	public void setConllentPublicYn(String conllentPublicYn) {
+		this.conllentPublicYn = conllentPublicYn;
+	}
+	public String getEntprRespsibHpNo2() {
+		return entprRespsibHpNo2;
+	}
+	public void setEntprRespsibHpNo2(String entprRespsibHpNo2) {
+		this.entprRespsibHpNo2 = entprRespsibHpNo2;
+	}
+	public String getEntprRespsibHpNo3() {
+		return entprRespsibHpNo3;
+	}
+	public void setEntprRespsibHpNo3(String entprRespsibHpNo3) {
+		this.entprRespsibHpNo3 = entprRespsibHpNo3;
+	}
+	public String getBuyerEmail() {
+		return buyerEmail;
+	}
+	public void setBuyerEmail(String buyerEmail) {
+		this.buyerEmail = buyerEmail;
+	}
+	public String getBuyerCelNo() {
+		return buyerCelNo;
+	}
+	public void setBuyerCelNo(String buyerCelNo) {
+		this.buyerCelNo = buyerCelNo;
+	}
+	public String getBuyerCelNo1() {
+		return buyerCelNo1;
+	}
+	public void setBuyerCelNo1(String buyerCelNo1) {
+		this.buyerCelNo1 = buyerCelNo1;
+	}
+	public String getBuyerCelNo2() {
+		return buyerCelNo2;
+	}
+	public void setBuyerCelNo2(String buyerCelNo2) {
+		this.buyerCelNo2 = buyerCelNo2;
+	}
+	public String getBuyerCelNo3() {
+		return buyerCelNo3;
+	}
+	public void setBuyerCelNo3(String buyerCelNo3) {
+		this.buyerCelNo3 = buyerCelNo3;
+	}
+	public String getMemberStCdNm() {
+		return memberStCdNm;
+	}
+	public void setMemberStCdNm(String memberStCdNm) {
+		this.memberStCdNm = memberStCdNm;
 	}
 }

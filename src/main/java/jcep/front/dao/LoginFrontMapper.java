@@ -2,6 +2,7 @@ package jcep.front.dao;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import egovframework.rte.psl.dataaccess.mapper.Mapper;
 import jcep.admin.model.MemberVO;
@@ -66,7 +67,16 @@ public interface LoginFrontMapper {
 	 * @return Integer형
 	 * @exception Exception
 	 */
-	public Integer memberExpertInsertExpert(MemberVO params) throws Exception;
+	public Integer memberExpertInsertExpert(Map<String, Object> params) throws Exception;
+
+	
+	/**
+	 * 회원을 등록한다.
+	 * @param params - 수정할 정보가 담긴 MemberVO
+	 * @return Integer형
+	 * @exception Exception
+	 */
+	public Integer memberInsert(Map<String, Object> params) throws Exception;
 
 	
 	/**
@@ -75,16 +85,7 @@ public interface LoginFrontMapper {
 	 * @return Integer형
 	 * @exception Exception
 	 */
-	public Integer memberEnterpriseInsert(MemberVO params) throws Exception;
-
-	
-	/**
-	 * 전문가 정보를 등록한다.
-	 * @param params - 수정할 정보가 담긴 MemberVO
-	 * @return Integer형
-	 * @exception Exception
-	 */
-	public Integer memberExpertInsertEnterprise(MemberVO params) throws Exception;
+	public Integer memberExpertInsertEnterprise(Map<String, Object> params) throws Exception;
 	
 	/**
 	 * 바이어 정보를 등록한다.
@@ -101,7 +102,7 @@ public interface LoginFrontMapper {
 	 * @return Integer형
 	 * @exception Exception
 	 */
-	public Integer memberBuyerInsertEnterprise(MemberVO params) throws Exception;
+	public Integer memberBuyerInsertEnterprise(Map<String, Object> params) throws Exception;
 
 	
 	

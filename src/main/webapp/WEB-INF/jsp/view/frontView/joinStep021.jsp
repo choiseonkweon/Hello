@@ -7,28 +7,11 @@
 <%@ taglib prefix="spring"	uri="http://www.springframework.org/tags"%>    
 <!DOCTYPE html>
 <html>
-<link rel='stylesheet' type='text/css' href='css/reset.css' />
-<link rel='stylesheet' type='text/css' href='css/common.css' />
-<link rel='stylesheet' type='text/css' href='css/sub.css' />
-<script type="text/javascript" src="../db/assets/js/jquery-1.12.4.min.js"></script>
-<script type="text/javascript" src="../db/assets/js/jquery.easing.1.3.js"></script>
-<script type="text/javascript" src="../db/assets/js/ui.js"></script>
-
 
 <head>
 
 <script type="text/javaScript" >
 	$(document).ready(function () {
-		
-		 
-		 $("#resourceBtn").click(function(){
-				$("#resourcePop").show();
-		 });	
-		 
-		 $(".closeBtn").click(function(){
-				$("#resourcePop").hide();
-		 });
-		 
 		 $(function(){ //전체선택 체크박스 클릭
 			    $("#joinAgreeAll").click(function(){
 			    	//alert("terstestet");//만약 전체 선택 체크박스가 체크된상태일경우
@@ -40,7 +23,7 @@
 			    });
 			    
 		 		$(".chk").click(function(){
-			    	if($("input[name='chk']:checked").length == 3){
+			    	if($(":checkbox:checked").not("#joinAgreeAll").length == 3){
 			    		$("#joinAgreeAll").prop("checked", true);
 			    	}else{
 			    		$("#joinAgreeAll").prop("checked", false);
@@ -49,20 +32,28 @@
 			
 		 });
 		 $("#okok").click(function(){
-			 if($('#joinAgree1').prop('checked') == false || $('#joinAgree2').prop('checked') == false){
+			 if($('#joinAgree1').prop('checked') == false){
 		            alert('필수 약관에 동의 하셔야 합니다.');
+		            $('#joinAgree1').focus();
+		            
+			 }else if($('#joinAgree2').prop('checked') == false){
+		            alert('필수 약관에 동의 하셔야 합니다.');
+		            $('#joinAgree2').focus();				 
+				 
 			 }else{
-			 	window.location.href="/db/joinStep031.do"
+			   if($("#joinAgree3").prop("checked")){
+				   $("#conllentPublicYn").val("Y");
+			   }else{
+				   $("#conllentPublicYn").val("N");
+			   }
+			       	$('#requestFrm').attr('action', "/db/joinStep031.do").submit();				 
 			 }
 		 });
 
 		 $("#cancel").click(function(){
-			 var result = confirm("취소하시겠습니까?");
 			 
-			 if(result){
-			 	window.location.href="/db/main.do"
-			 }else{
-				 
+			 if(confirm("취소하시겠습니까?")){
+			 	window.location.href="/db/main.do";
 			 }
 		 });
 		 
@@ -79,10 +70,6 @@
 </head>
 <body>
 
-<input type="hidden" name="searchType" value="<c:out value='${searchVO.searchType}'/>"/>
-<input type="hidden" name="searchText" value="<c:out value='${searchVO.searchText}'/>"/>
-<input type="hidden" name="memberSt" value="<c:out value='${searchVO.memberSt}'/>"/>
-<input type="hidden" name="pageIndex" value="<c:out value='${searchVO.pageIndex}'/>"/> 
 <div id="wrap" class="sub s6">
 	<jsp:include page="menu.jsp"></jsp:include>
 		<div id="contents">
@@ -173,6 +160,9 @@
 	</div>
 	
 </div>
+	<form role="form" id="requestFrm" action="#" class="form-horizontal" method="post">	 
+	   <input type="hidden" name="conllentPublicYn" id="conllentPublicYn" value="">
+    </form>		
 
 </body>
 </html>

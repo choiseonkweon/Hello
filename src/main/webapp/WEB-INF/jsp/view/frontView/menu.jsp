@@ -8,64 +8,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-<!-- 	<script type="text/javascript">
-		function moveDetailView(memberId){
-			$('#memberId').val(memberId);
-			//$('#memberId').val(memberId);
-			//$('#memberId1').val(memberId1);
-			//alert("memberIdx :: " + memberIdx);
-			//alert("memberId :: " + memberId);
-			//alert("memberId1 :: " + memberId1);
-			$('#memberDetailFrm').attr('action', "/db/joinStep03Detail.do").submit();
+ 	<script type="text/javascript">
+		function moveDetailView(memberId,joinTypeCd){
+			if(joinTypeCd === "000001"){ // 기업
+				window.location.href = "/db/myCompanyInformation.do";
+			}else if(joinTypeCd === "000002"){ // 전문가
+				window.location.href = "/db/myExpertInformation.do";
+				
+			}else if(joinTypeCd === "000003"){ // 바이어
+				window.location.href = "/db/myBuyerInformation.do";
+			}
 		}
-		
-		// 시설 사용신청 현황 이동
-		function moveDetailViewMy(memberId){
-			$('#memberId').val(memberId);
-			//$('#memberId').val(memberId);
-			//$('#memberId1').val(memberId1);
-			//alert("memberIdx :: " + memberIdx);
-			//alert("memberId :: " + memberId);
-			//alert("memberId1 :: " + memberId1);
-			$('#memberDetailFrm').attr('action', "/db/facilitiesResourcesApplicationStatus.do").submit();
-		}
-	
-		// 원스톰 지원실 온라인 상담 신청 이동 
-		function onlineMoveDetailView(memberId){
-			$('#memberId').val(memberId);
-			//$('#memberId').val(memberId);
-			//$('#memberId1').val(memberId1);
-			//alert("memberIdx :: " + memberIdx);
-			//alert("memberId :: " + memberId);
-			//alert("memberId1 :: " + memberId1);
-			$('#memberDetailFrm').attr('action', "/db/onlineApply.do").submit();
-		}
-		
-	
-		// 마이페이지 온라인 상담신청 현황 이동
-		function onlineMoveDetailViewMy(memberId){
-			$('#memberId').val(memberId);
-			//$('#memberId').val(memberId);
-			//$('#memberId1').val(memberId1);
-			//alert("memberIdx :: " + memberIdx);
-			//alert("memberId :: " + memberId);
-			//alert("memberId1 :: " + memberId1);
-			$('#memberDetailFrm').attr('action', "/db/onlineCounselingStatus.do").submit();
-		}
-		
-			
-		
-	
-		function myMoveDetailView(memberId){
-			$('#memberId').val(memberId);
-			//$('#memberId').val(memberId);
-			//$('#memberId1').val(memberId1);
-			//alert("memberIdx :: " + memberIdx);
-			//alert("memberId :: " + memberId);
-			//alert("memberId1 :: " + memberId1);
-			$('#memberDetailFrm').attr('action', "/db/myCompanyInformationList.do").submit();
-		}
-	</script> -->
+	</script>
 </head>
 <body>
 <div class="headerWrap">
@@ -154,7 +108,7 @@
 						<c:if test="${memberId != null}">
 							<div class="loginInfo">
 							<input type="text" id="memberId1" value="${memberId}" style="font-size: 10px;" disabled="disabled"><br/>
-							<a href="/db/joinStep03Detail.do" style="font-size: 11px;"> 회원정보수정</a>
+							<a href="javascript:moveDetailView('${memberId}','${joinTypeCd}')" style="font-size: 11px;"> 회원정보수정</a>
 							<a>/</a>
 							<!-- <a href="#" style="font-size: 10px;"> 님 회원정보수정</a> -->
 							<a href="logout.do">로그아웃</a>

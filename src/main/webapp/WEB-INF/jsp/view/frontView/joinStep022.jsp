@@ -7,67 +7,57 @@
 <%@ taglib prefix="spring"	uri="http://www.springframework.org/tags"%>    
 <!DOCTYPE html>
 <html>
-<link rel='stylesheet' type='text/css' href='css/reset.css' />
-<link rel='stylesheet' type='text/css' href='css/common.css' />
-<link rel='stylesheet' type='text/css' href='css/sub.css' />
-<script type="text/javascript" src="../db/assets/js/jquery-1.12.4.min.js"></script>
-<script type="text/javascript" src="../db/assets/js/jquery.easing.1.3.js"></script>
-<script type="text/javascript" src="../db/assets/js/ui.js"></script>
-
-
 <head>
 
 <script type="text/javaScript" >
-	$(document).ready(function () {
+$(document).ready(function () {
+	 $(function(){ //전체선택 체크박스 클릭
+		    $("#joinAgreeAll").click(function(){
+		    	//alert("terstestet");//만약 전체 선택 체크박스가 체크된상태일경우
+		        if($("#joinAgreeAll").prop("checked")) { //해당화면에 전체 checkbox들을 체크해준다
+		            $("input[type=checkbox]").prop("checked",true); // 전체선택 체크박스가 해제된 경우
+		        } else { //해당화면에 모든 checkbox들의 체크를해제시킨다.
+		            $("input[type=checkbox]").prop("checked",false);
+		        }
+		    });
+		    
+	 		$(".chk").click(function(){
+		    	if($(":checkbox:checked").not("#joinAgreeAll").length == 3){
+		    		$("#joinAgreeAll").prop("checked", true);
+		    	}else{
+		    		$("#joinAgreeAll").prop("checked", false);
+		    	}
+		    });
 		
-		 
-		 $("#resourceBtn").click(function(){
-				$("#resourcePop").show();
-		 });	
-		 
-		 $(".closeBtn").click(function(){
-				$("#resourcePop").hide();
-		 });
-		 
-		 $(function(){ //전체선택 체크박스 클릭
-			    $("#joinAgreeAll").click(function(){
-			    	//alert("terstestet");//만약 전체 선택 체크박스가 체크된상태일경우
-			        if($("#joinAgreeAll").prop("checked")) { //해당화면에 전체 checkbox들을 체크해준다
-			            $("input[type=checkbox]").prop("checked",true); // 전체선택 체크박스가 해제된 경우
-			        } else { //해당화면에 모든 checkbox들의 체크를해제시킨다.
-			            $("input[type=checkbox]").prop("checked",false);
-			        }
-			    });
-			    
-		 		$(".chk").click(function(){
-			    	if($("input[name='chk']:checked").length == 3){
-			    		$("#joinAgreeAll").prop("checked", true);
-			    	}else{
-			    		$("#joinAgreeAll").prop("checked", false);
-			    	}
-			    });
-			
-		 });
-		 $("#okok").click(function(){
-			 if($('#joinAgree1').prop('checked') == false || $('#joinAgree2').prop('checked') == false){
-		            alert('필수 약관에 동의 하셔야 합니다.');
-			 }else{
-			 	window.location.href="/db/joinStep031.do"
-			 }
-		 });		 
-
-		 $("#cancel").click(function(){
-			 var result = confirm("취소하시겠습니까?");
+	 });
+	 $("#okok").click(function(){
+		 if($('#joinAgree1').prop('checked') == false){
+	            alert('필수 약관에 동의 하셔야 합니다.');
+	            $('#joinAgree1').focus();
+	            
+		 }else if($('#joinAgree2').prop('checked') == false){
+	            alert('필수 약관에 동의 하셔야 합니다.');
+	            $('#joinAgree2').focus();				 
 			 
-			 if(result){
-			 	window.location.href="/db/main.do"
-			 }else{
-				 
-			 }
-		 });
+		 }else{
+		   if($("#joinAgree3").prop("checked")){
+			   $("#conllentPublicYn").val("Y");
+		   }else{
+			   $("#conllentPublicYn").val("N");
+		   }
+		       	$('#requestFrm').attr('action', "/db/joinStep032.do").submit();				 
+		 }
+	 });
+
+	 $("#cancel").click(function(){
 		 
-		
-	});
+		 if(confirm("취소하시겠습니까?")){
+		 	window.location.href="/db/main.do";
+		 }
+	 });
+	 
+	
+});
 	
 	
 	
@@ -79,10 +69,6 @@
 </head>
 <body>
 
-<input type="hidden" name="searchType" value="<c:out value='${searchVO.searchType}'/>"/>
-<input type="hidden" name="searchText" value="<c:out value='${searchVO.searchText}'/>"/>
-<input type="hidden" name="memberSt" value="<c:out value='${searchVO.memberSt}'/>"/>
-<input type="hidden" name="pageIndex" value="<c:out value='${searchVO.pageIndex}'/>"/> 
 <div id="wrap" class="sub s6">
 	<jsp:include page="menu.jsp"></jsp:include>
 	<div id="contents">
@@ -171,8 +157,9 @@
 			</div>
 		</div>
 	</div>
-	
 </div>
-
+	<form role="form" id="requestFrm" action="#" class="form-horizontal" method="post">	 
+	   <input type="hidden" name="conllentPublicYn" id="conllentPublicYn" value="">
+    </form>		
 </body>
 </html>
