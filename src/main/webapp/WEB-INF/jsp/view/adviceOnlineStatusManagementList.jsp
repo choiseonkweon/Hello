@@ -14,7 +14,7 @@
 		$(document).ready(function () {
 			
 			//input을 datepicker로 선언
-            $("#startdate").datepicker({
+            $("#startDate").datepicker({
                 dateFormat: 'yy-mm-dd' //Input Display Format 변경
                 ,showOtherMonths: true //빈 공간에 현재월의 앞뒤월의 날짜를 표시
                 ,showMonthAfterYear:true //년도 먼저 나오고, 뒤에 월 표시
@@ -34,7 +34,7 @@
 				}
             }); 
 			
-			$("#finishdate").datepicker({
+			$("#endDate").datepicker({
                 dateFormat: 'yy-mm-dd' //Input Display Format 변경
                 ,showOtherMonths: true //빈 공간에 현재월의 앞뒤월의 날짜를 표시
                 ,showMonthAfterYear:true //년도 먼저 나오고, 뒤에 월 표시
@@ -75,7 +75,7 @@
 		
         /* pagination 페이지 링크 function */
        function fn_egov_link_page(pageNo){
-       	document.listForm.pageIndex.value = pageNo;
+       	document.listForm.pageIndex.value = pageNo
        	document.listForm.action = "<c:url value='/oneStop/adviceOnlineStatusManagementList.do'/>";
         document.listForm.submit();
        }
@@ -177,11 +177,11 @@
 											<th style="text-align:center;background:#eee;vertical-align:middle;">기간</th>
 											<td colspan="2">								
 												<label class="input"> 
-													<input class="input-sm" type="text" name="startDate" id="startdate" placeholder="" data-dateformat="yy-mm-dd"  />													
+													<input class="input-sm" type="text" name="startDate" id="startDate"value="${searchVO.startDate}" readOnly />													
 													&nbsp;~&nbsp;
 												</label> 
 												<label class="input"> 
-													<input class="input-sm" type="text" name="endDate" id="finishdate" placeholder="" data-dateformat="yy-mm-dd" />													
+													<input class="input-sm" type="text" name="endDate" id="endDate"  value="${searchVO.endDate}" readOnly/>													
 												</label>
 											</td>
 										</tr>
@@ -203,11 +203,23 @@
 							</div>
 							<form id="memberListFrm" name="memberListFrm">
 								<table class="table table-hover">
+									<colgroup>
+										<col width="5%">
+										<col width="10%">
+										<col width="10%">
+										<col width="10%">
+										<col width="10%"> 
+										<col width="10%">
+										<col width="10%">
+										<col width="10%">
+										<col width="5%">
+									</colgroup>
 									<thead>
 										<tr>
 											<th>No.</th>
 											<th>회원ID</th>
 											<th>회사명</th>
+											<th>가입구분</th>
 											<th>담당자</th>
 											<th>자문분야</th>
 											<th>전문가</th>
@@ -235,8 +247,9 @@
 															<c:out value="${result.entprNm}"/>
 														</a>
 													</td>
+													<td><c:out value="${result.onoffDiviCd}"/></td>
 													<td><c:out value="${result.compApplNm}"/></td>
-													<td><c:out value="${result.advicePlaceCd}"/></td>
+													<td><c:out value="${result.adviceAreaCd}"/></td>
 													<td><c:out value="${result.proMemberId}"/></td>
 													<td><c:out value="${result.applicatDt}"/></td>
 													<td><c:out value="${result.applicStCd}"/></td>
@@ -261,7 +274,7 @@
 					</div>
 			</section> 
 			<!-- end widget grid -->
-			<div class="btnList alignRight">
+			<div class="btnList alignRight" style="text-align: right;">
 				<button  type="button" id="createBtn"class="btn btn-primary btn-sm" onclick="fn_create()">등록</button>
 			</div>
 

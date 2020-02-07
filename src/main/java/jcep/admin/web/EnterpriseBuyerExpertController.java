@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import egovframework.rte.fdl.property.EgovPropertyService;
 import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 import jcep.admin.common.MakeExcel;
+import jcep.admin.model.BusinessVO;
 import jcep.admin.model.EnterpriseBuyerExpertVO;
 import jcep.admin.model.MemberVO;
 import jcep.admin.service.EnterpriseBuyerExpertService;
@@ -62,7 +63,6 @@ public class EnterpriseBuyerExpertController {
 	 */
 	@RequestMapping(value = "/enterprise/enterpriseInformationManagementList.do")
 	public ModelAndView enterpriseInformationManagementList(@ModelAttribute("searchVO") MemberVO searchVO, ModelAndView mv, Model model) throws Exception {
-		System.out.println("enterpriseInformationManagementList_1***********************"+searchVO);
 		searchVO.setPageUnit(propertiesService.getInt("pageUnit"));
 		searchVO.setPageSize(propertiesService.getInt("pageSize"));
 
@@ -75,13 +75,20 @@ public class EnterpriseBuyerExpertController {
 		searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
 		searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
 
+		MemberVO commonsVo = new MemberVO();
+
+		/*20191219 최선권 공통코드 추가*/
+		commonsVo.setGroupCd("G00002");
+		List<MemberVO> largeBussAreaCd = memberService.selectCommonsList(commonsVo);
+
 		ArrayList<MemberVO> authList = enterpriseBuyerExpertService.selectEnterPriseInformationList(searchVO);
-		model.addAttribute("resultList", authList);
 		
 		int totCnt = enterpriseBuyerExpertService.selectEnterPriseInformationListTotCnt(searchVO);
 		paginationInfo.setTotalRecordCount(totCnt);
 		model.addAttribute("paginationInfo", paginationInfo);
-		System.out.println("enterpriseInformationManagementList_2***********************"+searchVO);
+		model.addAttribute("largeBussAreaCd", largeBussAreaCd);
+		model.addAttribute("resultList", authList);
+
 		mv.setViewName("/view/enterpriseInformationManagementList");
 		
 		return mv;
@@ -95,48 +102,87 @@ public class EnterpriseBuyerExpertController {
 	 * @return "enterpriseInformationManagementRegister"
 	 * @exception Exception
 	 */
-	@RequestMapping("/enterprise/enterpriseInformationManagementRegisterUpdate.do")
-	public ModelAndView enterpriseInformationManagementRegisterUpdate(@ModelAttribute("searchVO") MemberVO searchVO, Model model, ModelAndView mv, HttpServletRequest request) throws Exception {
-		
-		System.out.println("enterpriseInformationManagementRegisterUpdate_1***********************"+searchVO);
-		
+	@RequestMapping("/enterprise/enterpriseInformationManagementDetail.do")
+	public ModelAndView enterpriseInformationManagementDetail(@ModelAttribute("searchVO") MemberVO searchVO, Model model, ModelAndView mv, HttpServletRequest request) throws Exception {
+		int limit = 3;
 		String memberId = request.getParameter("memberId");
+		searchVO.setLimit(limit);
 		searchVO.setMemberId(memberId);
-		System.out.println("memberId :: " + memberId);
-		MemberVO commonsVo = new MemberVO();
-
-		/*20191219 최선권 공통코드 추가*/
-		commonsVo.setGroupCd("g00021");
-		List<MemberVO> nationVo = memberService.selectCommonsList(commonsVo);
-		commonsVo.setGroupCd("g00020");
-		List<MemberVO> regForm = memberService.selectCommonsList(commonsVo);
-		commonsVo.setGroupCd("g00019");
-		List<MemberVO> propt = memberService.selectCommonsList(commonsVo);
-		commonsVo.setGroupCd("g00004");
-		List<MemberVO> YearCd = memberService.selectCommonsList(commonsVo);
-		commonsVo.setGroupCd("g00005");
-		List<MemberVO> qtaCd = memberService.selectCommonsList(commonsVo);
-		commonsVo.setGroupCd("g00002");
-		List<MemberVO> largeBussAreaCd = memberService.selectCommonsList(commonsVo);	//대분류코드표
-
-		MemberVO detail = enterpriseBuyerExpertService.selectEnterpriseInformationManagementRegisterUpdate(searchVO);
+		//기본정보
+		HashMap<String,String> detail = enterpriseBuyerExpertService.enterpriseInformationManagementDetail(memberId);
+		//성과관리
+		List<HashMap<String,String>> list1 = enterpriseBuyerExpertService.enterpriseInformationManagementResultList(searchVO);
+		//진흥원 수혜사업
+		List<HashMap<String,String>> list2 = enterpriseBuyerExpertService.enterpriseInformationManagementAnncemntApplList(searchVO);
+		//지적재산권 현황
+		List<HashMap<String,String>> list3 = enterpriseBuyerExpertService.enterpriseInformationManagementProptyList(searchVO);
+		//기업사원 정보
+		List<HashMap<String,String>> list4 = enterpriseBuyerExpertService.enterpriseInformationManagementEmployeeList(searchVO);
+		
 		model.addAttribute("detail", detail);
-		model.addAttribute("nationVo", nationVo);
-		model.addAttribute("regForm", regForm);
-		model.addAttribute("propt", propt);
-		model.addAttribute("YearCd", YearCd);
-		model.addAttribute("qtaCd", qtaCd);
-		model.addAttribute("largeBussAreaCd", largeBussAreaCd);
-		model.addAttribute("viewType", "modify");
-		System.out.println("detail ?? :: " + detail);
+		model.addAttribute("list1", list1);
+		model.addAttribute("list2", list2);
+		model.addAttribute("list3", list3);
+		model.addAttribute("list4", list4);
 		
-		System.out.println("enterpriseInformationManagementRegisterUpdate_2***********************"+searchVO);
-		
-		mv.setViewName("/view/enterpriseInformationManagementRegister");
+		mv.setViewName("/view/enterpriseInformationManagementDetail");
 		
 		return mv;
 	}
 
+	/**
+	 * 사업찾기 
+	 * @param searchVO - 조회할 정보가 담긴 EnterpriseBuyerExpertVO
+	 * @param model
+	 * @return "businessOrderStatusList"
+	 * @exception Exception
+	 */
+	@RequestMapping(value = "/enterprise/goEntprSubSearchList.do")
+	public ModelAndView goEntprSubSearchList(@ModelAttribute("searchVO") MemberVO searchVO, ModelAndView mv, Model model) throws Exception {	
+		
+		searchVO.setPageUnit(propertiesService.getInt("pageUnit"));
+		searchVO.setPageSize(propertiesService.getInt("pageSize"));
+		
+		PaginationInfo paginationInfo = new PaginationInfo();
+		paginationInfo.setCurrentPageNo(searchVO.getPageIndex());
+		paginationInfo.setRecordCountPerPage(searchVO.getPageUnit());
+		paginationInfo.setPageSize(searchVO.getPageSize());
+		
+		searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
+		searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
+		searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
+		
+		searchVO.setLimit(100);
+		int totCnt =0;
+		String data = searchVO.getSearchType();
+		System.out.println("data :" + data);
+		System.out.println("memberId :" + searchVO.getMemberId());
+		List<HashMap<String,String>> list =  new ArrayList<HashMap<String, String>>();
+		if(data.equals("result")) {		//성과관리
+			System.out.println("성과관리");
+			list = enterpriseBuyerExpertService.enterpriseInformationManagementResultList(searchVO);
+			totCnt = enterpriseBuyerExpertService.enterpriseInformationManagementResultListCnt(searchVO);			
+		}else if(data.equals("propty")) {//진흥원 수혜사업
+			list = enterpriseBuyerExpertService.enterpriseInformationManagementAnncemntApplList(searchVO);
+			totCnt = enterpriseBuyerExpertService.enterpriseInformationManagementResultListCnt(searchVO);			
+		}else if(data.equals("jecp")) {//지적재산권 현황
+			list = enterpriseBuyerExpertService.enterpriseInformationManagementProptyList(searchVO);
+			totCnt = enterpriseBuyerExpertService.enterpriseInformationManagementResultListCnt(searchVO);			
+		}else if(data.equals("employee")) {//기업사원 정보
+			list = enterpriseBuyerExpertService.enterpriseInformationManagementEmployeeList(searchVO);
+			totCnt = enterpriseBuyerExpertService.enterpriseInformationManagementResultListCnt(searchVO);			
+		}
+		System.out.println(list.toString());
+		paginationInfo.setTotalRecordCount(totCnt);
+		model.addAttribute("paginationInfo", paginationInfo);
+		model.addAttribute("list", list);
+		model.addAttribute("data", data);
+		
+		mv.setViewName("/html/goEntprSubSearchPop");
+		
+    	return mv;
+	}
+	
 	/**
 	 * 기업 정보 등록화면을 조회한다.
 	 * @param EnterpriseBuyerExpertVO - 등록할 정보가 담긴 VO
@@ -163,22 +209,59 @@ public class EnterpriseBuyerExpertController {
 	 * @exception Exception
 	 */
     @RequestMapping("/enterprise/enterpriseInformationManagementUpdate.do")
-    public String enterpriseInformationManagementUpdate(HttpServletRequest request, Model model, @ModelAttribute("searchVO") MemberVO searchVO) throws Exception {
-    	
-    	System.out.println("buyerUpdate_1***********************"+searchVO);
-    	
-    	String memberId = request.getParameter("memberId");
-    	searchVO.setMemberId(memberId);
-    	System.out.println("memberId :: " + memberId);
-    	
-    	enterpriseBuyerExpertService.enterpriseInformationManagementUpdate(searchVO, request);
-    	// 20191204 신승원
-    	// 추후 업데이트 되는 부분에서 최선권 주임 업로드 관련 작업 다 되면 추가 관련 확인 후 작업 해야 함
-    	//enterpriseBuyerExpertService.buyerMemberInsert(searchVO);
-    	
-    	System.out.println("buyerUpdate_2***********************"+searchVO);
+    public ModelAndView enterpriseInformationManagementUpdate(HttpServletRequest request, Model model, @ModelAttribute("searchVO") MemberVO searchVO) throws Exception {
+    	ModelAndView mav = new ModelAndView();
+		MemberVO commonsVo = new MemberVO();
+
+		int limit = 3;
+		String memberId = request.getParameter("memberId");
+		searchVO.setLimit(limit);
+		searchVO.setMemberId(memberId);
+
+		HashMap<String,String> detail = enterpriseBuyerExpertService.enterpriseInformationManagementDetail(memberId);		//기본정보
+		List<HashMap<String,String>> list1 = enterpriseBuyerExpertService.enterpriseInformationManagementResultList(searchVO);		//성과관리
+		List<HashMap<String,String>> list2 = enterpriseBuyerExpertService.enterpriseInformationManagementAnncemntApplList(searchVO);		//진흥원 수혜사업
+		List<HashMap<String,String>> list3 = enterpriseBuyerExpertService.enterpriseInformationManagementProptyList(searchVO);		//지적재산권 현황
+		List<HashMap<String,String>> list4 = enterpriseBuyerExpertService.enterpriseInformationManagementEmployeeList(searchVO);		//기업사원 정보
+
+
+		commonsVo.setGroupCd("g00021");
+		List<MemberVO> nationVo = memberService.selectCommonsList(commonsVo);
+		commonsVo.setGroupCd("g00020");
+		List<MemberVO> regForm = memberService.selectCommonsList(commonsVo);
+		commonsVo.setGroupCd("g00019");
+		List<MemberVO> propt = memberService.selectCommonsList(commonsVo);
+		commonsVo.setGroupCd("g00004");
+		List<MemberVO> YearCd = memberService.selectCommonsList(commonsVo);
+		commonsVo.setGroupCd("g00005");
+		List<MemberVO> qtaCd = memberService.selectCommonsList(commonsVo);
+		commonsVo.setGroupCd("g00002");
+		List<MemberVO> largeBussAreaCd = memberService.selectCommonsList(commonsVo);	//대분류코드표
 		
-    	return "jsonView";
+		commonsVo.setGroupCd("G00048");
+		List<MemberVO> telNum = memberService.selectCommonsList(commonsVo);
+		commonsVo.setGroupCd("G00049");
+		List<MemberVO> totNum = memberService.selectCommonsList(commonsVo);
+		commonsVo.setGroupCd("G00050");
+		List<MemberVO> hpNum = memberService.selectCommonsList(commonsVo);
+
+		mav.addObject("list",detail);
+		mav.addObject("nationVo",nationVo);
+		mav.addObject("regForm",regForm);
+		mav.addObject("propt",propt);
+		mav.addObject("propt",propt);
+		mav.addObject("YearCd",YearCd);
+		mav.addObject("qtaCd",qtaCd);
+		mav.addObject("largeBussAreaCd",largeBussAreaCd);
+		mav.addObject("telNum",telNum);
+		mav.addObject("totNum",totNum);
+		mav.addObject("hpNum",hpNum);
+		mav.addObject("list1",list1);
+		mav.addObject("list2",list2);
+		mav.addObject("list3",list3);
+		mav.addObject("list4",list4);
+		mav.setViewName("/view/enterpriseInformationManagementUpdate");
+    	return mav;
     }
 
 	/**

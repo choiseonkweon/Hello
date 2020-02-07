@@ -1093,6 +1093,9 @@ public class MemberService {
 	public String onestopSupportNoSelect(Map<String,String> params)throws Exception{
 		return memberMapper.onestopSupportNoSelect(params);		
 	}
+	public int onestopArearCdInsert(Map<String,String> map)throws Exception{
+		return memberMapper.onestopArearCdInsert(map);		
+	}
 	
 	public int onestopBussLogInsertOk(Map<String,String> params)throws Exception{
 		return memberMapper.onestopBussLogInsertOk(params);		
@@ -1145,11 +1148,9 @@ public int ExpertEvaluInsertOk(HashMap<String,Object> hMap)throws Exception{
 		//평가위원 분류정보 저장
 		for(int i=0;i<slectClassTable.size();i++) {
 			addEvalu2.put("selectNo", selectNo);
-			System.out.println("너의 이름은??: "+slectClassTable.get(i));
 			addEvalu2.put("selectClassCd", slectClassTable.get(i));
 			insertOk = memberMapper.SelectSelectClassCdInsert(addEvalu2);
 		}
-		System.out.println("완료되면 야하고 외쳐!!!!");
 		return result;
 	}
 
@@ -1163,4 +1164,10 @@ public int ExpertEvaluInsertOk(HashMap<String,Object> hMap)throws Exception{
 	public List<HashMap<String,String>> selectEvaluInformationManagementDetailList(String param)throws Exception{
 		return memberMapper.selectEvaluInformationManagementDetailList(param);		
 	}
+	
+	public List<HashMap<String,String>> SelectadviceAreaCd(String param)throws Exception{
+		return memberMapper.SelectadviceAreaCd(param);		
+	}
+
+	
 }

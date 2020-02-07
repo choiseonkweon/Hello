@@ -306,58 +306,55 @@
 	<select id="selectEnterPriseInformationList" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
 		/*	selectEnterPriseInformationList */
 		<![CDATA[
-			SELECT  a.entprNm
-					   ,a.entprCeo
-					   ,a.largeBussAreaCd
-					   ,a.entprHeadTel
-					   ,a.entprHeadAddr
-					   ,a.memberId
-					   ,( SELECT entpr_result_emp_cnt
-					        FROM  tb_enterprise_result 
- 				          WHERE  member_id = a.memberId
- 				      ORDER BY  entpr_result_year_cd DESC
- 				                    ,entpr_result_qta_cd  DESC
- 				            LIMIT 1
- 				        )           as entprResultEmpCnt
-			
-			FROM (SELECT		entpr_nm   		as entprNm
-			                       ,entpr_ceo  		as	entprCeo
-                                   ,(SELECT	common_nm 
-                                       FROM	ta_common
-                                     WHERE	group_cd ='G00002'
-                                        AND	LEFT(common_cd,2) = large_buss_area_cd
-                                    )              		as largeBussAreaCd
-			                       ,if(entpr_head_tel = ''
-								                              ,''
-                                                              ,if( left(entpr_head_tel,2) = "02"
-                                                                  ,concat(left(entpr_head_tel,2),"-",mid(entpr_head_tel,3,4),"-",right(entpr_head_tel,4))
-																  ,concat(left(entpr_head_tel,3),"-",mid(entpr_head_tel,4,4),"-",right(entpr_head_tel,4))
-									                             )
-					                )              		as entprHeadTel
-			                       ,if(entpr_head_addr !=null
-									  ,substr(entpr_head_addr,9,2)
-									  ,substr(entpr_branch_addr,9,2)
-					                  )               	as entprHeadAddr
- 			                          ,member_id	as memberId
- 			                          ,reg_dt 		as regDt
-					    FROM tb_enterprise) a
-		  WHERE 1=1
-]]>
-				<if test="searchText != null and searchText != ''">
-		        <choose>
-		        	<when test='searchType eq ""'>
-						AND	a.entprNm LIKE CONCAT('%',#{searchText},'%') OR a.entprCeo LIKE CONCAT('%',#{searchText},'%')
-					</when>
-		            <when test='searchType eq 1'>
-						AND	a.entprNm LIKE CONCAT('%',#{searchText},'%')
-					</when>
-		            <when test='searchType eq 2'>
-						AND	a.entprCeo LIKE CONCAT('%',#{searchText},'%')
-					</when>
-				</choose>
-				</if>
+			SELECT	entpr_nm   																							AS entprNm
+						,entpr_ceo  																						AS	entprCeo
+						,(
+							SELECT	common_nm 
+							FROM	ta_common
+							WHERE	group_cd ='G00002'
+							AND	LEFT(common_cd,2) = large_buss_area_cd
+						)              																							AS largeBussAreaCd
+						,concat(entpr_head_tel,"-",entpr_head_tel2,"-",entpr_head_tel3)          		AS entprHeadTel
+						,if(
+							entpr_head_addr !=null
+							,entpr_head_addr
+							,entpr_branch_addr
+						)               																						AS entprHeadAddr
+						,member_id																							AS memberId
+						,reg_dt 																								AS regDt
+						,(
+							SELECT entpr_result_emp_cnt
+							FROM  tb_enterprise_result 
+							WHERE  member_id = a.member_id
+							ORDER BY  entpr_result_year_cd DESC
+							,entpr_result_qta_cd  DESC
+							LIMIT 1
+						)           																							AS entprResultEmpCnt
+			  FROM 	tb_enterprise a
+			WHERE 1=1	
+		]]>
+		<if test="searchText != null and searchText != ''">
+	        <choose>
+	        	<when test='searchType eq ""'>
+					AND	entpr_nm LIKE CONCAT('%',#{searchText},'%') OR entpr_ceo LIKE CONCAT('%',#{searchText},'%')
+				</when>
+	            <when test='searchType eq 1'>
+					AND	entpr_nm LIKE CONCAT('%',#{searchText},'%')
+				</when>
+	            <when test='searchType eq 2'>
+					AND	entpr_ceo LIKE CONCAT('%',#{searchText},'%')
+				</when>
+			</choose>
+		</if>
+		<if test="searchSelect != null">
+	        <choose>
+	            <when test='searchSelect !=""'>
+					AND	large_buss_area_cd = #{searchSelect}
+				</when>
+			</choose>
+		</if>
 		<![CDATA[
-          Order BY a.regDt DESC
+          Order BY reg_dt DESC
               LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
 ]]>
 	</select>
@@ -365,88 +362,239 @@
 	<select id="selectEnterPriseInformationListTotCnt" parameterType="jcep.admin.model.MemberVO" resultType="int">
 		/* selectEnterPriseInformationListTotCnt */
 		<![CDATA[
-SELECT  count(b.memberId) 									AS totcnt
-  FROM	(SELECT	a.*
-			            ,(SELECT	entpr_result_emp_cnt
-			                 FROM	tb_enterprise_result
-			               WHERE	member_id = a.memberId
-			           ORDER BY	entpr_result_year_cd 	DESC
-			                           ,entpr_result_qta_cd		DESC
-			                 LIMIT	1
-			            ) 												AS entpr_result_emp_cnt
-		                   FROM (	SELECT 	entpr_nm		AS	 entprNm
-									               ,entpr_ceo		AS entprCeo
-						                           ,(SELECT	common_nm
-						                               FROM	ta_common
-						                             WHERE	group_cd ='G00002'
-						                                 AND	left(common_cd,2) = large_buss_area_cd
-						                            )					AS largeBussAreaCd
-										 			,if(entpr_head_tel = ''
-						  				    								  ,''
-											                                  ,if(left(entpr_head_tel,2) = "02", concat(left(entpr_head_tel,2),"-",mid(entpr_head_tel,3,4),"-",right(entpr_head_tel,4))
-																			                                            , concat(left(entpr_head_tel,3),"-",mid(entpr_head_tel,4,4),"-",right(entpr_head_tel,4))
-											                                     )
-							                           )                AS entprHeadTel
- 						                            ,if(entpr_head_addr !=null
-											                                   ,substr(entpr_head_addr,9,2)
-											                                   ,substr(entpr_branch_addr,9,2)
-							                           )                AS	entprHeadAddr
-						                            ,member_id 	AS	memberId
-						                            ,reg_dt			AS	regDt
-				                          FROM	tb_enterprise
-		 							 )a
-	      	)b
- WHERE 1=1
-	]]>
-				<if test="searchText != null and searchText != ''">
-		        <choose>
-		        	<when test='searchType eq ""'>
-						AND	b.entprNm LIKE CONCAT('%',#{searchText},'%') OR b.entprCeo LIKE CONCAT('%',#{searchText},'%')
-					</when>
-		            <when test='searchType eq 1'>
-						AND	b.entprNm LIKE CONCAT('%',#{searchText},'%')
-					</when>
-		            <when test='searchType eq 2'>
-						AND	b.entprCeo LIKE CONCAT('%',#{searchText},'%')
-					</when>
-				</choose>
-				</if>
-            Order BY b.regDt ASC
+			SELECT  count(*)		AS totcnt
+			  FROM	tb_enterprise
+			WHERE	1=1
+		]]>
+		<if test="searchText != null and searchText != ''">
+	        <choose>
+	        	<when test='searchType eq ""'>
+					AND	entpr_nm LIKE CONCAT('%',#{searchText},'%') OR entpr_ceo LIKE CONCAT('%',#{searchText},'%')
+				</when>
+	            <when test='searchType eq 1'>
+					AND	entpr_nm LIKE CONCAT('%',#{searchText},'%')
+				</when>
+	            <when test='searchType eq 2'>
+					AND	entpr_ceo LIKE CONCAT('%',#{searchText},'%')
+				</when>
+			</choose>
+		</if>
+		<if test="searchSelect != null">
+	        <choose>
+	            <when test='searchSelect !=""'>
+					AND	large_buss_area_cd = #{searchSelect}
+				</when>
+			</choose>
+		</if>
+		<![CDATA[
+          Order BY reg_dt DESC
+		]]>
 	</select>
 	
-		<select id="selectEnterpriseInformationManagementRegisterUpdate" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
-			/*selectEnterpriseInformationManagementRegisterUpdate*/
-			SELECT
-				member_id as memberId, <!-- 아이디 -->				
-				entpr_respsib_nm as entprRespsibNm,		<!-- 담당자명 -->
-				entpr_respsib_hp_no as entprRespsibHpNo,		<!--담당자휴대전화  -->		
-				entpr_respsib_email as entprRespsibEmail,		<!-- 담당자E-mail -->		
-				entpr_nm as entprNm,		<!-- 기업명 -->				
-				entpr_ceo as entprCeo,		<!-- 대표자 -->				
-				entpr_ceo_email as entprCeoEmail,		<!-- 대표자E-Mail -->			
-				entpr_type_nm as entprTypeNm,			<!-- 업종명 -->		
-				entpr_com_reg_num as entprComRegNum,			<!-- 사업자등록번호 -->	
-				large_buss_area_cd as largeBussAreaCd,		<!-- 대사업분야코드 -->		
-				medium_buss_area_cd as mediumBussAreaCd,		<!-- 중사업분야코드 -->		
-				entpr_site as entprSite,		<!--홈페이지  -->				
-				entpr_head_addr as entprHeadAddr,		<!-- 본사주소 -->			
-				entpr_head_detail_addr as entprHeadDetailAddr,		<!-- 본사상세주소 -->		
-				entpr_head_tel as entprHeadTel,			<!--본사대표전화  -->			
-				entpr_head_fax as entprHeadFax,			<!--본사대표Fax  -->			
-				entpr_branch_addr as entprBranchAddr,		<!-- 지사주소 -->			
-				entpr_branch_detail_addr as entprBranchDetailAddr,		<!--지사상세주소 -->	
-				entpr_branch_tel as entprBranchTel,		<!-- 지사대표전화 -->			
-				entpr_branch_fax as entprBranchFax,		<!--지사대표Fax  -->			
-				entpr_est_dt as entprEstDt,		<!--설립일자  -->				
-				entpr_capital_amt as entprCapitalAmt,		<!-- 자본금 -->			
-				movein_yn as moveinYn,		<!--입주여부  -->					
-				movein_dt as moveinDt,			<!-- 입주입자 -->				
-				reg_dt as regDt,		<!--등록일자  -->
-				reg_id as regId		<!-- 등록자아이디 -->
-			from tb_enterprise
-			where member_id = #{memberId}
-		
-		</select>
+	<!-- 기업정보 상세보기 -->
+	<select id="enterpriseInformationManagementDetail" parameterType="String" resultType="java.util.HashMap">
+			/*enterpriseInformationManagementDetail*/
+		<![CDATA[
+			SELECT	member_id					AS	memberId
+						,entpr_respsib_nm		AS	entprRespsibNm
+						,entpr_respsib_hp_no	AS	entprRespsibHpNo
+						,entpr_respsib_hp_no2	AS	entprRespsibHpNo2
+						,entpr_respsib_hp_no3	AS	entprRespsibHpNo3
+						,entpr_respsib_email		AS	entprRespsibEmail
+						,entpr_nm					AS	entprNm
+						,entpr_ceo					AS	entprCeo
+						,entpr_ceo_email			AS	entprCeoEmail
+						,entpr_type_nm			AS	entprTypeNm
+						,entpr_com_reg_num		AS	entprComRegNum
+				        ,large_buss_area_cd		AS largeBussAreaCd
+						,medium_buss_area_cd	AS	mediumBussAreaCd
+						,entpr_site					AS	entprSite
+						,entpr_head_addr			AS	entprHeadAddr
+						,entpr_head_detail_addr	AS	entprHeadDetailAddr
+						,entpr_head_tel			AS	entprHeadTel
+						,entpr_head_tel2			AS	entprHeadTel2
+						,entpr_head_tel3			AS	entprHeadTel3
+						,entpr_head_fax			AS	entprHeadFax
+						,entpr_head_fax2			AS	entprHeadFax2
+						,entpr_head_fax3			AS	entprHeadFax3
+						,entpr_branch_addr		AS	entprBranchAddr
+						,entpr_branch_detail_addr	AS	entprBranchDetailAddr
+						,entpr_branch_tel			AS	entprBranchTel
+						,entpr_branch_tel2		AS	entprBranchTel2
+						,entpr_branch_tel3		AS	entprBranchTel3
+						,entpr_branch_fax		AS	entprBranchFax
+						,entpr_branch_fax2		AS	entprBranchFax2
+						,entpr_branch_fax3		AS	entprBranchFax3
+						,date_format(entpr_est_dt,'%Y-%m-%d')	AS	entprEstDt
+						,entpr_capital_amt		AS	entprCapitalAmt
+						,(
+				         SELECT common_nm FROM ta_common WHERE 1=1 AND group_cd = 'G00002' AND common_cd =large_buss_area_cd
+				        )								AS	largeBussAreaNm
+				        ,(
+				         SELECT common_nm FROM ta_common WHERE 1=1 AND group_cd = 'G00003' AND common_cd =medium_buss_area_cd
+				        )								AS	mediumBussAreaNm
+
+			FROM	tb_enterprise
+			WHERE 1=1
+			AND member_id = #{memberId}
+		]]>
+	</select>
+<!-- 성과관리 상세보기 -->
+	<select id="enterpriseInformationManagementResultList" parameterType="jcep.admin.model.MemberVO" resultType="java.util.HashMap">
+		<![CDATA[
+			SELECT	member_id					AS	memberId
+						,enterprise_idx				AS	enterpriseIdx
+						,entpr_result_year_cd	AS	entprResultYearCd
+						,entpr_result_qta_cd		AS	entprResultQtaCd
+						,entpr_capital_amt		AS	entprCapitalAmt
+						,entpr_result_take_amt	AS	entprResultTakeAmt
+						,entpr_result_emp_cnt	AS	entprResultEmpCnt
+				   		,(
+				         SELECT common_nm FROM ta_common WHERE 1=1 AND group_cd = 'G00004' AND common_cd =entpr_result_year_cd
+				        )								AS	entprResultYearNm
+				   		,(
+				         SELECT common_nm FROM ta_common WHERE 1=1 AND group_cd = 'G00005' AND common_cd =entpr_result_qta_cd
+				        )								AS	entprResultQtaNm
+			  FROM tb_enterprise_result
+			  where 1=1
+			    AND member_id = #{memberId}
+		]]>
+		<if test="limit  lt 10"><![CDATA[LIMIT	#{limit}]]></if>
+		<if test="limit gt 10"><![CDATA[LIMIT #{recordCountPerPage} OFFSET #{firstIndex}]]></if>
+
+	</select>
+<!-- 진흥원 수혜사업 상세보기 -->
+	<select id="enterpriseInformationManagementAnncemntApplList" parameterType="jcep.admin.model.MemberVO" resultType="java.util.HashMap">
+		<![CDATA[
+			SELECT	a.buss_anncemnt_no 											AS bussAnncemntNo
+						,a.member_id 														AS memberId
+						,a.applic_st_cd													AS applicStCd
+						,a.remark															AS remark
+						,(
+						 SELECT common_nm FROM ta_common WHERE 1=1 AND group_cd = 'G00027' AND common_cd =a.applic_st_cd
+						)																		AS applicStNm
+						,if(a.applic_st_cd ='000004',b.entpr_creat_job_cnt,'') 	AS applicStCd
+				        ,if(a.applic_st_cd ='000004'
+				            ,(SELECT group_concat(' ',SUBSTRING_INDEX(org_file_nm,'_',-1)) FROM  tb_buss_anncemnt_attch_file WHERE 1=1 AND member_id = a.member_id AND buss_anncemnt_no = a.buss_anncemnt_no AND attch_file_no like '%1')
+							,(SELECT group_concat(' ',SUBSTRING_INDEX(org_file_nm,'_',-1)) FROM tb_enterprise_attch_file  WHERE 1=1 AND member_id = a.member_id AND buss_anncemnt_no = a.buss_anncemnt_no AND attch_file_no like '%1')
+				        )AS orgFileNm1
+				        ,if(a.applic_st_cd ='000004'
+				            ,(SELECT group_concat(' ',SUBSTRING_INDEX(org_file_nm,'_',-1)) FROM  tb_buss_anncemnt_attch_file WHERE 1=1 AND member_id = a.member_id AND buss_anncemnt_no = a.buss_anncemnt_no AND attch_file_no like '%2')
+							,(SELECT group_concat(' ',SUBSTRING_INDEX(org_file_nm,'_',-1)) FROM tb_enterprise_attch_file  WHERE 1=1 AND member_id = a.member_id AND buss_anncemnt_no = a.buss_anncemnt_no AND attch_file_no like '%2')
+				        )AS orgFileNm2
+				        ,if(a.applic_st_cd ='000004',b.entpr_buss_yn,'') AS entprBussYn
+				        ,c.buss_fr_dt 														AS bussFrDt
+				        ,c.buss_to_dt 														AS bussToDt
+				        ,c.buss_anncemnt_nm 											AS bussAnncemntNm
+				        ,c.buss_cost_amt 												AS bussCostAmt
+				        ,c.buss_dept_cd                                                  AS bussDeptCd
+						,(
+						 SELECT common_nm FROM ta_common WHERE 1=1 AND group_cd = 'G00023' AND common_cd =c.buss_dept_cd
+						)																		AS bussDeptNm
+  			  FROM	tb_buss_anncemnt_appl a
+        LEFT JOIN	tb_enterprise_jcep_buss b ON b.member_id = a.member_id 
+                AND	b.buss_anncemnt_no = a.buss_anncemnt_no
+			   JOIN	tb_business_announcement c ON c.buss_anncemnt_no = a.buss_anncemnt_no 
+            WHERE	1=1
+                AND	a.member_id =  #{memberId}
+	    GROUP BY	applicat_dt DESC
+		]]>
+		<if test="limit  lt 10"><![CDATA[LIMIT	#{limit}]]></if>
+		<if test="limit gt 10"><![CDATA[LIMIT #{recordCountPerPage} OFFSET #{firstIndex}]]></if>
+	</select>
+<!-- 지적재산권 상세보기 -->
+	<select id="enterpriseInformationManagementProptyList" parameterType="jcep.admin.model.MemberVO" resultType="java.util.HashMap">
+		<![CDATA[
+			SELECT	member_id					AS	memberId
+						,enterprise_idx				AS	enterpriseIdx
+						,intlt_propt_buss_nm		AS	intltProptBussNm
+						,intlt_propt_perf_nm		AS	intltProptPerfNm
+						,intlt_propt_cd				AS	intltProptCd
+						,reg_form_cd				AS	regFormCd
+						,reg_nation_cd				AS	regNationCd
+						,intlt_propt_reg_no		AS	intltProptRegNo
+						,(
+				         SELECT common_nm FROM ta_common WHERE 1=1 AND group_cd = 'G00019' AND common_cd =intlt_propt_cd
+				        )								AS	intltProptNm
+						,(
+				         SELECT common_nm FROM ta_common WHERE 1=1 AND group_cd = 'G00020' AND common_cd =reg_form_cd
+				        )								AS	regFormNm
+						,(
+				         SELECT common_nm FROM ta_common WHERE 1=1 AND group_cd = 'G00021' AND common_cd =reg_nation_cd
+				        )								AS	regNationNm
+						,date_format(intlt_propty_dt,'%Y-%m-%d') AS intltProptyDt
+						,remark
+			 FROM	tb_enterprise_intlt_propty
+		   WHERE	1=1 
+			   AND	member_id = #{memberId}
+		]]>
+		<if test="limit  lt 10"><![CDATA[LIMIT	#{limit}]]></if>
+		<if test="limit gt 10"><![CDATA[LIMIT #{recordCountPerPage} OFFSET #{firstIndex}]]></if>
+
+	</select>
+<!-- 기업사원 상세보기 -->
+	<select id="enterpriseInformationManagementEmployeeList" parameterType="jcep.admin.model.MemberVO" resultType="java.util.HashMap">
+		<![CDATA[
+			SELECT	member_id						AS	memberId
+						,enterprise_idx					AS	enterpriseIdx
+						,entpr_employee_nm			AS	entprEmployeeNm
+						,entpr_employee_dept		AS	entprEmployeeDept
+						,entpr_employee_position	AS	entprEmployeePosition
+						,entpr_employee_email		AS	entprEmployeeemail
+						,entpr_employee_phone		AS	entprEmployeePhone
+						,entpr_employee_phone2	AS	entprEmployeePhone2
+						,entpr_employee_phone3	AS	entprEmployeePhone3
+						,file_course						AS	fileCourse
+						,SUBSTRING_INDEX(org_file_nm,'_',-1)	AS	orgFileNm
+						,upload_file_nm				AS	uploadFileNm
+			  FROM	tb_enterprise_employee
+			WHERE	1=1 
+			    AND	member_id = #{memberId}
+		]]>
+		<if test="limit  lt 10"><![CDATA[LIMIT	#{limit}]]></if>
+		<if test="limit gt 10"><![CDATA[LIMIT #{recordCountPerPage} OFFSET #{firstIndex}]]></if>
+
+	</select>
+<!-- 성과관리 상세보기 -->
+	<select id="enterpriseInformationManagementResultListCnt" parameterType="jcep.admin.model.MemberVO" resultType="int">
+		<![CDATA[
+			SELECT	count(*) totCnt
+			  FROM tb_enterprise_result
+			  where 1=1
+			    AND member_id = #{memberId}
+		]]>
+	</select>
+<!-- 진흥원 수혜사업 상세보기 -->
+	<select id="enterpriseInformationManagementAnncemntApplListCnt" parameterType="jcep.admin.model.MemberVO" resultType="int">
+		<![CDATA[
+			SELECT	count(*) totCnt
+  			  FROM	tb_buss_anncemnt_appl a
+        LEFT JOIN	tb_enterprise_jcep_buss b ON b.member_id = a.member_id 
+                AND	b.buss_anncemnt_no = a.buss_anncemnt_no
+			   JOIN	tb_business_announcement c ON c.buss_anncemnt_no = a.buss_anncemnt_no 
+            WHERE	1=1
+                AND	a.member_id =  #{memberId}
+	    GROUP BY	applicat_dt DESC
+		]]>
+	</select>
+<!-- 지적재산권 상세보기 -->
+	<select id="enterpriseInformationManagementProptyListCnt" parameterType="jcep.admin.model.MemberVO" resultType="int">
+		<![CDATA[
+			SELECT	count(*) totCnt
+			 FROM	tb_enterprise_intlt_propty
+		   WHERE	1=1 
+			   AND	member_id = #{memberId}
+		]]>
+	</select>
+<!-- 기업사원 상세보기 -->
+	<select id="enterpriseInformationManagementEmployeeListCnt" parameterType="jcep.admin.model.MemberVO" resultType="int">
+		<![CDATA[
+			SELECT	count(*) totCnt
+			  FROM	tb_enterprise_employee
+			WHERE	1=1 
+			    AND	member_id = #{memberId}
+		]]>
+	</select>
 
 	<select id="selectEnterpriseInformationManagementRegisterUpdateHist" parameterType="jcep.admin.model.MemberVO" resultType="jcep.admin.model.MemberVO">
 			/*selectEnterpriseInformationManagementRegisterUpdateHist*/
@@ -463,7 +611,7 @@ SELECT  count(b.memberId) 									AS totcnt
 					<if test="memberId != null and memberId != ''">member_id = #{memberId},</if>
 					<if test="entprRespsibNm != null and entprRespsibNm != ''">entpr_respsib_nm = #{entprRespsibNm},</if>
 					<if test="entprRespsibHpNo != null and entprRespsibHpNo != ''">entpr_respsib_hp_no = #{entprRespsibHpNo},</if>
-					<if test="entprRespsibEmail != null and entprRespsibEmail != ''">entpr_respsib_email = #{entprRespsibEmail},</if>
+					<if test="entprRespsibEmail != null a	nd entprRespsibEmail != ''">entpr_respsib_email = #{entprRespsibEmail},</if>
 					<if test="entprNm != null and entprNm != ''">entpr_nm = #{entprNm},</if>
 					<if test="entprCeo != null and entprCeo != ''">entpr_ceo = #{entprCeo},</if>
 					<if test="entprCeoEmail != null and entprCeoEmail != ''">entpr_ceo_email = #{entprCeoEmail},</if>
@@ -585,7 +733,7 @@ SELECT  count(b.memberId) 									AS totcnt
                         buyer_branch_detail_addr 		as buyerBranchDetailAddr,
                         buyer_branch_tel 				as buyerBranchTel,
                         buyer_branch_fax 				as buyerBranchFax,
-                        buyer_est_dt 						as buyerEstDt,
+                        date_format(buyer_est_dt,'%Y-%m-%d')	as buyerEstDt,
                         buyer_capital_amt 				as buyerCapitalAmt,
                         reg_dt 								as regDt,
                         reg_id 								as regId
@@ -595,24 +743,6 @@ SELECT  count(b.memberId) 									AS totcnt
 		]]>
 	</select>
 	
-	<select id="selectBuyerInformationManagementRegisterUpdateHist" parameterType="jcep.admin.model.MemberVO" resultType="int">
-		/* selectBuyerInformationManagementRegisterUpdateHist */
-		
-		 <!-- select 
-		 		distinct(member_id) as memberId,
-				buyer_hist_idx as buyerHistIdx,
-				buyer_hist_nm as buyerHistNm,
-				buyer_hist_invt as buyerHistInvt,
-				buyer_hist_spec as buyerHistSpec,
-				buyer_hist_dt as buyerHistDt,
-				buyer_hist_content as buyerHistContent,
-				process_cd as processCd,
-				reg_dt as regDt,
-				reg_id as regId
-			from tb_buyer_hist
-			where member_id = #{memberId} -->
-	
-	</select>
 	
 	<!-- 신승원 20191219 사업관리 글목록 조회	 -->
 	<!-- 최선권 20200115 사업관리 글목록 조회 수정	 -->
@@ -622,8 +752,8 @@ SELECT  count(b.memberId) 									AS totcnt
 				SELECT a.*
                 FROM (SELECT buss_anncemnt_no	AS	bussAnncemntNo
 						    ,buss_anncemnt_nm	AS	bussAnncemntNm
-						    ,(CASE WHEN DATE_FORMAT(now(),'%Y-%m-%d') BETWEEN buss_fr_dt AND buss_to_dt THEN '000002'
-			                          WHEN DATE_FORMAT(now(),'%Y-%m-%d') > buss_to_dt THEN '000001'
+						    ,(CASE WHEN DATE_FORMAT(now(),'%Y-%m-%d') BETWEEN date_format(buss_fr_dt,'%Y-%m-%d') AND date_format(buss_to_dt,'%Y-%m-%d')  THEN '000002'
+			                          WHEN DATE_FORMAT(now(),'%Y-%m-%d') >date_format(buss_to_dt,'%Y-%m-%d')THEN '000001'
 			                          ELSE '000003' END
 		                    ) 								AS anncemntStCd
 					 	    ,(SELECT common_nm
@@ -635,8 +765,8 @@ SELECT  count(b.memberId) 									AS totcnt
 				             ) 								AS result
 						     ,reg_id					AS	regId
 						     ,Date_format(reg_dt, '%Y-%m-%d') AS regDt
-				             ,buss_fr_dt as bussFrDt
-				             ,buss_to_dt as bussToDt
+				             ,date_format(buss_fr_dt,'%Y-%m-%d')as bussFrDt
+				             ,date_format(buss_to_dt,'%Y-%m-%d') as bussToDt
 				             ,(SELECT count(*)
 						         FROM tb_buss_anncemnt_appl b
 						       WHERE 1=1
@@ -688,8 +818,8 @@ SELECT  count(b.memberId) 									AS totcnt
 					</choose>
 				</if>
 				 <if test='startDate != null and startDate != "" and endDate != null and endDate != ""'>
-				    AND  (buss_fr_dt BETWEEN date_format(#{startDate}, '%Y-%m-%d') AND date_format(#{endDate}, '%Y-%m-%d') OR
-				            buss_to_dt BETWEEN date_format(#{startDate}, '%Y-%m-%d') AND date_format(#{endDate}, '%Y-%m-%d')
+				    AND  (date_format(buss_fr_dt,'%Y-%m-%d') BETWEEN date_format(#{startDate}, '%Y-%m-%d') AND date_format(#{endDate}, '%Y-%m-%d') OR
+				            date_format(buss_to_dt,'%Y-%m-%d') BETWEEN date_format(#{startDate}, '%Y-%m-%d') AND date_format(#{endDate}, '%Y-%m-%d')
 				            )
 				</if>
 				<if test='searchSelect != null and searchSelect != ""'>
@@ -956,8 +1086,8 @@ SELECT  count(b.memberId) 									AS totcnt
 		<![CDATA[
 			SELECT	buss_anncemnt_no		AS	bussAnncemntNo
 					 	,buss_anncemnt_nm		AS	bussAnncemntNm
-						,buss_fr_dt					AS	bussFrDt
-						,buss_to_dt					AS	bussToDt
+						,date_format(buss_fr_dt,'%Y-%d-%m')	AS	bussFrDt
+						,date_format(buss_to_dt,'%Y-%d-%m')	AS	bussToDt
 						,buss_cost_amt			AS	bussCostAmt
 						,buss_dept_cd				AS	bussDeptCd
 						,original_url					AS	originalUrl
@@ -1125,8 +1255,8 @@ LEFT OUTER JOIN	tb_buss_anncemnt_attch_file c 	ON		a.buss_anncemnt_no = c.buss_a
 		<![CDATA[
 			SELECT	select_no			AS	selectNo
 						,select_title			AS	selectTitle
-						,select_dt			AS	selectDt
-						,evaluation_dt		AS	evaluationDt
+						,date_format(select_dt,'%Y-%d-%m')			AS	selectDt
+						,date_format(evaluation_dt,'%Y-%d-%m')		AS	evaluationDt
 						,evaluation_cnt	AS	evaluationCnt
 						,reg_dt				AS	regDt
 						,reg_id				AS	regId
@@ -1141,7 +1271,7 @@ LEFT OUTER JOIN	tb_buss_anncemnt_attch_file c 	ON		a.buss_anncemnt_no = c.buss_a
 			</choose>
 		</if>
 		 <if test='startDate != null and startDate != "" and endDate != null and endDate != ""'>
-		    AND  select_dt BETWEEN date_format(#{startDate}, '%Y-%m-%d') AND date_format(#{endDate}, '%Y-%m-%d')
+		    AND  date_format(select_dt,'%Y-%d-%m') BETWEEN date_format(#{startDate}, '%Y-%m-%d') AND date_format(#{endDate}, '%Y-%m-%d')
 		</if>
 		<![CDATA[
 			ORDER BY reg_dt DESC

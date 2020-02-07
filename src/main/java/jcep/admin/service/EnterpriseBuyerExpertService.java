@@ -1124,9 +1124,33 @@ public class EnterpriseBuyerExpertService {
 	 * @return 회원 목록
 	 * @exception Exception
 	 */
-	public MemberVO selectEnterpriseInformationManagementRegisterUpdate(MemberVO params) throws Exception {
-    	return enterpriseBuyerExpertMapper.selectEnterpriseInformationManagementRegisterUpdate(params);
+	public HashMap<String,String> enterpriseInformationManagementDetail(String params) throws Exception {
+    	return enterpriseBuyerExpertMapper.enterpriseInformationManagementDetail(params);
     }
+	public List<HashMap<String,String>> enterpriseInformationManagementResultList(MemberVO params) throws Exception {
+		return enterpriseBuyerExpertMapper.enterpriseInformationManagementResultList(params);
+	}
+	public List<HashMap<String,String>> enterpriseInformationManagementAnncemntApplList(MemberVO params) throws Exception {
+		return enterpriseBuyerExpertMapper.enterpriseInformationManagementAnncemntApplList(params);
+	}
+	public List<HashMap<String,String>> enterpriseInformationManagementProptyList(MemberVO params) throws Exception {
+		return enterpriseBuyerExpertMapper.enterpriseInformationManagementProptyList(params);
+	}
+	public List<HashMap<String,String>> enterpriseInformationManagementEmployeeList(MemberVO params) throws Exception {
+		return enterpriseBuyerExpertMapper.enterpriseInformationManagementEmployeeList(params);
+	}
+	public int enterpriseInformationManagementResultListCnt(MemberVO params) throws Exception {
+		return enterpriseBuyerExpertMapper.enterpriseInformationManagementResultListCnt(params);
+	}
+	public int enterpriseInformationManagementAnncemntApplListcCnt(MemberVO params) throws Exception {
+		return enterpriseBuyerExpertMapper.enterpriseInformationManagementAnncemntApplListCnt(params);
+	}
+	public int enterpriseInformationManagementProptyListCnt(MemberVO params) throws Exception {
+		return enterpriseBuyerExpertMapper.enterpriseInformationManagementProptyListCnt(params);
+	}
+	public int enterpriseInformationManagementEmployeeListCnt(MemberVO params) throws Exception {
+		return enterpriseBuyerExpertMapper.enterpriseInformationManagementEmployeeListCnt(params);
+	}
 
 	/**
 	 * 기업 상세 정보를 조회한다.

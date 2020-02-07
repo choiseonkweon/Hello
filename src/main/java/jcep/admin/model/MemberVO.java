@@ -238,14 +238,13 @@ public class MemberVO extends PagingVO {
 	private String joinDt;
 	private String joinTypeCd;
 	private String joinTypeCdNm;
-	private String memberStCd,memberStCdNm;
+	private String memberStCd;
+	private String memberStCdNm;
 	private String regDt;
 	private String entprRespsibNm;
 	
 	// 20191113 신승원 기업정보
 	private String entprRespsibHpNo;
-	private String entprRespsibHpNo2;
-	private String entprRespsibHpNo3;
 	private String entprRespsibEmail;
 	private String entprNm;
 	private String entprCeo;
@@ -691,7 +690,23 @@ public class MemberVO extends PagingVO {
 
 	/*20200115 최선권 검색 셀렉트 구분변수 추가*/
 	private String searchSelect;
-	
+	private String onoffDiviCd;
+	private int limit;
+	private String entprRespsibHpNo2;
+	private String entprRespsibHpNo3;
+
+	public int getLimit() {
+		return limit;
+	}
+	public void setLimit(int limit) {
+		this.limit = limit;
+	}
+	public String getOnoffDiviCd() {
+		return onoffDiviCd;
+	}
+	public void setOnoffDiviCd(String onoffDiviCd) {
+		this.onoffDiviCd = onoffDiviCd;
+	}
 	public String getSearchSelect() {
 		return searchSelect;
 	}

@@ -759,6 +759,8 @@ public interface MemberMapper {
 	public int selectadviceOnlineStatusEntprListCnt(MemberVO params)throws Exception;
 
 	public String onestopSupportNoSelect(Map<String,String> params)throws Exception;
+
+	public int onestopArearCdInsert(Map<String,String> map)throws Exception;
 	
 	public int adviceOnlineStatusMagagementInsertOk(Map<String,String> params)throws Exception;
 	
@@ -782,5 +784,7 @@ public interface MemberMapper {
 	public HashMap<String,String> selectEvaluInformationManagementDetail(String param)throws Exception;
 
 	public List<HashMap<String,String>> selectEvaluInformationManagementDetailList(String param)throws Exception;
+
+	public List<HashMap<String,String>> SelectadviceAreaCd(String param)throws Exception;
 
 }

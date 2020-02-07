@@ -161,7 +161,7 @@
 </div>
 
 <div class="layer" style="display: none;" id="onlineModal">
-	<div class="box boxw650" style="width:85%; height: 95%; margin-top: -465px; margin-left:-556px; overflow:scroll">s
+	<div class="box boxw650" style="width:55%; height: 95%; margin-top: -465px; margin-left:-556px; overflow:scroll">s
 		<div id="DetailShow">
 		
 		</div>

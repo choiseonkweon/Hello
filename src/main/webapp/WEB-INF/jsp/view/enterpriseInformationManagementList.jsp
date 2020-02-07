@@ -40,7 +40,7 @@
         
         function moveDetailView(memberId){
         	$('#memberId').val(memberId);
-        	$('#memberDetailFrm').attr('action', "/db/enterprise/enterpriseInformationManagementRegisterUpdate.do").submit();
+        	$('#memberDetailFrm').attr('action', "/db/enterprise/enterpriseInformationManagementDetail.do").submit();
         }
         
         function checkValue(){ 
@@ -102,13 +102,14 @@
 												</select>
 												<input type="text" name="searchText" id="searchText" class="input-sm not-kor" style="width:250px;" value="${searchVO.searchText}" onkeydown="javascript:enterKey();">
 											</td>
-											<!-- <th style="text-align:center;background:#eee;vertical-align:middle;">분야</th> -->
+											<th style="text-align:center;background:#eee;vertical-align:middle;">분야</th>
 											<td>
-												<%-- <select name="memberSt" id="memberSt" class="select" style="width:150px; height: 31.5px;">
+												<select name="searchSelect" id="searchSelect"  class="select" style="width:150px; height: 31.5px;">
 													<option value="">전체</option>
-													<option value="Y" ${searchVO.memberSt eq 'Y' ? 'selected="selected"' : '' }>승인</option>
-													<option value="N" ${searchVO.memberSt eq 'N' ? 'selected="selected"' : '' }>미승인</option>
-												</select> --%>
+													<c:forEach var="largeBussAreaCd" items="${largeBussAreaCd}" varStatus="status">
+														<option value="${largeBussAreaCd.commonCd}" <c:if test="${largeBussAreaCd.commonCd eq searchVO.searchSelect}"> selected</c:if>>${largeBussAreaCd.commonNm}</option>
+													</c:forEach>
+												</select>
 												<a href="javascript:goSearch();" class="btn btn-primary" style="margin-left: 200px;"><b>검색</b></a>
 											</td>
 										</tr>

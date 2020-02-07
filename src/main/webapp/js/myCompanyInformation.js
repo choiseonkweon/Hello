@@ -490,36 +490,3 @@
 			}
 		}).open();
 	}
-	
-	
-	
-	/* 대사업분야 select에 따른 중사업분야 select 변경*/
-
-/*	 대사업분야 select에 따른 중사업분야 select 변경
-	function largeBussAreaCdSelectBox(){
-		var selectBoxData = $("#largeBussAreaCd").val();
- 		$.ajax({
- 			type : 'post',
- 			url:'/db/selectOnchange.do',
- 			data: {
- 						"selectBoxData" : selectBoxData
- 					},
- 			dataType: 'json',
- 	 		success: function(data) {
- 	 			var htmls = "";
- 	 			if(data.length < 1){
- 	 			} else {
- 	                     $(data.data).each(function(){
- 	 	                    htmls +='<option value="' + this.commonCd + '">' + this.commonNm + '</>'; 
- 	                 	});	//each end
- 	 			};
- 	 			console.log(data.data);
- 	 			//alert(htmls);
- 	 			$("#mediumBussAreaCd").html(htmls);
- 	            },  
- 			error:function(request,status,error){ //ajax 오류인경우  
- 				alert("작업중 에러가 발생했습니다.");      
- 				console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
- 			} 
- 		});
-	}*/

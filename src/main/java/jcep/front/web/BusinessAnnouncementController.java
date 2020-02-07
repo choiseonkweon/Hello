@@ -384,17 +384,10 @@ public class BusinessAnnouncementController {
 				String email2 = email[1]; 
 				
 				
-		//		String[] phone =  enterpriseDetail.getEntprRespsibHpNo().split("-");
-				String phone1 = enterpriseDetail.getEntprRespsibHpNo().substring(0,3);
-				String phone2 = enterpriseDetail.getEntprRespsibHpNo().substring(3,7);
-				String phone3 = enterpriseDetail.getEntprRespsibHpNo().substring(7,11);
 				
 				
 				mv.addObject("email1", email1);
 				mv.addObject("email2", email2);
-				mv.addObject("phone1", phone1);
-				mv.addObject("phone2", phone2);
-				mv.addObject("phone3", phone3);
 				mv.addObject("list1",enterpriseDetail);
 						
 				System.out.println("list1::" + enterpriseDetail);

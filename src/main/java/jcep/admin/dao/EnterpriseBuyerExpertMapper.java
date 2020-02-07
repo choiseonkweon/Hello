@@ -146,8 +146,65 @@ public interface EnterpriseBuyerExpertMapper {
 	 * @return 회원 목록
 	 * @exception Exception
 	 */
-	public MemberVO selectEnterpriseInformationManagementRegisterUpdate(MemberVO params) throws Exception;
-
+	public HashMap<String,String> enterpriseInformationManagementDetail(String params) throws Exception;
+	/**
+	 * 성과관리 상세 정보를 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 기업상세정보
+	 * @exception Exception
+	 */
+	public List<HashMap<String,String>> enterpriseInformationManagementResultList(MemberVO params) throws Exception ;
+	/**
+	 *  진흥원 정보를 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 기업상세정보
+	 * @exception Exception
+	 */
+	public List<HashMap<String,String>> enterpriseInformationManagementAnncemntApplList(MemberVO params) throws Exception ;
+	/**
+	 * 지적재산권 상세 정보를 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 기업상세정보
+	 * @exception Exception
+	 */
+	public List<HashMap<String,String>> enterpriseInformationManagementProptyList(MemberVO params) throws Exception ;
+	/**
+	 * 기업사원 정보를 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 기업상세정보
+	 * @exception Exception
+	 */
+	public List<HashMap<String,String>> enterpriseInformationManagementEmployeeList(MemberVO params) throws Exception ;
+	/*
+	 * 성과관리 상세 정보를 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 기업상세정보
+	 * @exception Exception
+	 */
+	public int enterpriseInformationManagementResultListCnt(MemberVO params) throws Exception ;
+	/**
+	 *  진흥원 정보를 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 기업상세정보
+	 * @exception Exception
+	 */
+	public int enterpriseInformationManagementAnncemntApplListCnt(MemberVO params) throws Exception ;
+	/**
+	 * 지적재산권 상세 정보를 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 기업상세정보
+	 * @exception Exception
+	 */
+	public int enterpriseInformationManagementProptyListCnt(MemberVO params) throws Exception ;
+	/**
+	 * 기업사원 정보를 조회한다.
+	 * @param params - 조회할 정보가 담긴 VO
+	 * @return 기업상세정보
+	 * @exception Exception
+	 */
+	public int enterpriseInformationManagementEmployeeListCnt(MemberVO params) throws Exception ;
+	
+	
 	/**
 	 * 기업 상세 정보를 조회한다.
 	 * @param params - 조회할 정보가 담긴 VO

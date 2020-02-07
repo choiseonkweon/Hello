@@ -1,7 +1,9 @@
 package jcep.admin.web;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -70,7 +72,6 @@ public class OnestopSupportController {
 	 */
 	@RequestMapping(value = "/oneStop/adviceConsultingStatusManagementList.do")
 	public ModelAndView adviceConsultingStatusManagementList(@ModelAttribute("searchVO") MemberVO searchVO, ModelAndView mv, Model model) throws Exception {
-		System.out.println("searchVO_1***********************"+searchVO);
 		searchVO.setPageUnit(propertiesService.getInt("pageUnit"));
 		searchVO.setPageSize(propertiesService.getInt("pageSize"));
 
@@ -89,7 +90,6 @@ public class OnestopSupportController {
 		//int totCnt = memberService.selectAuthListTotCnt(searchVO);
 		//paginationInfo.setTotalRecordCount(totCnt);
 		model.addAttribute("paginationInfo", paginationInfo);
-		System.out.println("searchVO_2***********************"+searchVO);
 		mv.setViewName("/view/adviceConsultingStatusManagementList");
 		
 		return mv;
@@ -133,6 +133,16 @@ public class OnestopSupportController {
 			searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
 			searchVO.setLastIndex(paginationInfo.getLastRecordIndex());			
 			
+	        /* FROM - TO Default */
+	        Date dt = new Date();
+	        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+
+	        if("".equals(searchVO.getStartDate()) || null == searchVO.getStartDate()) {
+	            searchVO.setStartDate(format1.format(dt));
+	        }
+	        if("".equals(searchVO.getEndDate()) || null == searchVO.getEndDate()) {
+	            searchVO.setEndDate(format1.format(dt));
+	        }        
 			ArrayList<MemberVO> memberList = memberService.selectAdviceOnlineStatusManagementList(searchVO);
 			model.addAttribute("resultList", memberList);
 			
@@ -154,23 +164,20 @@ public class OnestopSupportController {
 		 */
 		@RequestMapping(value = "/oneStop/adviceOnlineStatusManagementDetail.do")
 		public ModelAndView adviceOnlineStatusManagementDetail(@ModelAttribute("searchVO") MemberVO searchVO, Model model, ModelAndView mv, HttpServletRequest request) throws Exception {
-			System.out.println("안녕");
 			String memberId = request.getParameter("memberId");
 			String onestopSupportNo = request.getParameter("onestopSupportNo");
 			searchVO.setMemberId(memberId);
 			searchVO.setOnestopSupportNo(onestopSupportNo);
-			System.out.println("memberId :: " + memberId);
-			System.out.println("onestopSupportNo :: " + onestopSupportNo);
 			
+			List<HashMap<String,String>> adviceAreaCd = memberService.SelectadviceAreaCd(onestopSupportNo);
 			
-			
-			
-
 			MemberVO detail = memberService.selectAdviceOnlineStatusManagementDetail(searchVO);
+			
 			int joinTypeCd = 00002;
 			List<MemberVO> proMemberId = memberService.proMemberId(joinTypeCd);
 			
 			model.addAttribute("detail", detail);
+			model.addAttribute("adviceAreaCd", adviceAreaCd);
 			model.addAttribute("proMemberId", proMemberId);
 			mv.setViewName("/view/adviceOnlineStatusManagementDetail");
 
@@ -187,13 +194,10 @@ public class OnestopSupportController {
 		 */
 		@RequestMapping(value = "/oneStop/adviceOnlineStatusBusiness.do")
 		public ModelAndView adviceOnlineStatusBusiness(@ModelAttribute("searchVO") MemberVO searchVO, Model model, ModelAndView mv, HttpServletRequest request) throws Exception {
-			System.out.println("searchVO_1***********************"+searchVO);
 			String memberId = request.getParameter("memberId");
 			String onestopSupportNo = request.getParameter("onestopSupportNo");
 			searchVO.setMemberId(memberId);
 			searchVO.setOnestopSupportNo(onestopSupportNo);
-			System.out.println("memberId :: " + memberId);
-			System.out.println("onestopSupportNo :: " + onestopSupportNo);
 			
 			model.addAttribute("memberId", memberId);
 			model.addAttribute("onestopSupportNo", onestopSupportNo);
@@ -217,7 +221,6 @@ public class OnestopSupportController {
 			model.addAttribute("File4", File4);
 			model.addAttribute("detail", detail);
 			
-			System.out.println("detail?? :: " + detail);
 			
 			
 			mv.setViewName("/view/adviceOnlineStatusBusiness");
@@ -239,7 +242,6 @@ public class OnestopSupportController {
 	    	String onestopSupportNo = request.getParameter("onestopSupportNo");	
 	    	mav.addObject("memberId",memberId);
 	    	mav.addObject("onestopSupportNo" ,onestopSupportNo);
-	    	System.out.println(multipartRequest.getFile("fileName1"));
 	    	
 	    	for(int i =0; i<4; i++) {
 	    		if(i==0) {//자문 계획서
@@ -357,7 +359,6 @@ public class OnestopSupportController {
 	    	String onestopSupportNo = (String) map.get("onestopSupportNo");
 	    	String attchFileNo = (String) map.get("attchFileNo");
 	    	String attchFileDiviCd = (String) map.get("attchFileDiviCd");
-	    	System.out.println("attchFileNo:::::::::::::::"+attchFileNo);
 	    	hMap.put("memberId",memberId); 
     		hMap.put("onestopSupportNo",onestopSupportNo); 
     		hMap.put("attchFileNo",attchFileNo); 
@@ -389,10 +390,6 @@ public class OnestopSupportController {
 	    	hMap.put("proMemberId", request.getParameter("proMemberId"));
 	    	hMap.put("onestopSupportNo", request.getParameter("onestopSupportNo"));
 
-	    	System.out.println("memberId :: " + request.getParameter("memberId"));
-	    	System.out.println("proMemberId :: " + request.getParameter("proMemberId"));
-	    	System.out.println("onestopSupportNo :: " + request.getParameter("onestopSupportNo"));
-	    
 	    	Integer returnCode = memberService.adviceOnlineStatusManagementUpdate(hMap);	    
 	    	
 			return "jsonView";
@@ -401,7 +398,6 @@ public class OnestopSupportController {
 	   /*온라인상담 현황 관리 이전글 다음글 수정*/
 	  @RequestMapping(value = "/adviceOnlineStatusManagementDetailpaging.do")
 	  public ModelAndView adviceOnlineStatusManagementDetailpaging(@ModelAttribute("searchVO") MemberVO searchVO, ModelAndView mv,  HttpServletRequest request) throws Exception {
-	     System.out.println("adviceOnlineStatusManagementDetailpaging***********************"+searchVO);
 	     searchVO.setPageUnit(propertiesService.getInt("pageUnit"));
 	     searchVO.setPageSize(propertiesService.getInt("pageSize"));
 	     
@@ -413,7 +409,6 @@ public class OnestopSupportController {
 	     searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
 	     searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
 	     searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
-	      System.out.println("memberId::" + request.getParameter("memberId"));
 
 	     String memberId = request.getParameter("memberId");  
 	     String noticeTitle = request.getParameter("noticeTitle");
@@ -424,10 +419,6 @@ public class OnestopSupportController {
 	     searchVO.setNoticeIdx(noticeIdx);
 	     searchVO.setPageNum(pageNum);
 	     
-	     System.out.println("memberId :  " + memberId);
-	     System.out.println("noticeTitle :  " + noticeTitle);
-	     System.out.println("noticeIdx :  " + noticeIdx);
-	     System.out.println("pageNum :  " + pageNum);
 	     
 	     MemberVO detail = memberService.selectNoticeDetail(searchVO);         //해당페이지의 정보
 //	     MemberVO detail1 = memberService.selectNoticeDetailPlus(searchVO);      //다음글에 대한 정보
@@ -440,10 +431,8 @@ public class OnestopSupportController {
 //	     mv.addObject("detail2", detail2);
 	     mv.addObject("pageNum", pageNum);
 
-	     System.out.println("detail :: " + detail);
 	     
 	     mv.setViewName("/view/adviceOnlineStatusManagementDetailpaging");      
-	     System.out.println("adviceOnlineStatusManagementDetailpaging***********************"+searchVO);
 	     
 	     return mv;
 	  }
@@ -490,10 +479,8 @@ public class OnestopSupportController {
 
 			commonsVo.setGroupCd("G00047");//구분
 			List<MemberVO> onoffDiviCd = memberService.selectCommonsList(commonsVo);
-			commonsVo.setGroupCd("G00002");//사업분야
-			List<MemberVO> largeBussAreaCd = memberService.selectCommonsList(commonsVo);
-			commonsVo.setGroupCd("G00003");//사업분야 상세
-			List<MemberVO> mediumBussAreaCd = memberService.selectCommonsList(commonsVo);
+			commonsVo.setGroupCd("G00028");//자문사업분야
+			List<MemberVO> suppBussAreaCd = memberService.selectCommonsList(commonsVo);
 			commonsVo.setGroupCd("G00029");//희망장소
 			List<MemberVO> advicePlaceCd = memberService.selectCommonsList(commonsVo);
 			commonsVo.setGroupCd("G00030");//자문 신청분야
@@ -501,13 +488,21 @@ public class OnestopSupportController {
 
 			int joinTypeCd = 00002;
 			List<MemberVO> proMemberId = memberService.proMemberId(joinTypeCd);
+			for(int i=0; i<proMemberId.size(); i++) {
+				System.out.println(proMemberId.get(i));
+			}
+	        /* FROM - TO Default */
+	        Date dt = new Date();
+	        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+
+	        String today = format1.format(dt);
 			
 			mav.addObject("onoffDiviCd",onoffDiviCd);
-			mav.addObject("largeBussAreaCd",largeBussAreaCd);
-			mav.addObject("mediumBussAreaCd",mediumBussAreaCd);
+			mav.addObject("suppBussAreaCd",suppBussAreaCd);
 			mav.addObject("advicePlaceCd",advicePlaceCd);
 			mav.addObject("adviceAreaCd",adviceAreaCd);
 			mav.addObject("proMemberId",proMemberId);
+			mav.addObject("today",today);
 			mav.setViewName("/view/adviceOnlineStatusManagementInsert");
 			return mav;
 		}
@@ -549,19 +544,36 @@ public class OnestopSupportController {
 		//원스톱지원정보 ->관리자페이지 등록
 		@RequestMapping(value = "/oneStop/adviceOnlineStatusMagagementInsertOk.do",  produces="text/plain;charset=utf-8")
 		public String adviceOnlineStatusMagagementInsertOk(@RequestParam(required=false) Map<String, String> map, MultipartHttpServletRequest multipartRequest) throws Exception {
+			String[] adviceAreaCdList = map.get("adviceAreaCdList").split(",");		
+			  
 			String filePath = noticeFilePath;//파일경로 가져오기
 			String attchFileNo = null;
-			if(multipartRequest.getFile("orgFileNm") != null) { //파일이 있으면 
+			map.put("compMail",map.get("compMail1")+"@"+map.get("compMail2"));
+			
+			if(!multipartRequest.getFile("orgFileNm").isEmpty()) { //파일이 있으면 
 				MultipartFile orgFileNm = multipartRequest.getFile("orgFileNm");
 				HashMap<String, String> fileMap = UploadFileUtils.OnefileUpload(orgFileNm,filePath);
 				map.put("fileCourse",fileMap.get("fileCourse"));
 				map.put("orgFileNm",fileMap.get("orgFileNm"));
 			}
+			//onsertop info inserto
 			String onestopSupportNo = memberService.onestopSupportNoSelect(map);
+
 			map.put("onestopSupportNo", onestopSupportNo);
+			System.out.println(onestopSupportNo);
 			int insert = memberService.adviceOnlineStatusMagagementInsertOk(map);
+			
 			if(insert > 0) {
-			    	if(!multipartRequest.getFile("fileName1").isEmpty()) { //파일이 있으면 
+				//분류코드 insert
+				map.put("adviceAreaCdList", map.get("adviceAreaCdList"));
+				map.put("memberId", map.get("memberId"));
+				for(int i=0; i<adviceAreaCdList.length;i++) {
+					map.put("adviceAreaCd",adviceAreaCdList[i]);
+					int areaCdInsert = memberService.onestopArearCdInsert(map);					
+				}
+
+				//파일 insert
+				if(!multipartRequest.getFile("fileName1").isEmpty()) { //파일이 있으면 
 						MultipartFile orgFileNm = multipartRequest.getFile("fileName1");
 						HashMap<String, String> fileMap = UploadFileUtils.OnefileUpload(orgFileNm,filePath);
 		    			attchFileNo = map.get("memberId")+"_"+onestopSupportNo+"_"+1+"_"+1;

@@ -184,7 +184,7 @@
 									</tr>
 									<tr>
 										<th style="text-align:center;background:#eee;vertical-align:middle;">사업분야 *</th>
-										<td colspan="3"><c:out value="${detail.largeBussAreaCd}"/> > <c:out value="${detail.mediumBussAreaCd}"/></td>
+										<td><c:out value="${detail.suppBussAreaCd}"/></td>
 									</tr>
 									<tr>
 										<th style="text-align:center;background:#eee;vertical-align:middle;">주소</th>
@@ -196,8 +196,8 @@
 									<tr>
 										<th style="text-align:center;background:#eee;vertical-align:middle;">대표전화</th>
 										<td><c:out value="${detail.entprHeadTel}"/>	</td>
-										<th style="text-align:center;background:#eee;vertical-align:middle;">종업원수</th>
-										<td><c:out value="${detail1.entprResultEmpCnt}"/></td>
+										<th style="text-align:center;background:#eee;vertical-align:middle;">직원수</th>
+										<td><c:out value="${detail.compEmplCnt}"/>명</td>
 									</tr>
 								</tbody>
 							</table>
@@ -254,7 +254,12 @@
 									</tr>
 									<tr>
 										<th style="text-align:center;background:#eee;vertical-align:middle;">자문신청분야</th>
-										<td colspan="3"><c:out value="${detail.adviceAreaCd}"/></td>
+										<td colspan="3">
+											<c:forEach var="adviceAreaCd" items="${adviceAreaCd}" varStatus="status">
+												<c:out value="${adviceAreaCd.adviceAreaCd}"/>
+												&nbsp;
+											</c:forEach>
+										</td>
 									</tr>
 									<tr>
 										<th style="text-align:center;background:#eee;vertical-align:middle;">자문신청내용</th>
