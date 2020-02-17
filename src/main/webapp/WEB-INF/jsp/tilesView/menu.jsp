@@ -109,6 +109,9 @@
 							<a href="/db/site/noticeList.do" title="사이트 관리"><span class="menu-item-parent">공지사항</span></a>
 						</li>
 						<li class="">
+							<a href="/db/site/faqList.do" title="사이트 관리"><span class="menu-item-parent">FAQ</span></a>
+						</li>
+						<li class="">
 							<a href="/db/site/popupList.do" title="사이트 관리"><span class="menu-item-parent">팝업 관리</span></a>
 						</li>
 						<li class="">

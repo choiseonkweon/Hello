@@ -122,6 +122,145 @@
 			ORDER BY notice_idx DESC LIMIT 1	
 	</update>
 	
+<!-- 	<select id="selectFaqList" parameterType="java.util.Map" resultType="java.util.Map"> -->
+			
+<!-- 			SELECT -->
+<!-- 				faq_idx AS faqIdx, -->
+<!-- 				faq_title AS faqTitle, -->
+<!-- 				faq_cont AS faqContent, -->
+<!-- 				( -->
+<!-- 					CASE faq_open_yn  -->
+<!-- 						WHEN 'Y' THEN '공개' -->
+<!-- 						WHEN 'N' THEN '비공개' -->
+<!-- 					END -->
+<!--                 ) AS faqOpenYn, -->
+<!-- 				date_format(reg_dt, '%Y.%m.%d') AS faqRegDt -->
+<!-- 			FROM ta_faq -->
+<!-- 			WHERE 1=1 -->
+<!-- 			<if test="searchText != null and searchText != ''"> -->
+<!-- 		        <choose> -->
+<!-- 		        	<when test='searchType eq ""'> -->
+<!-- 						AND	faq_title LIKE CONCAT('%',#{searchText},'%') OR faq_open_yn LIKE CONCAT('%',#{searchText},'%')  -->
+<!-- 					</when> -->
+<!-- 		            <when test='searchType eq 1'> -->
+<!-- 						AND	faq_title LIKE CONCAT('%',#{searchText},'%') -->
+<!-- 					</when> -->
+<!-- 				</choose> -->
+<!-- 			</if>  -->
+<!-- 			ORDER BY faq_idx ASC -->
+<!-- 			LIMIT #{recordCountPerPage} OFFSET #{firstIndex} -->
+<!-- 	</select> -->
+	<select id="selectFaqList" parameterType="java.util.Map" resultType="java.util.Map">
+			SELECT
+				faq_idx AS faq_idx,
+				faq_title AS faq_title,
+				faq_cont AS faq_cont,
+				(SELECT common_nm FROM ta_common t WHERE t.group_cd = 'G00038' AND common_cd = A.faq_open_yn) AS faq_open_yn,
+				date_format(reg_dt, '%Y.%m.%d') AS reg_dt
+			FROM ta_faq A
+			WHERE 1=1 
+			<if test="searchText != null and searchText != ''">
+		        <choose>
+		        	<when test='searchType eq ""'>
+						AND	faq_title LIKE CONCAT('%',#{searchText},'%') OR faq_open_yn LIKE CONCAT('%',#{searchText},'%') 
+					</when>
+		            <when test='searchType eq 1'>
+						AND	faq_title LIKE CONCAT('%',#{searchText},'%')
+					</when>
+				</choose>
+			</if> 
+			ORDER BY faq_idx DESC
+			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+	</select>
+	
+	<select id="selectFaqDetail" parameterType="java.util.Map" resultType="java.util.Map">
+			SELECT	faq_idx 					AS faq_idx
+						,faq_title 				AS faq_title
+						,faq_cont 				AS faq_cont
+						,faq_open_yn 			AS faq_open_yn
+						,file_course					AS	fileCourse
+						,org_file_nm				AS	orgFileNm
+						,upload_file_nm			AS	uploadFileNm
+			   FROM ta_faq
+			 WHERE 1=1
+			     AND faq_idx 					=#{faq_idx}
+	</select>
+	
+	<select id="selectFaqDatailFiles" parameterType="java.util.Map" resultType="java.util.Map">
+			SELECT	faq_idx 					AS faq_idx
+						,faq_title 				AS faq_title  
+						,faq_cont 				AS faq_cont
+						,faq_open_yn 			AS faq_open_yn  
+						,file_course					AS	fileCourse
+						,org_file_nm				AS	orgFileNm
+						,upload_file_nm			AS	uploadFileNm
+			   FROM ta_faq
+			 WHERE 1=1
+			     AND faq_idx 					=#{faq_idx}
+	</select>
+	
+	<insert id="selectFaqInsert" parameterType="java.util.Map">
+			INSERT INTO ta_faq (
+				 faq_idx
+				,faq_title  
+				,faq_cont
+				,faq_open_yn
+				,file_course
+				,org_file_nm
+				,upload_file_nm
+				,reg_dt
+				,reg_id
+			)
+			VALUES(
+			(select concat('F',IFNULL(LPAD(MAX(SUBSTRING(faq_idx,2,LENGTH(faq_idx))) + 1,4,'0'),'0000')) from ta_faq a)
+				,#{faq_title}
+				,#{faq_cont}
+				,#{faq_open_yn}
+				,#{fileCourse}
+				,#{orgFileNm}
+				,#{uploadFileNm}
+				,CURRENT_TIMESTAMP
+				,'admin'<!-- 나중에 로그인한 아이디로 수정예정  -->
+			)
+	</insert>
+	
+	
+	<update id="selectfaqUpdate" parameterType="java.util.Map">
+			UPDATE ta_faq 
+				set
+				 faq_idx = #{faq_idx}, 
+				 faq_title = #{faq_title}, 
+				 faq_cont = #{faq_cont}, 
+				 faq_open_yn = #{faq_open_yn}
+				 ,file_course =  #{fileCourse}
+				 ,org_file_nm = #{orgFileNm}
+			where faq_idx = #{faq_idx}
+	</update>
+	
+	<select id="selectFaqListTotCnt" parameterType="java.util.Map" resultType="int">
+			SELECT COUNT(*) totcnt
+			FROM ta_faq
+			WHERE 1=1
+			<if test="searchText != null and searchText != ''">
+		        <choose>
+		        	<when test='searchType eq ""'>
+						AND	faq_title LIKE CONCAT('%',#{searchText},'%') OR faq_open_yn LIKE CONCAT('%',#{searchText},'%') 
+					</when>
+		            <when test='searchType eq 1'>
+						AND	faq_title LIKE CONCAT('%',#{searchText},'%')
+					</when>
+				</choose>
+			</if> 
+	</select>
+	
+	
+	<update id="faqFileUpload" parameterType="jcep.admin.model.SiteVO">
+			UPDATE ta_faq
+			SET 
+				org_file_nm = #{faqFile}
+				where faq_idx = #{faqIdx}
+			ORDER BY faq_idx DESC LIMIT 1	
+	</update>
 	<!-- 
 	
 	

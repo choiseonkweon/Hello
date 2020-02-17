@@ -1,6 +1,8 @@
 package jcep.admin.service;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -88,6 +90,45 @@ public class SiteService {
 	public Integer noticeFileUpload(SiteVO params) throws Exception {
     	return siteMapper.noticeFileUpload(params);
     }
+
+	
+	/**
+	 * FAQ목록을 조회한다.
+	 * @param
+	 * @return 
+	 * @return 
+	 * @return Integer형
+	 * @exception Exception
+	 */
+
+
+	public List<Map<String, String>> selectFaqList(SiteVO paramList) {
+		System.out.println("최종 파람=="+paramList);
+		return siteMapper.selectFaqList(paramList);
+	}
+
+	public Map<String, Object> selectFaqDetail(Map<String, Object> paramList) {
+		return siteMapper.selectFaqDetail(paramList);
+	}
+	
+	public Integer selectFaqInsert(Map<String, Object> paramList) {
+		return siteMapper.selectFaqInsert(paramList);
+	}
+
+	public Integer selectfaqUpdate(Map<String, Object> paramList) {
+		return siteMapper.selectfaqUpdate(paramList);
+	}
+
+
+	public int selectFaqListTotCnt(SiteVO paramList) {
+		return siteMapper.selectFaqListTotCnt(paramList);
+	}
+
+	public Integer faqFileUpload(SiteVO paramList) {
+		return siteMapper.faqFileUpload(paramList);
+	}
+
+	
 /*
 	*//**
 	 * 시설 이미지 업로드
@@ -150,3 +191,5 @@ public class SiteService {
 	}
 	*/
 }
+
+

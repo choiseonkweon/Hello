@@ -58,7 +58,7 @@ public class SiteVO extends PagingVO {
 	private String answerCont;
 	private String totcnt;
 
-	private String faqIdx;
+	private String faq_idx;
 	private String faqTitle;
 	private String faqCont;
 	private String faqOpenYn;
@@ -221,10 +221,10 @@ public class SiteVO extends PagingVO {
 		this.totcnt = totcnt;
 	}
 	public String getFaqIdx() {
-		return faqIdx;
+		return faq_idx;
 	}
-	public void setFaqIdx(String faqIdx) {
-		this.faqIdx = faqIdx;
+	public void setFaqIdx(String faq_idx) {
+		this.faq_idx = faq_idx;
 	}
 	public String getFaqTitle() {
 		return faqTitle;
@@ -313,5 +313,6 @@ public class SiteVO extends PagingVO {
 	public void setNoticeFiles(MultipartFile noticeFiles) {
 		this.noticeFiles = noticeFiles;
 	}
+
 
 }

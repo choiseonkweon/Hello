@@ -1118,7 +1118,7 @@ public class MemberController {
     
     
 	/**
-	 * 회원정보를 승인한다.
+	 * 회원정보를 승인 및 거절한다.
 	 * @param memberidx - 수정할 회원 idx
 	 * @param searchVO - 목록 조회조건 정보가 담긴 VO
 	 * @param model

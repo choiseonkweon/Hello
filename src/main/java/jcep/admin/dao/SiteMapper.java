@@ -1,6 +1,9 @@
 package jcep.admin.dao;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import egovframework.rte.psl.dataaccess.mapper.Mapper;
 import jcep.admin.model.SiteVO;
@@ -55,7 +58,7 @@ public interface SiteMapper {
 	public Integer noticeInsert(SiteVO params) throws Exception;
 
 	/**
-	 * 공지사항을 등록한다.
+	 * 공지사항을 수정한다.
 	 * @param params - 등록할 정보가 담긴 SiteVO
 	 * @return Integer형
 	 * @exception Exception
@@ -71,6 +74,39 @@ public interface SiteMapper {
 	 * @exception Exception
 	 */
 	public Integer noticeFileUpload(SiteVO params) throws Exception;
+
+	
+	
+	/**
+	 * FAQ 목록 조회
+	 * @param 
+	 * @return Integer형
+	 * @exception Exception
+	 */
+	
+
+	public List<Map<String, String>> selectFaqList(SiteVO paramList);
+
+	public Integer selectFaqInsert(Map<String, Object> paramList);
+
+	public Integer selectfaqUpdate(Map<String, Object> paramList);
+
+	public Map<String, Object> selectFaqDetail(Map<String, Object> paramList);
+
+	public int selectFaqListTotCnt(SiteVO paramList);
+
+	public Integer faqFileUpload(SiteVO paramList);
+
+//	public Map<String, Object> selectFaqDetail(String faqIdx);
+
+//	public List<Map<String, Object>> selectFaqDatailFiles(String faqIdx);
+
+
+
+
+
+
+
 	
 /*	
 	
