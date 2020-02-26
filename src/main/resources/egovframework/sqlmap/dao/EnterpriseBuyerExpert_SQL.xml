@@ -1231,9 +1231,11 @@ LEFT OUTER JOIN	tb_buss_anncemnt_attch_file c 	ON		a.buss_anncemnt_no = c.buss_a
 	<select id="businessManagementFileLength" parameterType="java.util.Map" resultType="int">
 		/*businessManagementFileLength*/
 		<![CDATA[
-			SELECT MAX(RIGHT(attch_file_no,1))+1
-			  FROM tb_buss_attch_file
-			WHERE buss_anncemnt_no = #{bussAnncemntNo}
+				SELECT  RIGHT(CONCAT(LEFT(IFNULL(MAX(buss_anncemnt_no),'P'),1), 
+    						LPAD((RIGHT(IFNULL(MAX(attch_file_no),'P'),4)+1),4,0)),4)
+				   FROM	tb_buss_attch_file
+				 WHERE	1=1
+					 AND	buss_anncemnt_no = #{bussAnncemntNo}
 		]]>
 	</select>
 

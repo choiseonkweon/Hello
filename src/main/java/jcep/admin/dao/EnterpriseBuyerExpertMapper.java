@@ -419,7 +419,7 @@ public interface EnterpriseBuyerExpertMapper {
 	
 	public int businessManagementRegisterUpdateOk(Map<String,String> hMap)throws Exception;
 
-	public int businessManagementFileLength(Map<String,String> hMap)throws Exception;
+	public String businessManagementFileLength(Map<String,String> hMap)throws Exception;
 
 	public int NomberValidateCheck(Map<String,String> hMap)throws Exception;
 

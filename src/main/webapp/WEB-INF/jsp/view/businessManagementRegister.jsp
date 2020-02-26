@@ -753,7 +753,7 @@
 											</td>
 										</tr>
 										<tr>
-											<th style="text-align:center;background:#eee;vertical-align:middle;">첨부파일</th>
+											<th style="text-align:center;background:#eee;vertical-align:middle;">첨부1파일</th>
 											<td colspan="3">
 <%-- 										<form method="post" enctype="multipart/form-data" action="imgup.jsp">
 													<input type="file" name="filename1" size=100>

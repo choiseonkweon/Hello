@@ -378,29 +378,6 @@ public class BusinessController {
 	}
 	
 
-	/**
-	 * 사업정보를 등록한다.
-	 * @param memberidx - 등록할 회원 idx
-	 * @param searchVO - 목록 조회조건 정보가 담긴 VO
-	 * @param model
-	 * @return "memberRegister"
-	 * @exception Exception
-	 */
-    /*@RequestMapping("/business/businessManagementRegisterInsert.do")
-    public String businessManagementRegisterInsert(HttpServletRequest request, Model model, @ModelAttribute("searchVO") MemberVO searchVO) throws Exception {
-		System.out.println("businessManagementRegisterInsert_1***********************"+searchVO);
-
-    	String mngId = request.getParameter("mngId");
-    	searchVO.setMngId(mngId);
-    	System.out.println("mngId :: " + mngId);
-    	
-   		Integer returnCode = enterpriseBuyerExpertService.businessManagementRegisterInsert(searchVO);
-   		
-   		System.out.println("businessManagementRegisterInsert_2***********************"+searchVO);
-   		
-    	return "jsonView";
-    }
-    */
     @RequestMapping("/business/businessManagementRegisterInsert.do")
 	public String businessManagementRegisterInsert(MemberVO searchVO,HttpServletRequest request, HttpSession session, MultipartHttpServletRequest multipartRequest) throws Exception {
     	System.out.println("businessManagementRegisterInsert_1***********************"+searchVO);
@@ -416,9 +393,11 @@ public class BusinessController {
         	List<Map<String, Object>> fileMap = UploadFileUtils.MultiFileUpload(multipartRequest, filePath);
         	for(int i = 0; i<fileMap.size(); i++) {
         		HashMap<String,String> hMap = new HashMap<String,String>();
-
+        		int num = 0000;
+        		num = +i;
+        		System.out.println("num: " + num);
         		hMap.put("bussAnncemntNo",searchVO.getBussAnncemntNo());		//사업공고번호
-        		hMap.put("attchFileNo",searchVO.getBussAnncemntNo()+i);				//첨부파일번호
+        		hMap.put("attchFileNo",searchVO.getBussAnncemntNo()+"000"+i);				//첨부파일번호
         		hMap.put("fileCourse",(String)fileMap.get(i).get("fileCourse"));			//파일경로
         		hMap.put("orgFileNm",(String)fileMap.get(i).get("orgFileNm"));			//파일명
         		int fileInsertcheck = enterpriseBuyerExpertService.businessManagementRegisterInsertFile(hMap);
@@ -1174,7 +1153,23 @@ public class BusinessController {
 		  }
 		  return null;
 	  }
-	  
+
+	  //file 미리보기구현
+	  @RequestMapping(value = "/businessManagementfileView.do", produces="text/plain;charset=utf-8")
+	  public ModelAndView  businessManagementfileView(@RequestParam(required=false) Map<String, String> map, ModelAndView mv,  HttpServletRequest request, HttpServletResponse response) throws Exception {
+		  System.out.println(map.get("attchFileNo"));
+		  MemberVO memberVo = enterpriseBuyerExpertService.businessManagementfileDownload(map);
+		  //미리보기 할 파일 정보를 불러온다. //다운로드와 같은 방식으로 데이터를 불러온다.
+		  mv.addObject("memberVo",memberVo);
+		  mv.addObject("response",response);
+		  try {
+			  //UploadFileUtils.fileView(mv);
+		  } catch (Exception e) {
+			  // TODO Auto-generated catch block
+			  e.printStackTrace();
+		  }
+		  return null;
+	  }	  
 		@RequestMapping(value = "/business/businessManagementUpdate.do",  produces="text/plain;charset=utf-8")
 		public ModelAndView businessManagementUpdate(@RequestParam(required=false) Map<String, String> map) throws Exception {
 
@@ -1526,19 +1521,17 @@ public class BusinessController {
     		
 			for(int i =0; i<count; i++) { //삭제할 파일개수만큼 돌리기
 				String attchFileNo =  map.get("fileNumber"+i); // 해당 파일 가져오기
-				System.out.println("파일번호"+ attchFileNo);
 				int Delete = enterpriseBuyerExpertService.businessManagementRegisterFileDelete(attchFileNo); //파일 삭제 쿼리
-				System.out.println("삭제"+i+":" +Delete); 
 			}
 
 			int update =  enterpriseBuyerExpertService.businessManagementRegisterUpdateOk(map);//수정된 사항 업데이트
 			if(update>0) {//업데이트가 완료되면
 	        	String filePath = noticeFilePath;//파일경로 가져오기
 	        	List<Map<String, Object>> fileMap = UploadFileUtils.MultiFileUpload(multipartRequest, filePath);//파일 업로드 | 업로드된 파일이름과 파일경로 리스트로 반환
-	    		int filelength = enterpriseBuyerExpertService.businessManagementFileLength(map);//마지막 파일번호 +1된 값 가져오기
-	        	for(int i =0; i<fileMap.size(); i++) { //업로드된 파일 개수만큼 돌리기
-	        		HashMap<String,String> hMap = new HashMap<String,String>(); 	//객체 선언
-
+	    		for(int i =0; i<fileMap.size(); i++) { //업로드된 파일 개수만큼 돌리기
+		    		String filelength = enterpriseBuyerExpertService.businessManagementFileLength(map);//마지막 파일번호 +1된 값 가져오기
+		    		System.out.println("filelength" + filelength);
+	    			HashMap<String,String> hMap = new HashMap<String,String>(); 	//객체 선언
 	        		hMap.put("bussAnncemntNo",map.get("bussAnncemntNo"));				//사업공고번호
        				hMap.put("attchFileNo",map.get("bussAnncemntNo")+filelength);		//첨부파일번호
        				hMap.put("fileCourse",(String)fileMap.get(i).get("fileCourse"));			//파일경로
@@ -1550,7 +1543,6 @@ public class BusinessController {
 	        		System.out.println("파일경로:"+(String)fileMap.get(i).get("fileCourse"));
 	        		System.out.println("파일명:"+(String)fileMap.get(i).get("orgFileNm"));
 	        		System.out.println("===============================");
-	        		filelength++;	//파일번호 증가
 				}
 			}
 			return "jsonView";

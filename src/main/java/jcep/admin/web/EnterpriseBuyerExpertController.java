@@ -8,7 +8,9 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import org.apache.poi.hslf.util.SystemTimeUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -20,8 +22,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import egovframework.rte.fdl.property.EgovPropertyService;
 import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
-import jcep.admin.common.MakeExcel;
-import jcep.admin.model.BusinessVO;
 import jcep.admin.model.EnterpriseBuyerExpertVO;
 import jcep.admin.model.MemberVO;
 import jcep.admin.service.EnterpriseBuyerExpertService;
@@ -183,23 +183,6 @@ public class EnterpriseBuyerExpertController {
     	return mv;
 	}
 	
-	/**
-	 * 기업 정보 등록화면을 조회한다.
-	 * @param EnterpriseBuyerExpertVO - 등록할 정보가 담긴 VO
-	 * @param searchVO -  조회조건 정보가 담긴 VO
-	 * @param status
-	 * @return "enterpriseInformationManagementRegister"
-	 * @exception Exception
-	 */
-	@RequestMapping("/enterprise/enterpriseInformationManagementRegister.do")
-	public ModelAndView enterpriseInformationManagementRegister(@ModelAttribute("searchVO") MemberVO searchVO, Model model, ModelAndView mv, HttpServletRequest request) throws Exception {
-		
-		model.addAttribute("viewType", "create");
-		
-		mv.setViewName("/view/enterpriseInformationManagementRegister");
-		
-		return mv;
-	}
 	
 	/**
 	 * 기업정보를 수정 및 등록 한다.
@@ -626,10 +609,6 @@ public class EnterpriseBuyerExpertController {
 	  @RequestMapping(value = "/evalu/selectExpertList.do", produces="text/plain;charset=utf-8")
 	  public ModelAndView  SelectExpertList(@RequestParam(value="selectClassCd[]") List<String> selectClassCd, @RequestParam(value="evaluationCnt") int evaluationCnt) throws Exception {
 		  ModelAndView mav = new ModelAndView();
-		  for(int i=0;i<selectClassCd.size();i++) {
-			  System.out.println(selectClassCd.get(i));
-
-		  }
 		  HashMap<String,Object> hMap = new HashMap<String,Object>();
 		  hMap.put("selectClassCd", selectClassCd);
 		  hMap.put("evaluationCnt", evaluationCnt);
@@ -686,45 +665,31 @@ public class EnterpriseBuyerExpertController {
 			mav.setViewName("/view/evaluInformationManagementDetail");
 			return mav;
 		}
-		
-		
+
+
 		// 엑셀 다운로드
 		@RequestMapping("/evalu/ExpertEvaluExcelDownload.do")
-		public String  ExpertEvaluExcelDownload(@RequestParam(required=false) Map<String,List<Map<String,Object>>> paramList, HttpServletRequest request, HttpServletResponse response) throws Exception {
-	        ObjectMapper om = new ObjectMapper();
+		public ModelAndView  ExpertEvaluExcelDownload(@RequestParam(required=false) Map<String,List<Map<String,Object>>> paramList, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		    ModelAndView mav = new ModelAndView("excelView");
+
+			ObjectMapper om = new ObjectMapper();
 	        List<Map<String,String>> list =  om.readValue(om.writeValueAsString(JSONArray.fromObject(paramList.get("params"))), List.class);
 	        String selectTitle =  om.readValue(om.writeValueAsString(paramList.get("selectTitle")),String.class);
 	        String evaluationDt =  om.readValue(om.writeValueAsString(paramList.get("evaluationDt")),String.class);
 	        String evaluationCnt =  om.readValue(om.writeValueAsString(paramList.get("evaluationCnt")),String.class);
-	        List<Map<String,String>> selectClassCd =  om.readValue(om.writeValueAsString(JSONArray.fromObject(paramList.get("selectClassCd"))),List.class);	        
+	        List<Map<String,String>> selectClassCd =  om.readValue(om.writeValueAsString(JSONArray.fromObject(paramList.get("selectClassCd"))),List.class);
 
-			Map<String , Object> beans = new HashMap<String , Object>();
+			Map<String , Object> dataMap = new HashMap<String , Object>();
 
-			List<Map<String, String>> boardList = new ArrayList<>();
-			String fileName = "";
-			String templateFile = "";				
-				fileName = "boardProject(search)"; 
-				templateFile = "searchBoard.xlsx";
-				
-				for(int i=0; i<list.size(); i++) {
-					System.out.println(i +": " +list.get(i));
-				}
-//			beans.put("list", list);		
-			beans.put("selectTitle", selectTitle);		
-			beans.put("evaluationDt", evaluationDt);		
-			beans.put("evaluationCnt", evaluationCnt);		
-//			beans.put("selectClassCd", selectClassCd);		
-			
-			
-			MakeExcel me = new MakeExcel();
-			System.out.println(request);
-			System.out.println(response);
-			System.out.println(beans);
-			System.out.println(me.get_Filename(fileName));
-			System.out.println(templateFile);
-	        me.download(request, response, beans, me.get_Filename(fileName), templateFile);
-			
-	        return "jsonView";
-		}
-		
+
+		    String filename = "evaluExpertMemberList_"+System.currentTimeMillis();
+		    String[] columnArr = {"번호", "전문가 명", "참석여부", "비고"};
+
+			dataMap.put("list", list);		
+			dataMap.put("filename", filename);		
+		    dataMap.put("columnArr", columnArr);
+		    dataMap.put("sheetNm", "게시물 목록");    
+		    mav.addObject("dataMap", dataMap);
+	        return mav;//여기서 mav를 타면 
+		}		
 }

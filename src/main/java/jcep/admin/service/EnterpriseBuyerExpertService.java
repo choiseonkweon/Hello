@@ -1411,7 +1411,7 @@ public class EnterpriseBuyerExpertService {
 		return enterpriseBuyerExpertMapper.businessManagementRegisterUpdateOk(hMap);
 	}
 
-	public int businessManagementFileLength(Map<String,String> hMap)throws Exception{
+	public String businessManagementFileLength(Map<String,String> hMap)throws Exception{
 		return enterpriseBuyerExpertMapper.businessManagementFileLength(hMap);
 	}
 	
