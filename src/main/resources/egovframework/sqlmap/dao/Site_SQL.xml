@@ -122,34 +122,6 @@
 			ORDER BY notice_idx DESC LIMIT 1	
 	</update>
 	
-<!-- 	<select id="selectFaqList" parameterType="java.util.Map" resultType="java.util.Map"> -->
-			
-<!-- 			SELECT -->
-<!-- 				faq_idx AS faqIdx, -->
-<!-- 				faq_title AS faqTitle, -->
-<!-- 				faq_cont AS faqContent, -->
-<!-- 				( -->
-<!-- 					CASE faq_open_yn  -->
-<!-- 						WHEN 'Y' THEN '공개' -->
-<!-- 						WHEN 'N' THEN '비공개' -->
-<!-- 					END -->
-<!--                 ) AS faqOpenYn, -->
-<!-- 				date_format(reg_dt, '%Y.%m.%d') AS faqRegDt -->
-<!-- 			FROM ta_faq -->
-<!-- 			WHERE 1=1 -->
-<!-- 			<if test="searchText != null and searchText != ''"> -->
-<!-- 		        <choose> -->
-<!-- 		        	<when test='searchType eq ""'> -->
-<!-- 						AND	faq_title LIKE CONCAT('%',#{searchText},'%') OR faq_open_yn LIKE CONCAT('%',#{searchText},'%')  -->
-<!-- 					</when> -->
-<!-- 		            <when test='searchType eq 1'> -->
-<!-- 						AND	faq_title LIKE CONCAT('%',#{searchText},'%') -->
-<!-- 					</when> -->
-<!-- 				</choose> -->
-<!-- 			</if>  -->
-<!-- 			ORDER BY faq_idx ASC -->
-<!-- 			LIMIT #{recordCountPerPage} OFFSET #{firstIndex} -->
-<!-- 	</select> -->
 	<select id="selectFaqList" parameterType="java.util.Map" resultType="java.util.Map">
 			SELECT
 				faq_idx AS faq_idx,
@@ -261,50 +233,45 @@
 				where faq_idx = #{faqIdx}
 			ORDER BY faq_idx DESC LIMIT 1	
 	</update>
-	<!-- 
-	
-	
-	<update id="memberUpdate" parameterType="jcep.admin.model.MemberVO">
-			UPDATE tb_member
-			SET 
-				<if test="memberPw != null and memberPw != ''"> member_pw = #{memberPw},</if>
-				<if test="memberBelong != null and memberBelong != ''"> member_belong = #{memberBelong},</if>
-				<if test="memberAddr != null and memberAddr != ''"> member_addr = #{memberAddr},</if>
-				<if test="memberMail != null and memberMail != ''"> member_mail = #{memberMail},</if>
-				<if test="memberTel != null and memberTel != ''"> member_tel = #{memberTel},</if>
-				<if test="memberHp != null and memberHp != ''"> member_hp = #{memberHp},</if>
-				<if test="memberJoinType != null and memberJoinType != ''">member_join_type = #{memberJoinType}</if>
-			WHERE member_idx = #{memberIdx}
-	</update>
-	
-	<select id="memberIdChk" parameterType="jcep.admin.model.MemberVO" resultType="int">
-			SELECT COUNT(*) idCnt
-			FROM tb_member
-			WHERE 1=1
-			AND  member_id = #{memberId}
+
+	<select id="selectFaqListTotal" parameterType="java.util.Map" resultType="java.util.Map">
+			SELECT
+				faq_idx AS faq_idx,
+				faq_title AS faq_title,
+				faq_cont AS faq_cont,
+				(SELECT common_nm FROM ta_common t WHERE t.group_cd = 'G00038' AND common_cd = A.faq_open_yn) AS faq_open_yn,
+				date_format(reg_dt, '%Y.%m.%d') AS reg_dt
+			FROM ta_faq A
+			WHERE 1=1 
+			<if test="searchText != null and searchText != ''">
+		        <choose>
+		        	<when test='searchType eq ""'>
+						AND	faq_title LIKE CONCAT('%',#{searchText},'%') OR faq_open_yn LIKE CONCAT('%',#{searchText},'%') 
+					</when>
+		            <when test='searchType eq 1'>
+						AND	faq_title LIKE CONCAT('%',#{searchText},'%')
+					</when>
+				</choose>
+			</if> 
+			ORDER BY faq_idx DESC
 	</select>
 	
-	<insert id="memberAuthInsert" parameterType="jcep.admin.model.MemberVO">
-			INSERT INTO tb_member_auth (
-				 member_idx
-				,member_auth
-			)
-			VALUES(
-				 (select member_idx from tb_member where member_idx = #{memberIdx})
-				,'AA'
-			)
-		   ON
-		      DUPLICATE KEY
-		   UPDATE
-		     	member_idx = (select member_idx from tb_member where member_idx = #{memberIdx})
-		       ,member_auth = 'AA'
-
+	<insert id="insertDB" parameterType="jcep.admin.model.SiteVO">
+		insert into ta_faq(
+		faq_idx
+		,faq_title
+		,faq_cont
+		,faq_open_yn
+		,reg_dt
+		)values
+        (
+            #{faq_idx},
+            #{faqTitle},
+            #{faqCont},
+            #{faqOpenYn},
+            #{regDt}
+        )
+		
 	</insert>
-	
-	<update id="memberConfirm" parameterType="jcep.admin.model.MemberVO">
-			UPDATE tb_member
-			SET 
-				member_st = 'Y'
-			WHERE member_idx = #{memberIdx}
-	</update> -->
+
 </mapper>

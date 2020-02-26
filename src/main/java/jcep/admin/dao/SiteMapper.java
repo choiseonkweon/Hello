@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+
 import egovframework.rte.psl.dataaccess.mapper.Mapper;
 import jcep.admin.model.SiteVO;
 
@@ -97,9 +99,34 @@ public interface SiteMapper {
 
 	public Integer faqFileUpload(SiteVO paramList);
 
-//	public Map<String, Object> selectFaqDetail(String faqIdx);
+	public List<Map<String, String>> selectFaqListTotal();
 
-//	public List<Map<String, Object>> selectFaqDatailFiles(String faqIdx);
+	public void faqListExcelUpload(Map<String, Object> paramMap);
+
+
+	public List<Map<String,Object>> testDbList(Map<String, Object> map);
+
+	public int insertDB(SiteVO vo);
+
+		
+	
+
+
+
+
+
+
+		
+	}
+
+
+
+
+
+
+
+
+
 
 
 
@@ -151,4 +178,4 @@ public interface SiteMapper {
 	 *//*
 	public Integer resourceImageUpload(FacilityResourceVO params) throws Exception;*/
 	
-}
+

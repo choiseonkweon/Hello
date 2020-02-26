@@ -101,6 +101,11 @@
 			</section>
 			<div style="padding-bottom:5px;text-align:right;">
 				<a href="/db/site/faqReg.do" class="btn btn-primary" id="insertBtn" ><b>등록</b></a>
+				<a href="/db/site/faqListExcelDown.do" class="btn btn-primary" id="insertBtn" ><b>엑셀다운</b></a>
+				<!-- excel file 읽어오기 -->
+			    <form name="excelUpForm" id="excelUpForm" enctype="multipart/form-data" method="POST" action="ExcelUp.do">
+				    <input type="file" id="excelFile" name="excleFile" value="엑셀 업로드" />
+				</form>
 			</div>
 			<!-- end widget grid -->
 		</div>
@@ -138,7 +143,25 @@
          	$('#faq_idx').val(faq_idx);
          	$('#faqDetailFrm').attr('action', "/db/site/faqDetail.do").submit();
          }
-        
+
+         $("#excelUpForm").change(function(){
+             var form = $("#excelUpForm")[0];
+
+             var data = new FormData(form);
+             $.ajax({
+                enctype:"multipart/form-data",
+                method:"POST",
+                url: '/db/site/ExcelUp.do',
+                processData: false,   
+                contentType: false,
+                cache: false,
+                data: data,
+                success: function(){  
+                    alert("업로드 성공!!");
+                }
+             });
+         });
+
     </script>
 </body>
 </html>

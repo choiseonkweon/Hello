@@ -4,20 +4,30 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStream;
-import java.net.URL;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.jsp.PageContext;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -27,13 +37,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
+import org.stringtemplate.v4.compiler.STParser.mapExpr_return;
 
 import egovframework.rte.fdl.property.EgovPropertyService;
 import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 import jcep.admin.common.UploadFileUtils;
+import jcep.admin.dao.SiteMapper;
 import jcep.admin.model.MemberVO;
 import jcep.admin.model.SiteVO;
 import jcep.admin.service.SiteService;
@@ -56,9 +69,13 @@ public class SiteController {
 
 	@Resource(name = "siteService")
 	protected SiteService siteService;
+	
+	
 
 	@Resource(name="noticeFilePath")
     String noticeFilePath;
+
+
 
 	
 
@@ -334,51 +351,6 @@ public class SiteController {
 		return mv;
 	}
 	
-	/*
-    @RequestMapping("/site/noticeInsert.do")
-    public String noticeInsert(HttpServletRequest request, MultipartHttpServletRequest multipartRequest, Model model, @ModelAttribute("searchVO") SiteVO searchVO) throws Exception {
-		File path=new File(noticeFilePath);
-		if(!path.exists()) {
-			path.mkdir();
-		}
-		
-		Iterator <String> itr = multipartRequest.getFileNames();
-		while(itr.hasNext()) {
-			MultipartFile mpf = multipartRequest.getFile(itr.next());
-			System.out.println(mpf.getOriginalFilename());	
-			String fileOriginName = Long.toString(System.currentTimeMillis()) + "_" + mpf.getOriginalFilename();
-			File file = new File(path,fileOriginName);
-			try {
-				mpf.transferTo(file);
-				searchVO.setFileCourse(file.getAbsolutePath());					//경로
-				searchVO.setOrgFileNm(fileOriginName);							//파일명
-
-			}catch(Exception e) {
-				e.printStackTrace();
-			}
-		}
-		System.out.println("파일경로: "+ searchVO.getFileCourse());
-		System.out.println("파일이름: "+ searchVO.getOrgFileNm());
-		
-		
-		Integer returnCode =0;
-		if(no==1) {
-	    	searchVO.setNoticeTitle(request.getParameter("noticeTitle"));
-	    	searchVO.setNoticeOpenYn(request.getParameter("noticeOpenYn"));
-	    	searchVO.setNoticeImptYn(request.getParameter("noticeImptYn"));
-	    	searchVO.setNoticeCont(request.getParameter("noticeCont"));
-	    	returnCode = siteService.onestopfileUpload(searchVO);			
-		}
-    	searchVO.setNoticeTitle(request.getParameter("noticeTitle"));
-    	searchVO.setNoticeOpenYn(request.getParameter("noticeOpenYn"));
-    	searchVO.setNoticeImptYn(request.getParameter("noticeImptYn"));
-    	searchVO.setNoticeCont(request.getParameter("noticeCont"));
-    	System.out.println("라디오버튼: "+searchVO.getNoticeImptYn());
-    	System.out.println("내용: "+searchVO.getNoticeCont());
-    	Integer returnCode = siteService.noticeInsert(searchVO);
-		
-    	return "jsonView";
-    }*/
 	
 	/**
 	 * FAQ목록을 조회한다. 
@@ -393,27 +365,6 @@ public class SiteController {
 	@RequestMapping("/site/faqList.do")
 	public ModelAndView faqList(@RequestParam(required=false) Map<String,Object> paramList,Model model, ModelAndView mv,
 			String pageSize, String searchText, String searchType,@ModelAttribute("searchVO")SiteVO searchVO) throws Exception {
-
-		
-//        List<Map<String,Object>> faqList = siteService.selectFaqList(paramList);
-//        mv.addObject("faqList", faqList);
-//    	
-//    	Map<String,Object> ps = new HashMap<String, Object>();
-//    	ps.put("pageSize", pageSize);
-//    	ps.put("searchText", searchText);
-//    	ps.put("searchType", searchType);
-//    	
-//		PaginationInfo paginationInfo = new PaginationInfo();
-//    	paginationInfo.setPageSize(aaa.getPageSize());
-//    	
-//    	int totCnt = siteService.selectFaqListTotCnt(paramList);
-//    	paginationInfo.setTotalRecordCount(totCnt);
-//		model.addAttribute("paginationInfo", paginationInfo);
-//		
-//		System.out.println("검색코드는"+paramList.get("searchType"));
-//		System.out.println("검색어는"+paramList.get("searchText"));
-//		
-//		mv.setViewName("/view/faqList");
 		
 		//미리정의된 페이징 정보 가져오기
 		searchVO.setPageUnit(propertiesService.getInt("pageUnit"));	//페이지갯수
@@ -425,35 +376,21 @@ public class SiteController {
 		paginationInfo.setRecordCountPerPage(searchVO.getPageUnit());	//페이지갯수
 		paginationInfo.setPageSize(searchVO.getPageSize());					//페이지 리스트에 게시되는 페이지 건수	
 		
-		System.out.println("pagination==" + paginationInfo.getRecordCountPerPage());
-		
 		//다시 searchVo에 담기
 		searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
 		searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
 		searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
-		
-//		Map<String, Object> test = new HashMap<String, Object>();
-		
-//		test.put("searchVO", searchVO);
-		
-//		test.putAll((Map<? extends String, ? extends Object>) searchVO);
-		
-		System.out.println("paramList==" + paramList);
 		
 		//faqList 에 화면단 결과를 담기 
 		//selectFaqList 에서 조회한 결과(list)를 faqList에 넣는거
 		//형태는 List로 List안에는 Map 으로 들어가고
 		List<Map<String, String>> faqList = siteService.selectFaqList(searchVO);
 		
-		
-		System.out.println("faqList==="+faqList.size());
 		model.addAttribute("faqList", faqList);
 
-		System.out.println("faqList(0)==="+faqList.get(1));
 		
 		int totCnt = siteService.selectFaqListTotCnt(searchVO);
 		
-		System.out.println("totCnt=="+totCnt);
 		paginationInfo.setTotalRecordCount(totCnt);
 		model.addAttribute("paginationInfo", paginationInfo);
 		
@@ -491,13 +428,10 @@ public class SiteController {
 	@RequestMapping("/site/faqDetail.do")
 	public ModelAndView faqDetail(@RequestParam(required=false) Map<String,Object> paramList, Map<String, Object> faq_idx, Model model, ModelAndView mv, HttpServletRequest request) throws Exception {
 		
-//		String faqIdx = request.getParameter("faqIdx");
 		
 		Map<String,Object> detail = siteService.selectFaqDetail(paramList);
-//		List<Map<String, Object>> files = siteService.selectFaqDatailFiles(faqIdx);
 		
 		mv.addObject("detail", detail);
-//		mv.addObject("files", files);
 		
 		mv.setViewName("/view/faqReg");
 		
@@ -547,9 +481,6 @@ public class SiteController {
 		paramList.put("orgFileNm", searchVO.getOrgFileNm());
 		siteService.selectFaqInsert(paramList);
 		
-    	System.out.println("파일경로: "+ searchVO.getFileCourse());
-		System.out.println("파일이름: "+ searchVO.getOrgFileNm());
-		
     	return "jsonView";
     	
     }
@@ -595,78 +526,11 @@ public class SiteController {
     	return "jsonView";
     }
     
-//    @ResponseBody
-//    @PostMapping(value="/site/faqFileUpload.do", produces="text/plain;charset=utf-8")
-//    public ResponseEntity<String> faqFileUpload(HttpServletResponse response, Model model, SiteVO vo, @RequestParam("noticeFiles") MultipartFile noticeFiles) throws Exception {		
-//		
-//		String returnCode = "100";
-//		
-//		noticeFiles = vo.getNoticeFiles();
-//		
-//		String uploadedFileName = UploadFileUtils.imageFileUpload(noticeFilePath, noticeFiles.getOriginalFilename(), noticeFiles.getBytes());	        
-//		
-//		vo.setNoticeFile("/faqFile"+uploadedFileName);
-//		siteService.faqFileUpload(vo);
-//		
-//        return new ResponseEntity<String>(returnCode, HttpStatus.OK);
-//    }
-
-    
 	  
 	  @RequestMapping(value = "/site/faqFileDown.do", produces="text/plain;charset=utf-8")
 	  public ModelAndView  faqFileDown(@RequestParam(required=false) Map<String, String> map, ModelAndView mv, 
 			  HttpServletRequest request, HttpServletResponse response) throws Exception {
-			
-//		  String strFileName = request.getParameter("orgFileNm");  //파일명을 가지고 온다
-//		  String filePath = new String(strFileName.getBytes("8859_1"), "KSC5601"); //가지고 온 파일명을 한글도 받을 수있게 변환한다
-//
-//		  //업로드된 파일명 추출
-//		  int imgIdx = filePath.lastIndexOf("/");
-//		  String fileName = filePath.substring(imgIdx+1);
-//		  String path = noticeFilePath+"\\"+filePath;
-//
-//		  File file = new File(path);
-//		  response.setContentType("application/octet-stream");
-//
-//		  String Agent=request.getHeader("USER-AGENT");   //브라우져의 버젼
-//		  if(Agent.indexOf("MSIE")>=0){
-//		   int i  = Agent.indexOf('M',2);//두번째 'M'자가 있는 위치
-//		   String IEV = Agent.substring(i+5,i+8);
-//		   if(IEV.equalsIgnoreCase("5.5")){
-//		     // filename은 순수한 파일명만
-//		      response.setHeader("Content-Disposition", "filename="+new String(fileName.getBytes("euc-kr"),"8859_1"));
-//		   } else {
-//		    response.setHeader("Content-Disposition", "attachment;filename="+new String(fileName.getBytes("euc-kr"),"8859_1"));
-//		    }
-//		  } else {
-//		   response.setHeader("Content-Disposition", "attachment;filename="+new String(fileName.getBytes("euc-kr"),"8859_1"));
-//		  }
-//
-//		  byte b[] = new byte[1024];
-//
-//		  if (file.isFile()){ 
-//		   try {
-////		    out.clear();
-////		    out = pageContext.pushBody();
-//		    //jsp파일에서는 servlet으로 변환이 될때 내부적으로 out 객체가 자동 생성된다. 충돌을 방지하기위해 clear 해준다.
-//		    
-//		    BufferedInputStream fin = new BufferedInputStream(new FileInputStream(file)); 
-//		    BufferedOutputStream outs = new BufferedOutputStream(response.getOutputStream()); 
-//		   
-//		    int read = 0; 
-//		    while ((read = fin.read(b)) != -1){
-//		     outs.write(b,0,read);
-//		    }
-//		    outs.flush();
-//		    outs.close();
-//
-//		    fin.close();
-//		   } catch(Exception e) {
-//		    e.printStackTrace();
-//		   }
-//
-//		  }
-//		return null;
+
 		  
 //		   요청하는 컨트롤러에서 ModelAndView에 MemberVo에 Data를 담아서 보내고 여기서 꺼내오자.(파일을 읽고 쓸 스트림)
 			BufferedInputStream fis = null;
@@ -676,8 +540,7 @@ public class SiteController {
 				String fileName = map.get("orgFileNm");
 				
 				response.setContentType("application/octet-stream");
-				response.setHeader("Content-Disposition", "attachment;filename=" + fileName + ";");
-
+				response.setHeader("Content-Disposition", "attachment;filename=" + new String(fileName.getBytes("UTF-8"),"ISO-8859-1") + ";");
 				fis = new BufferedInputStream(new FileInputStream(noticeFilePath+"\\"+fileName));
 				
 				
@@ -715,4 +578,150 @@ public class SiteController {
 	    	Integer returnCode = siteService.selectfaqUpdate(paramList);
 	    	return "jsonView";
 	    }
+	    
+	    /**
+	     * faqList 엑셀 다운로드
+	     * @throws IOException 
+	     * **/
+	    @RequestMapping("site/faqListExcelDown.do")
+	    public void faqListExcelDown(HttpServletResponse response,@ModelAttribute("searchVO")SiteVO searchVO) throws IOException{
+	    	//faq게시판 목록 조회(한페이지씩 조회)
+//	    	List<Map<String, String>> faqList = siteService.selectFaqList(searchVO);
+	    	
+	    	//전체 테이블 조회
+	    	List<Map<String, String>> faqList = siteService.selectFaqListTotal();
+	    	
+	    	//워크북 생성
+	    	Workbook wb = new HSSFWorkbook();
+	    	Sheet sheet = wb.createSheet("FAQ");
+	    	Row row = null;
+	    	Cell cell = null;
+	    	int rowNo = 0;
+	    	
+	    	//테이블 헤더용 스타일
+	    	CellStyle headStyle = wb.createCellStyle();
+	    	
+	    	//헤더생성
+	    	row = sheet.createRow(rowNo++);
+	    	cell = row.createCell(0);
+	    	cell.setCellValue("NO");
+	    	cell = row.createCell(1);
+	    	cell.setCellValue("제목");
+	    	cell = row.createCell(2);
+	    	cell.setCellValue("상태");
+	    	cell = row.createCell(3);
+	    	cell.setCellValue("등록일");
+	    	
+	    	//데이터 생성
+	    	for(int i=1;i<faqList.size()+1;i++) {
+	    		row = sheet.createRow(i);
+	    		row.createCell(0).setCellValue(faqList.get(i-1).get("faq_idx"));
+	    		row.createCell(1).setCellValue(faqList.get(i-1).get("faq_title"));
+	    		row.createCell(2).setCellValue(faqList.get(i-1).get("faq_open_yn"));
+	    		row.createCell(3).setCellValue(faqList.get(i-1).get("reg_dt"));
+	    	}
+	    	
+	    	// 컨텐츠 타입과 파일명 지정
+	    	response.setContentType("ms-vnd/excel");
+	    	response.setHeader("Content-Disposition", "attachment;filename=test.xls");
+	    	
+	    	//엑셀 출력
+	    	wb.write(response.getOutputStream());
+	    	wb.close();
+	    	
+	    }
+	    /**
+	     * faqList 엑셀 업로드
+	     * @throws IOException 
+	     * **/
+	    
+
+	    @Autowired
+	    private SiteMapper siteMapper;
+	    
+	    @RequestMapping("site/ExcelUp.do")
+	    public void ExcelUp(SiteVO searchVO) throws IOException {
+	    	
+	    	System.out.println("업르도 컨트롤러 진입");
+	    	
+	    	//파일을 읽기위해 엑셀파일을 가져온다
+	    	FileInputStream fis=new FileInputStream("C:\\test.xls");
+	    	HSSFWorkbook workbook=new HSSFWorkbook(fis);
+	    	int rowindex=0;
+	    	int columnindex=0;
+	    	//시트 수 (첫번째에만 존재하므로 0을 준다)
+	    	//만약 각 시트를 읽기위해서는 FOR문을 한번더 돌려준다
+	    	HSSFSheet sheet=workbook.getSheetAt(0);
+	    	//행의 수
+	    	int rows=sheet.getPhysicalNumberOfRows();
+	    	
+	    	for(rowindex=1;rowindex<rows;rowindex++){ // row=0은 헤더이므로 1부터 시작
+	    	    //행을 읽는다
+	    	    HSSFRow row=sheet.getRow(rowindex);
+	    	    if(row !=null){
+	    	    	
+	    	        //셀의 수
+	    	        int cells=row.getPhysicalNumberOfCells(); // 한 row당 cell개수
+	    	       
+	    	        SiteVO vo = new SiteVO();
+                    vo.setFaqIdx(vo.getFaqIdx());               // 코드(항상같은정보)
+                    vo.setFaqTitle(vo.getFaqTitle());// 번호(+1증가)
+                    vo.setFaqCont(vo.getFaqCont());
+                    vo.setFaqOpenYn(vo.getFaqOpenYn());
+                    vo.setRegDt(vo.getRegDt());
+
+	    	        for(columnindex=0;columnindex<=cells;columnindex++){
+	    	        	
+	    	            //셀값을 읽는다
+	    	            HSSFCell cell=row.getCell(columnindex);
+	    	            String value="";
+
+	    	            //셀이 빈값일경우를 위한 널체크
+	    	            if(cell==null){
+	    	                continue;
+	    	            }else{
+	    	                //타입별로 내용 읽기
+	    	                switch (cell.getCellType()){
+	    	                case HSSFCell.CELL_TYPE_FORMULA:
+	    	                    value=cell.getCellFormula();
+	    	                    break;
+	    	                case HSSFCell.CELL_TYPE_NUMERIC:
+	    	                    value=cell.getNumericCellValue()+"";
+	    	                    break;
+	    	                case HSSFCell.CELL_TYPE_STRING:
+	    	                    value=cell.getStringCellValue()+"";
+	    	                    break;
+	    	                case HSSFCell.CELL_TYPE_BLANK:
+	    	                    value=cell.getBooleanCellValue()+"";
+	    	                    break;
+	    	                case HSSFCell.CELL_TYPE_ERROR:
+	    	                    value=cell.getErrorCellValue()+"";
+	    	                    break;
+	    	                }
+	    	            }
+	    	            
+	    	            System.out.println("각 셀 내용 :"+value);
+	    	            
+	    	            //담아놨던 value데이터를 셀 순서대로 vo에 set.
+	    	            switch(columnindex) {
+	    	            case 0 : vo.setFaqIdx(value);
+	    	            break;
+	    	            case 1 : vo.setFaqTitle(value);
+	    	            break;
+	    	            case 2 : vo.setFaqCont(value);
+	    	            break;
+	    	            case 3 : vo.setFaqOpenYn(value);
+	    	            break;
+	    	            case 4 : vo.setRegDt(value);
+	    	            break;
+	    	            }
+	    	            }
+	    	        siteMapper.insertDB(vo);
+	    	    }
+	    	    
+	    	}
+	    }
 }
+
+	    
+	    

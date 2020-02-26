@@ -1,5 +1,7 @@
 package jcep.admin.service;
 
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -7,8 +9,10 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+
 import jcep.admin.dao.SiteMapper;
 import jcep.admin.model.SiteVO;
+
 
 /**
  * @Class Name : SiteService.java
@@ -103,7 +107,6 @@ public class SiteService {
 
 
 	public List<Map<String, String>> selectFaqList(SiteVO paramList) {
-		System.out.println("최종 파람=="+paramList);
 		return siteMapper.selectFaqList(paramList);
 	}
 
@@ -127,6 +130,23 @@ public class SiteService {
 	public Integer faqFileUpload(SiteVO paramList) {
 		return siteMapper.faqFileUpload(paramList);
 	}
+
+	public List<Map<String, String>> selectFaqListTotal() {
+		return siteMapper.selectFaqListTotal();
+	}
+
+
+
+
+
+		
+	
+
+
+
+
+
+
 
 	
 /*
