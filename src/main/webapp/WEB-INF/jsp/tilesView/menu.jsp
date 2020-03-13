@@ -120,6 +120,9 @@
 						<li class="">
 							<a href="/db/site/accessLogList.do" title="사이트 관리"><span class="menu-item-parent">접속로그</span></a>
 						</li>
+						<li class="">
+							<a href="/db/site/calendar3.do" title="일정 관리"><span class="menu-item-parent">일정 관리</span></a>
+						</li>
 					</ul>	
 				</li>
 				<li class="">
