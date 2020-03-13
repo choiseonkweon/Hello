@@ -1,11 +1,13 @@
 package jcep.admin.dao;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import egovframework.rte.psl.dataaccess.mapper.Mapper;
 import jcep.admin.model.SiteVO;
@@ -107,6 +109,13 @@ public interface SiteMapper {
 	public List<Map<String,Object>> testDbList(Map<String, Object> map);
 
 	public int insertDB(SiteVO vo);
+
+
+	public void excelUpload(SiteVO vo);
+
+
+	public List<Map<String, String>> calendar_select(Map<String, Object> map);
+
 
 		
 	

@@ -256,7 +256,7 @@
 			ORDER BY faq_idx DESC
 	</select>
 	
-	<insert id="insertDB" parameterType="jcep.admin.model.SiteVO">
+	<insert id="excelUpload" parameterType="jcep.admin.model.SiteVO">
 		insert into ta_faq(
 		faq_idx
 		,faq_title
@@ -274,4 +274,15 @@
 		
 	</insert>
 
+	<select id="calendar_select" parameterType="java.util.Map" resultType="java.util.Map">
+	SELECT 
+		COMP_NM AS compNm
+		,USE_FR_DT AS useFrDt
+		,USE_TO_DT AS  useToDt
+	FROM tb_resour_faci_applicate
+	<![CDATA[
+where use_fr_dt >= #{useFrDt}
+    and use_to_dt <= #{useToDt}
+	]]>
+	</select>
 </mapper>

@@ -4,10 +4,10 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -21,7 +21,6 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
@@ -37,11 +36,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
-import org.stringtemplate.v4.compiler.STParser.mapExpr_return;
 
 import egovframework.rte.fdl.property.EgovPropertyService;
 import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
@@ -601,16 +598,6 @@ public class SiteController {
 	    	//테이블 헤더용 스타일
 	    	CellStyle headStyle = wb.createCellStyle();
 	    	
-	    	//헤더생성
-	    	row = sheet.createRow(rowNo++);
-	    	cell = row.createCell(0);
-	    	cell.setCellValue("NO");
-	    	cell = row.createCell(1);
-	    	cell.setCellValue("제목");
-	    	cell = row.createCell(2);
-	    	cell.setCellValue("상태");
-	    	cell = row.createCell(3);
-	    	cell.setCellValue("등록일");
 	    	
 	    	//데이터 생성
 	    	for(int i=1;i<faqList.size()+1;i++) {
@@ -627,7 +614,7 @@ public class SiteController {
 	    	
 	    	//엑셀 출력
 	    	wb.write(response.getOutputStream());
-	    	wb.close();
+//	    	wb.close();
 	    	
 	    }
 	    /**
@@ -640,38 +627,63 @@ public class SiteController {
 	    private SiteMapper siteMapper;
 	    
 	    @RequestMapping("site/ExcelUp.do")
-	    public void ExcelUp(SiteVO searchVO) throws IOException {
+	    public void ExcelUp(SiteVO searchVO,MultipartHttpServletRequest request, Model model) throws IOException {
+	    	System.out.println("컨트롤러 진입");
 	    	
-	    	System.out.println("업르도 컨트롤러 진입");
 	    	
+	    	Map<String, Object> resultMap = new HashMap<String, Object>();
+	        List<SiteVO> resultList = new ArrayList<SiteVO>();
+	        
+	        MultipartFile excelFile =request.getFile("excelFile"); //첨부 된 파일
+	        File destdir = new File(noticeFilePath); //디렉토리 가져오기
+//	        if(!destdir.exists()){
+//	            destdir.mkdirs(); //디렉토리가 존재하지 않는다면 생성
+//	        }
+	        
+	        File destFile = new File(destdir+"\\"+excelFile.getOriginalFilename()); //첨부파일 원래의 이름으로 저장         
+	        
+	        try{
+	            excelFile.transferTo(destFile); //파일 데이터를 지정한 file(destFile)로 저장 
+	        }catch(IllegalStateException | IOException e){
+	            throw new RuntimeException(e.getMessage(),e);
+	        }
+	        
+	        siteService.excelUpload(destFile);
+	        System.out.println("파일은? "+destFile);
+	        SiteVO vo = new SiteVO();
+			
+	        vo.setFileCourse(destFile.getAbsolutePath());
+
+//	        destFile.delete();
+	        
 	    	//파일을 읽기위해 엑셀파일을 가져온다
-	    	FileInputStream fis=new FileInputStream("C:\\test.xls");
+	    	FileInputStream fis=new FileInputStream(destFile);
 	    	HSSFWorkbook workbook=new HSSFWorkbook(fis);
 	    	int rowindex=0;
 	    	int columnindex=0;
 	    	//시트 수 (첫번째에만 존재하므로 0을 준다)
 	    	//만약 각 시트를 읽기위해서는 FOR문을 한번더 돌려준다
 	    	HSSFSheet sheet=workbook.getSheetAt(0);
-	    	//행의 수
-	    	int rows=sheet.getPhysicalNumberOfRows();
+	    	//행의 수 (생성된 시트를 이용하여 그 행의 수만큼 돌려서 행을 하나씩 생성)
+	    	int rows=sheet.getPhysicalNumberOfRows(); // 한 sheet당  몇개의 row가 있는지 체크
 	    	
-	    	for(rowindex=1;rowindex<rows;rowindex++){ // row=0은 헤더이므로 1부터 시작
+	    	for(rowindex=0;rowindex<rows;rowindex++){// row=0은 헤더이므로 1부터 시작
+	    		System.out.println("첫번째 포문 진입");
 	    	    //행을 읽는다
 	    	    HSSFRow row=sheet.getRow(rowindex);
 	    	    if(row !=null){
 	    	    	
-	    	        //셀의 수
-	    	        int cells=row.getPhysicalNumberOfCells(); // 한 row당 cell개수
+	    	        //셀의 수 (생성된 행을 이용하여 그 셀의 수만큼 돌려서 셀을 하나씩 생성)
+	    	        int cells=row.getPhysicalNumberOfCells(); // 한 row당  몇개의 cell이 있는지 체크
 	    	       
-	    	        SiteVO vo = new SiteVO();
-                    vo.setFaqIdx(vo.getFaqIdx());               // 코드(항상같은정보)
-                    vo.setFaqTitle(vo.getFaqTitle());// 번호(+1증가)
-                    vo.setFaqCont(vo.getFaqCont());
-                    vo.setFaqOpenYn(vo.getFaqOpenYn());
-                    vo.setRegDt(vo.getRegDt());
+//                    vo.setFaqIdx(vo.getFaqIdx());             
+//                    vo.setFaqTitle(vo.getFaqTitle());
+//                    vo.setFaqCont(vo.getFaqCont());
+//                    vo.setFaqOpenYn(vo.getFaqOpenYn());
+//                    vo.setRegDt(vo.getRegDt()); 
 
-	    	        for(columnindex=0;columnindex<=cells;columnindex++){
-	    	        	
+	    	        for(columnindex=0;columnindex<cells;columnindex++){
+			    		System.out.println("두번째 포문 진입");
 	    	            //셀값을 읽는다
 	    	            HSSFCell cell=row.getCell(columnindex);
 	    	            String value="";
@@ -680,13 +692,13 @@ public class SiteController {
 	    	            if(cell==null){
 	    	                continue;
 	    	            }else{
-	    	                //타입별로 내용 읽기
+	    	                //셀타입별로 내용 읽기
 	    	                switch (cell.getCellType()){
 	    	                case HSSFCell.CELL_TYPE_FORMULA:
-	    	                    value=cell.getCellFormula();
+	    	                    value=cell.getCellFormula();					// 수식자체를 가져올때
 	    	                    break;
 	    	                case HSSFCell.CELL_TYPE_NUMERIC:
-	    	                    value=cell.getNumericCellValue()+"";
+	    	                    value=cell.getNumericCellValue()+"";   //숫자 타입일때
 	    	                    break;
 	    	                case HSSFCell.CELL_TYPE_STRING:
 	    	                    value=cell.getStringCellValue()+"";
@@ -716,10 +728,130 @@ public class SiteController {
 	    	            break;
 	    	            }
 	    	            }
-	    	        siteMapper.insertDB(vo);
 	    	    }
 	    	    
+	    	    siteMapper.excelUpload(vo);
 	    	}
+	    }
+	    @RequestMapping("site/calendar.do")
+	    public ModelAndView Calendar(ModelAndView mv, Model model, HttpServletRequest request) throws IOException {
+	    	Calendar cal = Calendar.getInstance();
+	    	Calendar bfrCal = Calendar.getInstance();
+	    	Calendar nextCal = Calendar.getInstance();
+			
+	    	int currentYear = cal.get(Calendar.YEAR);
+	    	int currentMonth = cal.get(Calendar.MONTH);
+	    	int currentDate=cal.get(Calendar.DATE);
+	    	
+	    	String Year=request.getParameter("year"); 		//나타내고자 하는 날짜, Year변수에 값을 전송 받음
+	    	String Month=request.getParameter("month");
+	    	String Date=request.getParameter("date");
+	    	
+	    	int year, month, date;
+	    	if(Year == null && Month == null) { //처음 호출할때
+	    		year = currentYear;		//현재연도
+	    		month = currentMonth;	//현재월로 설정
+	    	}else {//나타내고자 하는 날짜를 정수로 변환
+	    		year=Integer.parseInt(Year);
+	    		month=Integer.parseInt(Month);
+	    		if(month<0) {month=11; year=year-1;} //1~12월까지만 범위지정
+	    		if(month>11) {month=0; year=year+1;}
+	    	}
+	    	
+	    	cal.set(year, month, 1); //현재 날짜를 현재 월의 1일로 설정
+	        bfrCal.set(year, month, 1); 
+	    	bfrCal.add(month, - 1);
+	    	nextCal.set(year, month, 1); 
+	        nextCal.add(month, +1);
+	       int startDay=cal.get(Calendar.DAY_OF_WEEK); //현재날짜(1일)의 요일
+	       int end=cal.getActualMaximum(Calendar.DAY_OF_MONTH); //이 달의 끝나는 날
+	       int bfrEnd=bfrCal.getActualMaximum(Calendar.DAY_OF_MONTH); //전 달의 끝나는 날
+	       int nextStart=nextCal.get(Calendar.DAY_OF_WEEK); //다음 달의 시작하는 요일 
+	      
+	       Calendar todayCal = Calendar.getInstance();
+	       SimpleDateFormat ysdf = new SimpleDateFormat("yyyy");
+	       SimpleDateFormat msdf = new SimpleDateFormat("M");
+	       
+	       int today = -1;
+	       if(currentYear == year && currentMonth==month) {
+	    	   SimpleDateFormat dsdf = new SimpleDateFormat("dd");
+	    	   today = Integer.parseInt(dsdf.format(todayCal.getTime()));
+	       }
+	       
+	       int i=0;
+	       System.out.println("startDay"+startDay);
+	       System.out.println("end"+end);
+	       System.out.println("bfrEnd"+bfrEnd);
+	       System.out.println("nextStart"+nextStart);
+	       
+	       request.setAttribute("year", year);
+	       request.setAttribute("month", month);
+	       request.setAttribute("today", today);
+	       request.setAttribute("currentYear", currentYear);
+	       request.setAttribute("currentMonth", currentMonth);
+	       request.setAttribute("currentDate", currentDate);
+	       request.setAttribute("startDay", startDay);
+	       request.setAttribute("end", end);
+	       request.setAttribute("bfrEnd", bfrEnd);
+	       request.setAttribute("nextStart", nextStart);
+	       request.setAttribute("i", i);
+	       
+	       
+	       
+	       
+//	       for(int i=0; i<(startDay-1); i++) { //전달 날짜 출력
+//	        out.println("<td style=color:gray>"+ String.valueOf(bfrEnd-(startDay-i-2)) +"</td>");
+//	        System.out.println("bfrEnd-(startDay-i-2)"+String.valueOf(bfrEnd-(startDay-i-2)));
+//	        	br++;
+//	       }
+//	      
+//	       for(int i=1; i<=end; i++) { //현재 날짜 출력
+//	        if((br%7)==0){  //달력에 있는 날과 내 컴퓨터의 로컬 날이 같으면, 배경색을 노랑색으로
+//	        	if(i==currentDate&&(currentMonth+1)==(month+1)&&currentYear==year){
+//	        		out.println("<td style='background-color:#FAF58C; color:red; font-weight:bold'>"+i+"</td>");
+//	            	}else{
+//	       			 	out.println("<td style='color:red; font-weight:bold'>" + i + "</td>");
+//	            	}
+//	        }else {
+//	        	if(i==currentDate&&(currentMonth+1)==(month+1)&&currentYear==year){
+//	        		out.println("<td style='background-color:#FAF58C; font-weight:bold'>"+i+"</td>");
+//	        		}else{
+//	        			out.println("<td style=font-weight:bold>" + i + "</td>");
+//	        	}
+//	        }
+//	        br++;
+//	        if((br%7)==0 && i!=end) {
+//	         out.println("</tr><tr height=100>");
+//	        }///7h
+//	       }
+//	       
+//	       int nextDate = 1;
+//	       while((br++)%7!=0){ //다음달 날짜 출력
+//	    	    out.println("<td style=color:gray>"+ String.valueOf(nextDate++) +"</td>");
+//	       }
+	       
+	       mv.setViewName("/view/calendar");
+			return mv;
+	    }
+	    
+	    @RequestMapping("site/calendar3.do")
+	    public ModelAndView Calendar3(ModelAndView mv) throws IOException {
+	    	
+	    	mv.setViewName("/view/calendar4");
+			
+			return mv;
+	    }
+	    @ResponseBody
+	    @RequestMapping("site/calendar4.do")
+	    public ModelAndView Calendar4(ModelAndView mv, HttpServletRequest request, 
+	    		@RequestParam(required=false) Map<String,Object> paramList) throws IOException {
+	    	System.out.println("paramList"+paramList.get("useFrDt"));
+	    	List<Map<String, String>> calendar_select = siteService.calendar_select(paramList);
+			System.out.println("calendar_select="+calendar_select);
+			mv.addObject("schedule", calendar_select);
+	    	mv.setViewName("jsonView");
+			
+			return mv;
 	    }
 }
 
