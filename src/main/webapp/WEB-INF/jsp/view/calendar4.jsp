@@ -14,7 +14,7 @@
         border:1px solid #BDBDBD;
         text-align:center;
         width:70%;
-        font-size:20px;
+        font-size:17px;
     }
     tr, td {
     border: 1px solid #BDBDBD;
@@ -24,8 +24,9 @@
 </style>
 <script language="javascript">
 	var today = new Date(); // 오늘 날짜
-	var date = new Date();
+	var date = new Date(); // 오늘날짜와 비교위해 date만듦
 	
+	//1. 페이지가 시작할때 일정을 조회
 	$(document).ready(function(){
 		selectSchedule();
 	});
@@ -46,31 +47,31 @@
     
     function build(data) //data 받기!
     {
-        var nMonth = new Date(today.getFullYear(), today.getMonth(), 1); //현재달의 첫째 날
-        var lastDate = new Date(today.getFullYear(), today.getMonth() + 1, 0); //현재 달의 마지막 날
-        var bfrLastDay = new Date(today.getFullYear(), today.getMonth() - 1, 0);// 이전달의 마지막날
-        var tbcal = document.getElementById("calendar"); // 테이블 달력을 만들 테이블
-        var yearmonth = document.getElementById("yearmonth"); //  년도와 월 출력할곳
+        var nMonth = new Date(today.getFullYear(), today.getMonth(), 1); 				 //현재달의 첫째 날
+        var lastDate = new Date(today.getFullYear(), today.getMonth() + 1, 0); 			 //현재 달의 마지막 날
+        var bfrLastDay = new Date(today.getFullYear(), today.getMonth() - 1, 0);		 // 이전달의 마지막날
+        var tbcal = document.getElementById("calendar"); 								 // 테이블 달력을 만들 테이블
+        var yearmonth = document.getElementById("yearmonth"); 							 //년도와 월 출력할곳
         yearmonth.innerHTML = today.getFullYear() + "년 "+ (today.getMonth() + 1) + "월"; //년도와 월 출력
         
-        if(today.getMonth()+1==12) //  눌렀을 때 월이 넘어가는 곳
+        if(today.getMonth()+1==12) 														//today.getMonth() 가 0부터 시작하므로 +1 을했을때 12면
         {
-            before.innerHTML=(today.getMonth())+"월";
-            next.innerHTML="1월";
+            before.innerHTML=(today.getMonth())+"월";									//이전 달은 그대로 표시
+            next.innerHTML="1월";														//다음 달은 1월로 표시
         }
-        else if(today.getMonth()+1==1) //  1월 일 때
+        else if(today.getMonth()+1==1) 													//today.getMonth() 가 0부터 시작하므로 +1 을했을때 1면
         {
-        before.innerHTML="12월";
-        next.innerHTML=(today.getMonth()+2)+"월";
+        before.innerHTML="12월";															//이전 달은 12월
+        next.innerHTML=(today.getMonth()+2)+"월";										//다음달은 2월
         }
-        else //   12월 일 때
+        else
         {
             before.innerHTML=(today.getMonth())+"월";
             next.innerHTML=(today.getMonth()+2)+"월";
         }
         
        
-        // 남은 테이블 줄 삭제
+        //요일을 표시하는 row를 제외하고 달력조회할때 다시 그리기 위해 제거
         while (tbcal.rows.length > 2) 
         {
             tbcal.deleteRow(tbcal.rows.length - 1);
@@ -95,47 +96,72 @@
             cell = row.insertCell();
             cell.innerHTML = i;
             cnt = cnt + 1;
-            if (cnt % 7 == 1) {//일요일 계산
-                cell.innerHTML = "<font color=#FF9090>" + i//일요일에 색
+            if (cnt % 7 == 1) {									//요일을 7로 나눌때 나머지가 1이므로 일요일
+                cell.innerHTML = "<font color=#FF9090>" + i;	//일요일에 색
             }
-            if (cnt % 7 == 0) { // 1주일이 7일 이므로 토요일 계산
-                cell.innerHTML = "<font color=#7ED5E4>" + i//토요일에 색
-                row = calendar.insertRow();// 줄 추가
+            if (cnt % 7 == 0) { 								// 요일을 7로 나눌때 나머지가 없으므로 토요일
+                cell.innerHTML = "<font color=#7ED5E4>" + i;	//토요일에 색
+                row = calendar.insertRow();						//토요일이면 다음주 한줄 생성
             }
-            if(today.getFullYear()==date.getFullYear() && today.getMonth()==date.getMonth()&&i==date.getDate()) 
+            //년, 월, 일이 같으면 오늘 날짜 표시
+            if(today.getFullYear() == date.getFullYear() && today.getMonth() == date.getMonth() && i == date.getDate()) 
             {
                 cell.bgColor = "#BCF1B1"; //오늘날짜배경색
             }
-            for(var a = 1; a < data.schedule.length; a++){ //일정 추가
-            if(i>=data.schedule[a].useFrDt.substring(6) && i<=data.schedule[a].useToDt.substring(6)){
-            	cell.innerHTML=i +"</br>"+ data.schedule[a].compNm //날짜 + 일정 
-            	}
+            var schedule = ""; //일정
+            //조회해온 일정만큼 반복문 수행
+            for(var a = 0; a < data.schedule.length; a++){
+            	/* 
+            	   i = 일자 
+            	   data.schedule[a].useFrDt.substring(6) = 조회해온 일정시작일에서 6자리 이전은 자르고 6자리 이후부터의 데이터 날짜만 가져옴 
+            	   data.schedule[a].useToDt.substring(6) = 조회해온 일정종료일에서 6자리 이전은 자르고 6자리 이후부터의 데이터 날짜만 가져옴 
+            	    일치할경우 일정을 표시
+            	*/
+            	if(i >= data.schedule[a].useFrDt.substring(6) && i <= data.schedule[a].useToDt.substring(6)	){
+            		if(schedule ==""){ //일정 비어있으면 일정하나 추가
+            			schedule =data.schedule[a].compNm;
+            			}else{ //근데 일정이 이미 등록되어있다면, 다른 일정들도 보여주기
+            		schedule = "</br>"+"<font size=1px>" + schedule +"</br>"+ "<font size=1px>" + data.schedule[a].compNm //일정들 
+            		}
             }
-            
+            }
+        cell.innerHTML=i +"</br>"+"<font size=1px>" + schedule; // 날짜 + 일정들
         }
-     var nextMonthDate = 1;
-     var html ="";
-     while((cnt++)%7 != 0){
-		html = '<span style="color:#B3B6B3 ;">'+nextMonthDate+'</span>'
-    	 row.insertCell().innerHTML = html;
-     	nextMonthDate+=1;
-     }
+        //다음달 시작
+        var nextMonthDate = 1;			//다음달 시작일
+     	var html ="";
+     	while((cnt++) % 7 != 0){		//토요일까지만 다음달 날짜를 표시하기위해 반복
+			html = '<span style="color:#B3B6B3 ;">'+nextMonthDate+'</span>'
+    	 	row.insertCell().innerHTML = html;
+     		nextMonthDate += 1;			//하루 추가
+     	}
     }
     
     //일정 조회
     function selectSchedule(){
    	
     		var year = String(today.getFullYear()); //현재년도
-    		var month = String(today.getMonth() < 10 ? "0" + (today.getMonth() +1) : today.getMonth() + 1); //현재 달
-    		var lastDay = String(( new Date( year, month, 0) ).getDate());
+    		var month = "";
+    		//현재 월 이 10월 이전이면 앞에 0을 붙여서 두자리로 만들어줌
+    		if(today.getMonth() < 10){
+    			month = "0" + (today.getMonth() +1)
+    		}else{
+    			month = today.getMonth() + 1;
+    		}
+    		var month = String(month);
+//     		var month = String(today.getMonth() < 10 ? "0" + (today.getMonth() +1) : today.getMonth() + 1); //현재 달
+    		var lastDay = String(( new Date( year, month, 0) ).getDate());	//현재 달의 마지막일
+    		//ajax 시작
     		$.ajax({
-            type : 'post',
-            data : {"useFrDt" : year.concat(month,"01")
-            	       ,"useToDt" : year.concat(month,lastDay)},
-            dataType: 'json',
-            url: '/db/site/calendar4.do',
-            success: function(data){
-            	build(data); //data 받아서 위로 넘겨주기
+            type : 'post',											//method 타입은 post 로..
+            data : {"useFrDt" : year.concat(month,"01")				//서버로 넘겨주는 파라메타
+            	       ,"useToDt" : year.concat(month,lastDay)},	//useFrDt = 시작일자 이므로 위에서 구한 year 에 month 와 01 을 붙여줌
+            														//useToDt = 마지막일자 이므로 year 에 month와 현재 월의 마지막일자를 붙여줌
+            	       dataType: 'json',
+            url: '/db/site/calendar4.do',							//url 설정
+            success: function(data){								//정상적으로 결과를 받으면..
+            	build(data); 										//data = 받은일정데이터
+            	                                                    //build = 달력 그리기 시작
             },
             error : function(e){
             	console.log("실패");
