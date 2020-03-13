@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jcep.admin.dao.CalendarMapper">
+
+	<select id="testCalendarList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		/*testCalendarList*/
+		SELECT	appli_no					AS	appliNo
+					,resour_faci_id			AS	resourFaciId
+					,member_id				AS	memberId
+					,resour_faci_divi_cd	AS	resourFaciDiviCd
+					,comp_nm				AS	compNm
+					,comp_addr1			AS	compAddr1
+					,comp_addr2			AS	compAddr2
+					,comp_appl_nm		AS	compApplNm
+					,comp_tel_no			AS	compTelNo
+					,comp_tel_no2			AS	compTelNo2
+					,comp_tel_no3			AS	compTelNo3
+					,comp_mail				AS	compMail
+					,use_pers_num			AS	usePersNum
+					,use_obj					AS	useObj
+					,use_fr_dt				AS	useFrDt
+					,use_fr_tm				AS	useFrTm
+					,use_to_dt				AS	useToDt
+					,use_to_tm				AS	useToTm
+					,applic_st_cd			AS	applicStCd
+					,reg_dt					AS	regDt
+					,reg_id					AS	regId
+	      FROM	tb_resour_faci_applicate
+	    WHERE	1=1
+	      <if test="year != null and year != ''">
+	        AND	YEAR(use_fr_dt) = #{year}
+	      </if>
+	      <if test="month != null and month != ''">
+	        AND	MONTH(use_fr_dt) = #{month}
+	      </if>
+	     ORDER 	BY use_fr_tm, use_to_tm
+	</select>
+</mapper>
