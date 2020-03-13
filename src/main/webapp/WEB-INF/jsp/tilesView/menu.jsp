@@ -122,6 +122,16 @@
 						</li>
 					</ul>	
 				</li>
+				<li class="">
+					<a href="#" title="과제목록"><i class="fa fa-lg fa-fw fa-pencil-square-o"></i> <span class="menu-item-parent">캘린더 예약</span></a>
+					<ul>
+						<li class="">
+							<a href="/db//schedule/scheduleMain.do" title="캘린더 예약"><span class="menu-item-parent">캘린더 예약</span></a>
+						</li>
+					</ul>	
+				</li>
+				
+				
 			</ul>
 		</nav>
 		
